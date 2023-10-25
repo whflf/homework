@@ -11,16 +11,16 @@
 #define TESTS_FAILED 2
 #define SCANF_FIELDS_ERROR
 
-typedef int* (SortMethod)(const* const, size_t);
+typedef int* (SortMethod)(size_t const* const, const size_t);
 
-void swap(int* value1, int* value2)
+void swap(int* const value1, int* const value2)
 {
     int value1Prev = *value1;
     *value1 = *value2;
     *value2 = value1Prev;
 }
 
-int arrayMax(int* array, size_t size)
+int arrayMax(int* const array, const size_t size)
 {
     int maximum = 0;
     for (int i = 0; i < size; ++i)
@@ -30,7 +30,7 @@ int arrayMax(int* array, size_t size)
     return maximum;
 }
 
-int bubbleSort(int* array, size_t size)
+int bubbleSort(int* const array, const size_t size)
 {
     for (int i = 0; i < size - 1; ++i)
     {
@@ -45,14 +45,13 @@ int bubbleSort(int* array, size_t size)
     return OK;
 }
 
-int countingSort(int* array, size_t size)
+int countingSort(int* const array, const size_t size)
 {
-    const int maxNumber = arrayMax(array, size);
-    int* countingArray = (int*)malloc(maxNumber * sizeof(*array) + 1);
+    const int maxNumber = arrayMax(array, size) + 1;
+    int* countingArray = (int*)calloc(maxNumber, maxNumber * sizeof(*array));
     if (countingArray == NULL) {
         return OUT_OF_MEMORY;
     }
-    memset(countingArray, 0, sizeof(*array) * (maxNumber + 1));
 
     for (int i = 0; i < size; ++i) 
     {
@@ -63,9 +62,9 @@ int countingSort(int* array, size_t size)
         ++countingArray[array[i]];
     }
     size_t index = 0;
-    for (int i = 0; i < maxNumber + 1; ++i) 
+    for (size_t i = 0; i < maxNumber; ++i) 
     {
-        for (int j = 0; j < countingArray[i]; ++j)
+        for (size_t j = 0; j < countingArray[i]; ++j)
         {
             array[index++] = i;
         }
@@ -82,17 +81,20 @@ double calcDuration(SortMethod method, const* const array, const size_t arraySiz
     return (stop - start) / CLOCKS_PER_SEC;
 }
 
-int* randArray()
+int* randArray(const size_t size, const int rangeMax, const int rangeMin)
 {
-    int* randomNumbers = (int*)malloc(LENGTH * sizeof(int));
+    int* const randomNumbers = (int*)malloc(size * sizeof(int));
 
-    if (randomNumbers == NULL) {
-        int randomNumbers[1] = { -1 };
+    if (randomNumbers == NULL) 
+    {
+        return NULL;
     }
-    else {
+    else 
+    {
         srand(time(NULL));
-        for (int i = 0; i < LENGTH; ++i) {
-            randomNumbers[i] = rand();
+        for (size_t i = 0; i < size; ++i) 
+        {
+            randomNumbers[i] = ((double)rand() / RAND_MAX) * (rangeMax - rangeMin) + rangeMin;
         }
     }
 
@@ -133,7 +135,7 @@ int main()
         return TESTS_FAILED;
     }
 
-    int length = 0;
+    size_t length = 0;
     printf("> Enter the length: ");
 
     int errorCode = 0;
@@ -156,7 +158,7 @@ int main()
     }
 
     printf("> Enter the elements of the array:\n");
-    for (int i = 0; i < length; i++)
+    for (size_t i = 0; i < length; i++)
     {
         printf("a[%d] = ", i);
         errorCode = scanf_s("%d", &numbers[i]);
@@ -175,7 +177,7 @@ int main()
         free(numbers);
         return NEGATIVE_NUMBER_ERROR;
     }
-    for (int i = 0; i < length; ++i)
+    for (size_t i = 0; i < length; ++i)
     {
         printf("%d ", numbers[i]);
     }
@@ -183,13 +185,31 @@ int main()
 
     printf("\n");
 
-    const* const randomNumbers = randArray();
+    const int randRangeMax = 1000;
+    const int randRangeMin = 0;
+    const* const randomNumbers = randArray(LENGTH, randRangeMax, randRangeMin);
+    if (randomNumbers == NULL)
+    {
+        printf("Memory allocation has failed :(");
+        return OUT_OF_MEMORY;
+    }
+
     const* const randomNumbers2 = (int*)malloc(LENGTH * sizeof(int));
+    if (randomNumbers2 == NULL) 
+    {
+        printf("Memory allocation has failed :(");
+        return OUT_OF_MEMORY;
+    }
+    memcpy(randomNumbers2, randomNumbers, LENGTH);
+
     double duration = calcDuration(bubbleSort, randomNumbers, LENGTH);
-    printf("Bubble soring required % 2.10f seconds\n", duration);
+    printf("Bubble sorting has required %2.10f seconds\n", duration);
 
     duration = calcDuration(countingSort, randomNumbers2, LENGTH);
-    printf("Counting soring required %2.10f seconds\n", duration);
+    printf("Counting sorting has required %2.10f seconds\n", duration);
+
+    free(randomNumbers);
+    free(randomNumbers2);
     
     return OK;
 }
