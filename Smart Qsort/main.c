@@ -58,7 +58,7 @@ void quicksort(int array[], const int low, const int high)
         const int partitionIndex = partition(array, low, high);
         if ((partitionIndex - low) >= 10)
         {
-            quicksort(array, low + 1, partitionIndex);
+            quicksort(array, low + 1, partitionIndex - 1);
         }
         else
         {
