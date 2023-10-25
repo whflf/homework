@@ -58,7 +58,7 @@ void quicksort(int array[], const int low, const int high)
         const int partitionIndex = partition(array, low, high);
         if ((partitionIndex - low) >= 10)
         {
-            quicksort(array, low, partitionIndex);
+            quicksort(array, low + 1, partitionIndex);
         }
         else
         {
@@ -115,7 +115,7 @@ int main()
     }
     for (size_t i = 0; i < size; ++i)
     {
-        printf("> a[%d] = ", i);
+        printf("> a[%d] = ", (int)i);
         fgets(&numbers[i], sizeof(int) + 1, stdin);
         numbers[i] = atoi(&numbers[i]);
     }
