@@ -10,19 +10,19 @@
 #define OUT_OF_MEMORY 1
 #define TESTS_FAILED 2
 
-void swap(int* value1, int* value2)
+void swap(int* const value1, int* const value2)
 {
     int value1Prev = *value1;
     *value1 = *value2;
     *value2 = value1Prev;
 }
 
-void halfQsort(int* array, size_t size)
+void halfQsort(int* const array, const size_t size)
 {
-    int index = 0;
+    size_t index = 0;
     int firstElement = array[0];
 
-    for (int i = 1; i < size; ++i) 
+    for (size_t i = 1; i < size; ++i) 
     {
         if (array[i] < firstElement) 
         {
@@ -37,12 +37,12 @@ int* randArray()
 
     if (randomNumbers == NULL) 
     {
-        int randomNumbers[1] = { -1 };
+        return NULL;
     }
     else 
     {
         srand(time(NULL));
-        for (int i = 0; i < RAND_ARRAY_LENGTH; ++i) 
+        for (size_t i = 0; i < RAND_ARRAY_LENGTH; ++i) 
         {
             randomNumbers[i] = rand();
         }
@@ -89,16 +89,15 @@ int main()
         return TESTS_FAILED;
     }
 
-    int* numbers = randArray();
-    int memoryErrorArray[1] = { -1 };
-    if (memcmp(numbers, memoryErrorArray, 1) == 0) 
+    int* const numbers = randArray();
+    if (numbers == NULL) 
     {
         printf("~ Memory allocation has failed");
         return OUT_OF_MEMORY;
     }
 
     printf("Before conversion: ");
-    for (int i = 0; i < 20; ++i) 
+    for (size_t i = 0; i < RAND_ARRAY_LENGTH; ++i) 
     {
         printf("%d ", numbers[i]);
     }
@@ -106,7 +105,7 @@ int main()
 
     halfQsort(numbers, RAND_ARRAY_LENGTH);
     printf("After conversion: ");
-    for (int i = 0; i < RAND_ARRAY_LENGTH; ++i) 
+    for (size_t i = 0; i < RAND_ARRAY_LENGTH; ++i) 
     {
         printf("%d ", numbers[i]);
     }
