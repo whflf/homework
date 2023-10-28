@@ -34,7 +34,6 @@ bool test1()
     }
     if (charCount(characters, "test1.txt") != FILE_OPEN_ERROR) 
     {
-        free(characters);
         return characters[10] == 13;
     }
 
@@ -51,7 +50,6 @@ bool test2()
     }
     if (charCount(characters, "test2.txt") != FILE_OPEN_ERROR)
     {
-        free(characters);
         return characters[32] == 15 && characters[78] == 1 && characters[10] == 0 && characters[111] == 8;
     }
 
@@ -74,8 +72,6 @@ int main()
     }
 
     if (charCount(characters, "file.txt") != FILE_OPEN_ERROR) {
-    charCount(characters, "file.txt");
-
         for (size_t i = 0; i < 256; ++i) {
             if (characters[i] == 0)
             {
