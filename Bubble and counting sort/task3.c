@@ -23,7 +23,7 @@ void swap(int* const value1, int* const value2)
 int arrayMax(int* const array, const size_t size)
 {
     int maximum = 0;
-    for (int i = 0; i < size; ++i)
+    for (size_t i = 0; i < size; ++i)
     {
         maximum = max(maximum, array[i]);
     }
@@ -32,9 +32,9 @@ int arrayMax(int* const array, const size_t size)
 
 int bubbleSort(int* const array, const size_t size)
 {
-    for (int i = 0; i < size - 1; ++i)
+    for (size_t i = 0; i < size - 1; ++i)
     {
-        for (int j = (size - 1); j > i; --j)
+        for (size_t j = (size - 1); j > i; --j)
         {
             if (array[j - 1] > array[j])
             {
@@ -49,11 +49,12 @@ int countingSort(int* const array, const size_t size)
 {
     const int maxNumber = arrayMax(array, size) + 1;
     int* countingArray = (int*)calloc(maxNumber, maxNumber * sizeof(*array));
-    if (countingArray == NULL) {
+    if (countingArray == NULL) 
+    {
         return OUT_OF_MEMORY;
     }
 
-    for (int i = 0; i < size; ++i) 
+    for (size_t i = 0; i < size; ++i) 
     {
         if (array[i] < 0) 
         {
