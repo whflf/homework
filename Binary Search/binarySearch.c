@@ -5,16 +5,18 @@
 #include <stdbool.h>
 
 #define TEST_LENGTH 5
+#define RANDOM_MAX 100
+#define KEY_MULTIPLIER 50
 
-#define NOTHING_FOUND -1
+#define NOT_FOUND -1
 #define OK 0
 #define TESTS_FAILED 1
 #define OUT_OF_MEMORY 2
 
 int compare(const void* a, const void* b)
 {
-    int* x = a;
-    int* y = b;
+    const int* x = a;
+    const int* y = b;
     return *x - *y;
 }
 
@@ -28,15 +30,16 @@ int* randArray(const size_t n, const int rangeMax, const int rangeMin)
     else 
     {
         srand(time(NULL));
-        for (size_t i = 0; i < n; ++i) {
-            randomNumbers[i] = ((double)rand() / RAND_MAX) * (rangeMax - rangeMin) + rangeMin;
+        for (size_t i = 0; i < n; ++i) 
+        {
+            randomNumbers[i] = (int)(((double)rand() / RAND_MAX) * (rangeMax - rangeMin) + rangeMin);
         }
     }
 
     return randomNumbers;
 }
 
-size_t binarySearch(int* const array, int first, int last, const int number)
+size_t binarySearch(int* const array, size_t first, size_t last, const int number)
 {
     while (first <= last) 
     {
@@ -55,21 +58,21 @@ size_t binarySearch(int* const array, int first, int last, const int number)
         }
     }
 
-    return NOTHING_FOUND;
+    return NOT_FOUND;
 }
 
 bool testCorrectCase()
 {
     int testArray[TEST_LENGTH] = { 4, 9, 1, 0, 3 };
     qsort(testArray, TEST_LENGTH, sizeof(int), compare);
-    return binarySearch(testArray, 0, 4, 0) != -1;
+    return binarySearch(testArray, 0, 4, 0) != NOT_FOUND;
 }
 
 bool testIncorrectCase()
 {
     int testArray[TEST_LENGTH] = { 4, 9, 1, 0, 3 };
     qsort(testArray, TEST_LENGTH, sizeof(int), compare);
-    return binarySearch(testArray, 0, 4, 5) == -1;
+    return binarySearch(testArray, 0, 4, 5) == NOT_FOUND;
 }
 
 int main() {
@@ -83,9 +86,9 @@ int main() {
     size_t k = 0;
 
     printf("> n = ");
-    scanf_s("%d", &n);
+    scanf("%ld", &n);
 
-    int* const numbers = randArray(n, 0, 100);
+    int* const numbers = randArray(n, RANDOM_MAX, 0);
     if (numbers == NULL) 
     {
         printf("Memory allocation has failed :(");
@@ -108,13 +111,13 @@ int main() {
     printf("\n");
 
     printf("> k = ");
-    scanf_s("%d", &k);
+    scanf("%ld", &k);
 
     for (size_t i = 0; i < k; ++i) 
     {
-        const int key = ((double)rand() / RAND_MAX) * 50;
+        const int key = (const int)(((double)rand() / RAND_MAX) * KEY_MULTIPLIER);
         const int index = binarySearch(numbers, 0, n - 1, key);
-        if (index > -1) 
+        if (index > NOT_FOUND) 
         {
             printf("%d is in the array\n", key);
         }
