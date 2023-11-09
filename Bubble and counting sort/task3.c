@@ -4,6 +4,8 @@
 #include <time.h>
 #include <stdbool.h>
 
+#define TEST_ARRAY_LENGTH 5
+
 #define LENGTH 100000
 #define OK 0
 #define NEGATIVE_NUMBER_ERROR -1
@@ -11,7 +13,7 @@
 #define TESTS_FAILED 2
 #define SCANF_FIELDS_ERROR
 
-typedef int* (SortMethod)(size_t const* const, const size_t);
+typedef int* (SortMethod)(int* const, const size_t);
 
 void swap(int* const value1, int* const value2)
 {
@@ -48,7 +50,7 @@ int bubbleSort(int* const array, const size_t size)
 int countingSort(int* const array, const size_t size)
 {
     const int maxNumber = arrayMax(array, size) + 1;
-    int* countingArray = (int*)calloc(maxNumber, maxNumber * sizeof(*array));
+    int* countingArray = (int*)calloc(maxNumber, sizeof(int));
     if (countingArray == NULL) 
     {
         return OUT_OF_MEMORY;
@@ -74,10 +76,10 @@ int countingSort(int* const array, const size_t size)
     return OK;
 }
 
-double calcDuration(SortMethod method, const* const array, const size_t arraySize)
+double calcDuration(SortMethod method, const* const array, const size_t arraySize, int* errorCode)
 {
     clock_t start = clock();
-    method(array, arraySize);
+    *errorCode = method(array, arraySize);
     clock_t stop = clock();
     return (stop - start) / CLOCKS_PER_SEC;
 }
@@ -90,42 +92,83 @@ int* randArray(const size_t size, const int rangeMax, const int rangeMin)
     {
         return NULL;
     }
-    else 
+    srand(time(NULL));
+
+    for (size_t i = 0; i < size; ++i) 
     {
-        srand(time(NULL));
-        for (size_t i = 0; i < size; ++i) 
-        {
-            randomNumbers[i] = ((double)rand() / RAND_MAX) * (rangeMax - rangeMin) + rangeMin;
-        }
+        randomNumbers[i] = (int)(((double)rand() / RAND_MAX) * (rangeMax - rangeMin) + rangeMin);
     }
 
     return randomNumbers;
 }
 
+int compareSortingMethods()
+{
+    const int randRangeMax = 1000;
+    const int randRangeMin = 0;
+    int* const randomNumbers = randArray(LENGTH, randRangeMax, randRangeMin);
+    if (randomNumbers == NULL)
+    {
+        printf("Memory allocation has failed :(");
+        return OUT_OF_MEMORY;
+    }
+
+    const* const randomNumbers2 = (int*)malloc(LENGTH * sizeof(int));
+    if (randomNumbers2 == NULL)
+    {
+        printf("Memory allocation has failed :(");
+        return OUT_OF_MEMORY;
+    }
+    memcpy(randomNumbers2, randomNumbers, LENGTH);
+    int errorCode = 0;
+
+    double duration = calcDuration(bubbleSort, randomNumbers, LENGTH, &errorCode);
+    if (errorCode != 0)
+    {
+        return errorCode;
+    }
+    printf("Bubble sorting has required %2.10f seconds\n", duration);
+
+    duration = calcDuration(countingSort, randomNumbers2, LENGTH, &errorCode);
+    if (errorCode != 0)
+    {
+        return errorCode;
+    }
+    printf("Counting sorting has required %2.10f seconds\n", duration);
+
+    free(randomNumbers);
+    free(randomNumbers2);
+
+    return OK;
+}
+
 bool testCorrectCase()
 {
-    int sortedArray[5] = { 1, 2, 3, 4, 5 };
-    int unsortedArray1[5] = { 2, 5, 4, 3, 1 };
-    int unsortedArray2[5] = { 2, 5, 4, 3, 1 };
-    bubbleSort(unsortedArray1, 5);
-    countingSort(unsortedArray2, 5);
-    return (memcmp(unsortedArray1, sortedArray, 5) == 0) && (memcmp(unsortedArray2, sortedArray, 5) == 0);
+    int sortedArray[TEST_ARRAY_LENGTH] = { 1, 2, 3, 4, 5 };
+    int unsortedArray1[TEST_ARRAY_LENGTH] = { 2, 5, 4, 3, 1 };
+    int unsortedArray2[TEST_ARRAY_LENGTH] = { 2, 5, 4, 3, 1 };
+    if (bubbleSort(unsortedArray1, TEST_ARRAY_LENGTH) == OK && countingSort(unsortedArray2, TEST_ARRAY_LENGTH) == OK)
+    {
+        return (memcmp(unsortedArray1, sortedArray, TEST_ARRAY_LENGTH) == 0) && (memcmp(unsortedArray2, sortedArray, TEST_ARRAY_LENGTH) == 0);
+    }
+    return 0;
 }
 
 bool testIncorrectCase()
 {
-    int unsortedArray[5] = { -2, 5, -4, 3, 1 };
-    return countingSort(unsortedArray, 5) == -1;
+    int unsortedArray[TEST_ARRAY_LENGTH] = { -2, 5, -4, 3, 1 };
+    return countingSort(unsortedArray, TEST_ARRAY_LENGTH) == -1;
 }
 
 bool testBoundaryCase()
 {
-    int unsortedArray1[5] = { 1, 2, 3, 4, 5 };
-    int unsortedArray2[5] = { 1, 2, 3, 4, 5 };
-    int sortedArray[5] = { 1, 2, 3, 4, 5 };
-    bubbleSort(unsortedArray1, 5);
-    countingSort(unsortedArray2, 5);
-    return (memcmp(unsortedArray1, sortedArray, 5) == 0) && (memcmp(unsortedArray2, sortedArray, 5) == 0);
+    int unsortedArray1[TEST_ARRAY_LENGTH] = { 1, 2, 3, 4, 5 };
+    int unsortedArray2[TEST_ARRAY_LENGTH] = { 1, 2, 3, 4, 5 };
+    int sortedArray[TEST_ARRAY_LENGTH] = { 1, 2, 3, 4, 5 };
+    if (bubbleSort(unsortedArray1, TEST_ARRAY_LENGTH) == OK && countingSort(unsortedArray2, TEST_ARRAY_LENGTH) == OK)
+    {
+        return (memcmp(unsortedArray1, sortedArray, 5) == 0) && (memcmp(unsortedArray2, sortedArray, TEST_ARRAY_LENGTH) == 0);
+    }
 }
 
 int main()
@@ -140,18 +183,14 @@ int main()
     printf("> Enter the length: ");
 
     int errorCode = 0;
-    errorCode = scanf_s("%d", &length);
+    errorCode = scanf_s("%zu", &length);
     if (errorCode == 0)
     {
         printf("!! Please enter an integer !!");
         return SCANF_FIELDS_ERROR;
     }
-    if (length < 0) {
-        printf("!! The length cannot be negative !!");
-        return NEGATIVE_NUMBER_ERROR;
-    }
 
-    const* const numbers = (int*)malloc(length * sizeof(int));
+    int* const numbers = (int*)malloc(length * sizeof(int));
     if (numbers == NULL) 
     {
         printf("Memory allocation failed :(");
@@ -172,11 +211,16 @@ int main()
     }
 
     errorCode = countingSort(numbers, length);
-    if (errorCode != 0) 
+    if (errorCode == NEGATIVE_NUMBER_ERROR) 
     {
         printf("!! Elements cannot be negative !! ");
         free(numbers);
         return NEGATIVE_NUMBER_ERROR;
+    }
+    if (errorCode == OUT_OF_MEMORY)
+    {
+        printf("Memory allocation has failed :(");
+        return OUT_OF_MEMORY;
     }
     for (size_t i = 0; i < length; ++i)
     {
@@ -186,31 +230,12 @@ int main()
 
     printf("\n");
 
-    const int randRangeMax = 1000;
-    const int randRangeMin = 0;
-    const* const randomNumbers = randArray(LENGTH, randRangeMax, randRangeMin);
-    if (randomNumbers == NULL)
+    errorCode = compareSortingMethods();
+    if (errorCode != OK)
     {
-        printf("Memory allocation has failed :(");
-        return OUT_OF_MEMORY;
+        printf("~ Sorting methods comparing has failed");
+        return errorCode;
     }
-
-    const* const randomNumbers2 = (int*)malloc(LENGTH * sizeof(int));
-    if (randomNumbers2 == NULL) 
-    {
-        printf("Memory allocation has failed :(");
-        return OUT_OF_MEMORY;
-    }
-    memcpy(randomNumbers2, randomNumbers, LENGTH);
-
-    double duration = calcDuration(bubbleSort, randomNumbers, LENGTH);
-    printf("Bubble sorting has required %2.10f seconds\n", duration);
-
-    duration = calcDuration(countingSort, randomNumbers2, LENGTH);
-    printf("Counting sorting has required %2.10f seconds\n", duration);
-
-    free(randomNumbers);
-    free(randomNumbers2);
     
     return OK;
 }
