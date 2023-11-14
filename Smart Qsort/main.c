@@ -1,10 +1,12 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define RETURN_OK 0
 #define RETURN_TESTS_FAILED 1
 #define RETURN_OUT_OF_MEMORY 2
+#define RETURN_BAD_INPUT 3
 
 void swap(int* const value1, int* const value2)
 {
@@ -13,15 +15,15 @@ void swap(int* const value1, int* const value2)
     *value2 = value1Prev;
 }
 
-void insertionSort(int* const array, const int low, const int high)
+void insertionSort(int* const array, const size_t low, const size_t high)
 {
-    for (size_t i = low; i <= high - 1; ++i)
+    for (size_t i = low; i < high; ++i)
     {
         if (i == low && low == 0)
         {
             continue;
         }
-        int j = i - 1;
+        size_t j = i - 1;
         while (array[j + 1] < array[j])
         {
             swap(&array[j + 1], &array[j]);
@@ -30,12 +32,12 @@ void insertionSort(int* const array, const int low, const int high)
     }
 }
 
-int partition(int array[], const int low, const int high)
+size_t partition(int* const array, const size_t low, const size_t high)
 {
     const int pivot = array[high];
     size_t i = (low - 1);
 
-    for (size_t j = low; j <= high - 1; ++j)
+    for (size_t j = low; j < high; ++j)
     {
         if (array[j] <= pivot)
         {
@@ -51,11 +53,16 @@ int partition(int array[], const int low, const int high)
     return (i + 1);
 }
 
-void quicksort(int array[], const int low, const int high)
+void quicksort(int* const array, const size_t low, const size_t high)
 {
     if (low < high)
     {
-        const int partitionIndex = partition(array, low, high);
+        size_t partitionIndex = high;
+        if (high - low > 10)
+        {
+            partitionIndex = partition(array, low, high);
+        }
+
         if ((partitionIndex - low) >= 10)
         {
             quicksort(array, low + 1, partitionIndex - 1);
@@ -77,18 +84,18 @@ void quicksort(int array[], const int low, const int high)
 
 bool testCorrectCase()
 {
-    const int unsortedArray[5] = { 2, 5, 4, 3, 1 };
-    const int sortedArray[5] = { 1, 2, 3, 4, 5 };
-    quicksort(unsortedArray, 0, 4);
-    return memcmp(unsortedArray, sortedArray, 5) == 0;
+    int unsortedArray[] = { 2, 5, 4, 3, 1 };
+    const int sortedArray[] = { 1, 2, 3, 4, 5 };
+    quicksort(unsortedArray, 0, _countof(unsortedArray) - 1);
+    return memcmp(unsortedArray, sortedArray, _countof(unsortedArray)) == 0;
 }
 
 bool testBoundaryCase()
 {
-    const int unsortedArray[5] = { 1, 2, 3, 4, 5 };
-    const int sortedArray[5] = { 1, 2, 3, 4, 5 };
-    quicksort(unsortedArray, 0, 4);
-    return memcmp(unsortedArray, sortedArray, 5) == 0;
+    int unsortedArray[] = { 1, 2, 3, 4, 5 };
+    const int sortedArray[] = { 1, 2, 3, 4, 5 };
+    quicksort(unsortedArray, 0, _countof(unsortedArray) - 1);
+    return memcmp(unsortedArray, sortedArray, _countof(unsortedArray)) == 0;
 }
 
 int main()
@@ -103,12 +110,14 @@ int main()
 
     printf("> Enter array size: ");
 
-    fgets(&size, sizeof(size_t) + 1, stdin);
-
-    size = atoi(&size);
+    if (!scanf("%llu", &size))
+    {
+        printf("\nBad input for array size. Please enter a valid positive integer.\n");
+        return RETURN_BAD_INPUT;
+    }
 
     int* numbers = (int*)malloc(size * sizeof(int));
-    if (numbers == NULL) 
+    if (numbers == NULL)
     {
         printf("Memory allocation has failed :(");
         return RETURN_OUT_OF_MEMORY;
@@ -116,13 +125,16 @@ int main()
     for (size_t i = 0; i < size; ++i)
     {
         printf("> a[%d] = ", (int)i);
-        fgets(&numbers[i], sizeof(int) + 1, stdin);
-        numbers[i] = atoi(&numbers[i]);
+        if (!scanf("%d", &numbers[i]))
+        {
+            printf("\nBad input for a[%llu]. Please enter a valid integer.\n", i);
+            return RETURN_BAD_INPUT;
+        }
     }
 
     quicksort(numbers, 0, size - 1);
 
-    printf("Result: ");
+    printf("\nResult: ");
     for (size_t i = 0; i < size; ++i)
     {
         printf("%d", numbers[i]);
@@ -136,3 +148,4 @@ int main()
     free(numbers);
     return RETURN_OK;
 }
+
