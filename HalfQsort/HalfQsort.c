@@ -39,13 +39,11 @@ int* randArray()
     {
         return NULL;
     }
-    else 
+
+    srand(time(NULL));
+    for (size_t i = 0; i < RAND_ARRAY_LENGTH; ++i) 
     {
-        srand(time(NULL));
-        for (size_t i = 0; i < RAND_ARRAY_LENGTH; ++i) 
-        {
-            randomNumbers[i] = rand();
-        }
+        randomNumbers[i] = rand();
     }
 
     return randomNumbers;
