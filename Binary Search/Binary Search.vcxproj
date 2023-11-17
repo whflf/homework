@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7901683c-0628-400d-9c5b-26c143407994}</ProjectGuid>
-    <RootNamespace>HalfQsort</RootNamespace>
+    <ProjectGuid>{88f6f7a0-6eda-46ea-b100-860c63874007}</ProjectGuid>
+    <RootNamespace>BinarySearch</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HalfQsort.c" />
+    <ClCompile Include="binarySearch.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

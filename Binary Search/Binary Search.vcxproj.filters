@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HalfQsort.c">
+    <ClCompile Include="binarySearch.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
