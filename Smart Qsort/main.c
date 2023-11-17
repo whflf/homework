@@ -8,6 +8,8 @@
 #define RETURN_OUT_OF_MEMORY 2
 #define RETURN_BAD_INPUT 3
 
+#define countof(array) sizeof(array) / sizeof(array[0])
+
 void swap(int* const value1, int* const value2)
 {
     const int value1Prev = *value1;
@@ -17,17 +19,11 @@ void swap(int* const value1, int* const value2)
 
 void insertionSort(int* const array, const size_t low, const size_t high)
 {
-    for (size_t i = low; i < high; ++i)
+    for (size_t i = low + 1; i < high; ++i)
     {
-        if (i == low && low == 0)
-        {
-            continue;
-        }
-        size_t j = i - 1;
-        while (array[j + 1] < array[j])
+        for (size_t j = i - 1; array[j + 1] < array[j]; --j)
         {
             swap(&array[j + 1], &array[j]);
-            --j;
         }
     }
 }
@@ -35,7 +31,7 @@ void insertionSort(int* const array, const size_t low, const size_t high)
 size_t partition(int* const array, const size_t low, const size_t high)
 {
     const int pivot = array[high];
-    size_t i = (low - 1);
+    size_t i = low - 1;
 
     for (size_t j = low; j < high; ++j)
     {
@@ -50,84 +46,74 @@ size_t partition(int* const array, const size_t low, const size_t high)
     }
 
     swap(&array[i + 1], &array[high]);
-    return (i + 1);
+    return i + 1;
 }
 
 void quicksort(int* const array, const size_t low, const size_t high)
 {
-    if (low < high)
+    if (low >= high)
     {
-        size_t partitionIndex = high;
-        if (high - low > 10)
-        {
-            partitionIndex = partition(array, low, high);
-        }
-
-        if ((partitionIndex - low) >= 10)
-        {
-            quicksort(array, low + 1, partitionIndex - 1);
-        }
-        else
-        {
-            insertionSort(array, low, partitionIndex + 1);
-        }
-        if ((high - partitionIndex) >= 10)
-        {
-            quicksort(array, partitionIndex + 1, high);
-        }
-        else
-        {
-            insertionSort(array, partitionIndex, high + 1);
-        }
+        return;
     }
+
+    if (high - low < 9)
+    {
+        insertionSort(array, low, high + 1);
+        return;
+    }
+
+    const size_t partitionIndex = partition(array, low, high);
+    quicksort(array, low + 1, partitionIndex - 1);
+    quicksort(array, partitionIndex + 1, high);
 }
 
-bool testCorrectCase()
+bool testCorrectCase(void)
 {
     int unsortedArray[] = { 2, 5, 4, 3, 1 };
     const int sortedArray[] = { 1, 2, 3, 4, 5 };
-    quicksort(unsortedArray, 0, _countof(unsortedArray) - 1);
-    return memcmp(unsortedArray, sortedArray, _countof(unsortedArray)) == 0;
+    quicksort(unsortedArray, 0, countof(unsortedArray) - 1);
+    return memcmp(unsortedArray, sortedArray, countof(unsortedArray)) == 0;
 }
 
-bool testBoundaryCase()
+bool testBoundaryCase(void)
 {
     int unsortedArray[] = { 1, 2, 3, 4, 5 };
     const int sortedArray[] = { 1, 2, 3, 4, 5 };
-    quicksort(unsortedArray, 0, _countof(unsortedArray) - 1);
-    return memcmp(unsortedArray, sortedArray, _countof(unsortedArray)) == 0;
+    quicksort(unsortedArray, 0, countof(unsortedArray) - 1);
+    return memcmp(unsortedArray, sortedArray, countof(unsortedArray)) == 0;
 }
 
-int main()
+int main(void)
 {
     if (!testCorrectCase() || !testBoundaryCase())
     {
-        printf("~ Tests failed");
+        printf("~ Tests failed.\n");
         return RETURN_TESTS_FAILED;
     }
 
     size_t size = 0;
 
     printf("> Enter array size: ");
-
-    if (!scanf("%llu", &size))
+    if (!scanf("%zu", &size) || size == 0)
     {
-        printf("\nBad input for array size. Please enter a valid positive integer.\n");
+        printf("\nBad input for array size. Please enter a non-zero positive integer.\n");
         return RETURN_BAD_INPUT;
     }
 
-    int* numbers = (int*)malloc(size * sizeof(int));
+    int* const numbers = (int*)malloc(size * sizeof(int));
     if (numbers == NULL)
     {
-        printf("Memory allocation has failed :(");
+        printf("\nMemory allocation has failed :(\n");
         return RETURN_OUT_OF_MEMORY;
     }
+
     for (size_t i = 0; i < size; ++i)
     {
-        printf("> a[%d] = ", (int)i);
+        printf("> a[%zu] = ", i);
         if (!scanf("%d", &numbers[i]))
         {
-            printf("\nBad input for a[%llu]. Please enter a valid integer.\n", i);
+            printf("\nBad input for a[%zu]. Please enter a valid integer.\n", i);
+            free(numbers);
             return RETURN_BAD_INPUT;
         }
     }
@@ -137,15 +123,10 @@ int main()
     printf("\nResult: ");
     for (size_t i = 0; i < size; ++i)
     {
-        printf("%d", numbers[i]);
-        if (i < size - 1)
-        {
-            printf(", ");
-        }
+        printf("%d%s", numbers[i], i < size - 1 ? ", " : "\n");
     }
-    printf("\n");
 
     free(numbers);
+
     return RETURN_OK;
 }
-
