@@ -1,3 +1,3 @@
 #pragma once
 
-int getResult(char* token);
+int getResult( const char* token);

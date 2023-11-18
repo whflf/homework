@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "stack.h"
+#include "../stack/stack.h"
 
 #define OK 0
 #define TESTS_FAILED 1
@@ -48,7 +48,7 @@ static void calcExpression(Stack** head, const char sign)
     push(head, operationResult);
 }
 
-int getResult(char* token)
+int getResult(const char* token)
 {
     Stack* numbers = createStack();
 

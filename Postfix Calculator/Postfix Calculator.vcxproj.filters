@@ -29,5 +29,8 @@
     <ClInclude Include="stack.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="calculator.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
