@@ -15,7 +15,7 @@
 
 int scanfSafetyChecks(const int scanfFieldsFilled)
 {
-    const char extraInput = 0;
+    char extraInput = 0;
 
     if (!scanfFieldsFilled)
     {
@@ -45,7 +45,7 @@ char* binary(int x)
         return NULL;
     }
 
-    int bit = 1 << DIGITS - 1;
+    int bit = 1 << (DIGITS - 1);
 
     for (int i = 0; i < DIGITS; ++i)
     {
@@ -58,6 +58,11 @@ char* binary(int x)
 
 char* binarySum(const char* const x, const char* const y)
 {
+    if (x == NULL || y == NULL)
+    {
+        return NULL;
+    }
+
     char* const binarySum = (char*)calloc(DIGITS, sizeof(char));
     if (binarySum == NULL)
     {
@@ -78,11 +83,16 @@ char* binarySum(const char* const x, const char* const y)
 
 int decimal(const char* const x)
 {
+    if (x == NULL)
+    {
+        return 0;
+    }
+
     int decimalNumber = 0;
 
     for (int i = 0; i < DIGITS; ++i)
     {
-        int degree = DIGITS - 1 - i;
+        const int degree = DIGITS - 1 - i;
         decimalNumber += (1 << degree) * x[i];
     }
 
@@ -103,10 +113,9 @@ void printBinary(const char* const x)
 
 bool sumTest(const int x, const int y, const char* const expectedBinaryValue, const int expectedIntValue)
 {
-    const char* const binaryX = binary(x);
-    const char* const binaryY = binary(y);
-    const char* const sumOfXAndY = binarySum(binaryX, binaryY);
-
+    char* const binaryX = binary(x);
+    char* const binaryY = binary(y);
+    char* const sumOfXAndY = binarySum(binaryX, binaryY);
     if (binaryX == NULL || binaryY == NULL || sumOfXAndY == NULL)
     {
         free(binaryX);
@@ -127,7 +136,7 @@ bool sumTest(const int x, const int y, const char* const expectedBinaryValue, co
 
 bool testPositiveCase(void)
 {
-    int const x = 5, const y = 8;
+    const int x = 5, y = 8;
 
     const char correctSumBits[] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -141,7 +150,7 @@ bool testPositiveCase(void)
 
 bool testNegativeCase(void)
 {
-    int const x = 5, const y = -6;
+    const int x = 5, y = -6;
 
     const char correctSumBits[] = {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -178,10 +187,9 @@ int main(void)
         return scanfError;
     }
 
-    const char* const binaryX = binary(x);
-    const char* const binaryY = binary(y);
-    const char* const sumOfXAndY = binarySum(binaryX, binaryY);
-
+    char* const binaryX = binary(x);
+    char* const binaryY = binary(y);
+    char* const sumOfXAndY = binarySum(binaryX, binaryY);
     if (binaryX == NULL || binaryY == NULL || sumOfXAndY == NULL)
     {
         free(binaryX);
