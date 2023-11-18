@@ -23,7 +23,7 @@ ErrorCode push(Stack** head, const int value)
     Stack* next = malloc(sizeof(Stack));
     if (next == NULL) 
     {
-        return stackIsEmpty;
+        return outOfMemory;
     }
     next->value = value;
     next->previous = *head;
@@ -31,12 +31,14 @@ ErrorCode push(Stack** head, const int value)
     return ok;
 }
 
-int pop(Stack** head)
+int pop(Stack** head, ErrorCode* errorCode)
 {
     if (*head == NULL) 
     {
+        *errorCode = stackIsEmpty;
         return stackIsEmpty;
     }
+
     const int value = (*head)->value;
     Stack* temp = *head;
     *head = (*head)->previous;
@@ -52,7 +54,8 @@ void freeStack(Stack** head)
     }
     Stack* next = (*head)->previous;
     free(*head);
-    while (next != NULL) {
+    while (next != NULL) 
+    {
         Stack* temp = next;
         next = next->previous;
         free(temp);
@@ -61,7 +64,8 @@ void freeStack(Stack** head)
 
 int top(Stack* head, ErrorCode* errorCode)
 {
-    if (head == NULL) {
+    if (head == NULL) 
+    {
         *errorCode = stackIsEmpty;
         return 0;
     }

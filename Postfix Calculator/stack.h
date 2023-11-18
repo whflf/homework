@@ -13,7 +13,7 @@ Stack* createStack();
 
 ErrorCode push(Stack** head, const int value);
 
-int pop(Stack** head);
+int pop(Stack** head, ErrorCode* errorCode);
 
 void freeStack(Stack** head);
 

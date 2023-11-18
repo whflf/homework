@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../stack/stack.h"
+#include "stack.h"
 
 #define OK 0
 #define TESTS_FAILED 1
@@ -15,14 +15,15 @@ static void calcExpression(Stack** head, const char sign)
         return;
     }
 
-    const int a = pop(head);
+    ErrorCode errorCode = ok;
+    const int a = pop(head, &errorCode);
     if (*head == NULL)
     {
         push(head, 0);
         return;
     }
 
-    const int b = pop(head);
+    const int b = pop(head, &errorCode);
     if (*head == NULL)
     {
         push(head, 0);
