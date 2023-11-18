@@ -1,7 +1,9 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
+#define NEGATIVE_SIZE -1
 #define OK 0
 #define BAD_INPUT 1
 #define OUT_OF_MEMORY 2
@@ -11,8 +13,8 @@
 
 int compareIntegers(const void* a, const void* b)
 {
-    int* x = a;
-    int* y = b;
+    const int* x = a;
+    const int* y = b;
     return *x - *y;
 }
 
@@ -51,15 +53,15 @@ int getMostOccurredElement(int* const numbers, const size_t size)
     return mostOccurredElement;
 }
 
-char testCorrectCase(void)
+bool testCorrectCase(void)
 {
-    int array[] = { 1, 2, 3, 3, 4 };
+    const int array[] = { 1, 2, 3, 3, 4 };
     return getMostOccurredElement(array, countof(array)) == 3;
 }
 
-char testBoundaryCase(void)
+bool testBoundaryCase(void)
 {
-    int array[] = { 1, 2, 3, 4, 5 };
+    const int array[] = { 1, 2, 3, 4, 5 };
     return getMostOccurredElement(array, countof(array)) == array[0];
 }
 
@@ -95,7 +97,12 @@ int main(void)
         if (!scanf("%d", &numbers[i]))
         {
             printf("Wrong input for a[%zu]. A valid integer required.\n", i);
-            return BAD_INPUT;
+            char extraChar = 0;
+            while (extraChar != '\n')
+            {
+                extraChar = getchar();
+            }
+            --i;
         }
     }
 
