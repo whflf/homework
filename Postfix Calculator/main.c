@@ -63,21 +63,23 @@ void calcExpression(Stack** head, const char sign)
         return;
     }
 
+    int operationResult = 0;
     switch (sign) 
     {
     case '+':
-        push(head, a + b);
+        operationResult = a + b;
         break;
     case '-':
-        push(head, b - a);
+        operationResult =  b - a;
         break;
     case '*':
-        push(head, a * b);
+        operationResult = a * b;
         break;
     case '/':
-        push(head, b / a);
+        operationResult = b / a;
         break;
     }
+    push(head, operationResult);
 }
 
 int getResult(char* token)
