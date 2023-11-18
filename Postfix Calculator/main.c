@@ -10,6 +10,37 @@
 #define TESTS_FAILED 1
 #define OUT_OF_MEMORY 2
 
+char* getString(void)
+{
+    size_t allocSize = 16, stringSize = 0;
+
+    char* string = malloc(sizeof(char) * allocSize);
+    if (string == NULL)
+    {
+        return NULL;
+    }
+
+    char character;
+    while ((character = getchar()) != '\n')
+    {
+        if (stringSize >= allocSize - 1)
+        {
+            allocSize *= 2;
+            string = realloc(string, allocSize * sizeof(char));
+            if (string == NULL)
+            {
+                return NULL;
+            }
+        }
+        string[stringSize] = character;
+        ++stringSize;
+    }
+
+    string[stringSize] = '\0';
+
+    return string;
+}
+
 void calcExpression(Stack** head, const char sign)
 {
     if (*head == NULL)
@@ -101,20 +132,22 @@ int main()
         printf("~ Tests have failed");
         return TESTS_FAILED;
     }
-    char* const expression = (char*)malloc(sizeof(char) * LENGTH);
-    if (expression == NULL) 
+
+    printf("Enter an expression: ");
+    char* const expression = getString();
+    if (expression == NULL)
     {
         printf("~ Memory allocation has failed");
         return OUT_OF_MEMORY;
     }
+
     char const delimiter = ' ';
     char* context = NULL;
-    printf("Enter an expression (up to 50 symbols): ");
-    fgets(expression, LENGTH, stdin);
     char *token = strtok_s(expression, &delimiter, &context);
     const int expressionResult = getResult(token);
 
     printf("The result is %d", expressionResult);
 
+    free(expression);
     return OK;
 }
