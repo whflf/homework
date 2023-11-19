@@ -5,11 +5,8 @@
 
 #include "stack.h"
 #include "calculator.h"
-
-#define LENGTH 51
-#define OK 0
-#define TESTS_FAILED 1
-#define OUT_OF_MEMORY 2
+#include "tests.h"
+#include "errors.h"
 
 char* getString(void)
 {
@@ -42,30 +39,12 @@ char* getString(void)
     return string;
 }
 
-bool test1() 
-{
-    char* const expression = "4 3 + 9 8 - / 5 *";
-    char const delimiter = ' ';
-    char* context = NULL;
-    char* token = strtok_s(expression, &delimiter, &context);
-    return getResult(token) == 35;
-}
-
-bool test2()
-{
-    char* const expression = "2 5 * 6 9 + *";
-    char const delimiter = ' ';
-    char* context = NULL;
-    char* token = strtok_s(expression, &delimiter, &context);
-    return getResult(token) == 150;
-}
-
 int main()
 {
-    if (!test1() || !test2()) 
+    if (!passTests())
     {
-        printf("~ Tests have failed");
-        return TESTS_FAILED;
+        printf("~ Tests failed");
+        return testsFailed;
     }
 
     printf("Enter an expression: ");
@@ -73,16 +52,24 @@ int main()
     if (expression == NULL)
     {
         printf("~ Memory allocation has failed");
-        return OUT_OF_MEMORY;
+        return outOfMemory;
     }
 
-    char const delimiter = ' ';
-    char* context = NULL;
-    char *token = strtok_s(expression, &delimiter, &context);
-    const int expressionResult = getResult(token);
+    ErrorCode errorCode = ok;
+    const int expressionResult = getResult(expression, &errorCode);
+    if (errorCode == stackIsEmpty)
+    {
+        printf("Wrong input. Please enter a valid expression.\n");
+        return stackIsEmpty;
+    }
+    if (errorCode == divisionByZero)
+    {
+        printf("Division by zero is forbidden. Please enter a valid expression.\n");
+        return divisionByZero;
+    }
 
-    printf("The result is %d", expressionResult);
+    printf("The result is %d\n", expressionResult);
 
     free(expression);
-    return OK;
+    return ok;
 }

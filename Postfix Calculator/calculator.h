@@ -1,3 +1,5 @@
 #pragma once
 
-int getResult( const char* token);
+#include "errors.h"
+
+int getResult( const char* string, ErrorCode* errorCode);

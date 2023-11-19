@@ -1,5 +1,8 @@
-#include "stack.h"
 #include <stdlib.h>
+#include <stdbool.h>
+
+#include "stack.h"
+#include "errors.h"
 
 struct Stack
 {
@@ -7,20 +10,9 @@ struct Stack
     struct Stack* previous;
 };
 
-
-Stack* createStack()
+ErrorCode push(Stack** const head, const int value)
 {
-    Stack* stack = calloc(1, sizeof(Stack));
-    if (stack == NULL) 
-    {
-        return NULL;
-    }
-    return stack;
-}
-
-ErrorCode push(Stack** head, const int value)
-{
-    Stack* next = malloc(sizeof(Stack));
+    Stack* next = (Stack*)malloc(sizeof(Stack));
     if (next == NULL) 
     {
         return outOfMemory;
@@ -31,7 +23,7 @@ ErrorCode push(Stack** head, const int value)
     return ok;
 }
 
-int pop(Stack** head, ErrorCode* errorCode)
+int pop(Stack** const head, ErrorCode* errorCode)
 {
     if (*head == NULL) 
     {
@@ -46,30 +38,20 @@ int pop(Stack** head, ErrorCode* errorCode)
     return value;
 }
 
-void freeStack(Stack** head)
+void freeStack(Stack** const head)
 {
-    if (head == NULL || *head == 0)
+    if (head == NULL || *head == NULL)
     {
-        return stackIsEmpty;
+        return;
     }
-    Stack* next = (*head)->previous;
-    free(*head);
-    while (next != NULL) 
+    while (head != NULL) 
     {
-        Stack* temp = next;
-        next = next->previous;
-        free(temp);
+        ErrorCode errorCode = ok;
+        pop(head, &errorCode);
     }
 }
 
-int top(Stack* head, ErrorCode* errorCode)
+bool isEmpty(const Stack* const head)
 {
-    if (head == NULL) 
-    {
-        *errorCode = stackIsEmpty;
-        return 0;
-    }
-
-    *errorCode = ok;
-    return head->value;
+    return head == NULL;
 }

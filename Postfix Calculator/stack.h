@@ -1,20 +1,14 @@
 #pragma once
 
-typedef enum ErrorCode
-{
-    ok,
-    stackIsEmpty,
-    outOfMemory,
-} ErrorCode;
+#include <stdbool.h>
+#include "errors.h"
 
 typedef struct Stack Stack;
 
-Stack* createStack();
+ErrorCode push(Stack** const head, const int value);
 
-ErrorCode push(Stack** head, const int value);
+int pop(Stack** const head, ErrorCode* errorCode);
 
-int pop(Stack** head, ErrorCode* errorCode);
+void freeStack(Stack** const head);
 
-void freeStack(Stack** head);
-
-int top(Stack* head, ErrorCode* errorCode);
+bool isEmpty(const Stack* const head);

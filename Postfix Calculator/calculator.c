@@ -2,32 +2,27 @@
 #include <string.h>
 
 #include "stack.h"
+#include "calculator.h"
+#include "errors.h"
 
-#define OK 0
-#define TESTS_FAILED 1
-#define OUT_OF_MEMORY 2
-
-static void calcExpression(Stack** head, const char sign)
+static int calcExpression(Stack** head, const char sign)
 {
-    if (*head == NULL)
-    {
-        push(head, 0);
-        return;
-    }
-
     ErrorCode errorCode = ok;
     const int a = pop(head, &errorCode);
-    if (*head == NULL)
+    if (errorCode == stackIsEmpty)
     {
-        push(head, 0);
-        return;
+        return stackIsEmpty;
+    }
+
+    if (isEmpty(*head))
+    {
+        return stackIsEmpty;
     }
 
     const int b = pop(head, &errorCode);
-    if (*head == NULL)
+    if (errorCode == stackIsEmpty)
     {
-        push(head, 0);
-        return;
+        return stackIsEmpty;
     }
 
     int operationResult = 0;
@@ -43,35 +38,48 @@ static void calcExpression(Stack** head, const char sign)
         operationResult = a * b;
         break;
     case '/':
+        if (a == 0)
+        {
+            return divisionByZero;
+        }
         operationResult = b / a;
         break;
     }
     push(head, operationResult);
+    return ok;
 }
 
-int getResult(const char* token)
+int getResult(char* const string, ErrorCode* errorCode)
 {
-    Stack* numbers = createStack();
+    Stack* numbers = NULL;
 
-    char const delimiter = ' ';
-    char* context = NULL;
-    size_t i = 0;
-    while (token != NULL)
+    for (size_t i = 0; string[i] != '\0'; ++i)
     {
-        if (*token == '+' || *token == '-' || *token == '*' || *token == '/')
+        if (string[i] == ' ')
         {
-            calcExpression(&numbers, *token);
+            continue;
+        }
+        if (string[i] == '+' || string[i] == '-' || string[i] == '*' || string[i] == '/')
+        {
+            *errorCode = calcExpression(&numbers, string[i]);
+            if (*errorCode != ok)
+            {
+                return *errorCode == stackIsEmpty ? stackIsEmpty : divisionByZero;
+            }
         }
         else
         {
-            const int x = atoi(token);
+            const char strX = string[i];
+            const int x = atoi(&strX);
             push(&numbers, x);
         }
-        token = strtok_s(NULL, &delimiter, &context);
     }
 
-    ErrorCode errorCode = ok;
-    const int result = top(numbers, &errorCode);
+    int result = pop(&numbers, errorCode);
+    while (!isEmpty(numbers))
+    {
+        result = pop(&numbers, errorCode);
+    }
     freeStack(&numbers);
     return result;
 }
