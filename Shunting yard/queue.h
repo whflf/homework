@@ -6,22 +6,22 @@ typedef struct Queue Queue;
 
 typedef struct QueueElement QueueElement;
 
-typedef char Value;
+typedef char queue_value_t;
 
-Queue* createQueue();
+Queue* createQueue(void);
 
-void createQueueElement(QueueElement* queueElement, const Value value);
+bool isEmpty(Queue* const queue);
 
-bool isEmpty(Queue* queue);
+void enqueue(Queue* const queue, const queue_value_t value);
 
-void enqueue(Queue* queue, const Value value);
+int dequeue(Queue* const queue);
 
-int dequeue(Queue* queue);
+void deleteQueue(Queue** const queue);
 
-void deleteQueue(Queue** queue);
+int front(Queue* const queue);
 
-int front(Queue* queue);
+int back(Queue* const queue);
 
-int back(Queue* queue);
+int queueSize(Queue* const queue);
 
-void printQueue(Queue* queue);
+void printQueue(Queue* const queue);

@@ -5,134 +5,65 @@
 
 #include "queue.h"
 #include "stack.h"
+#include "errors.h"
+#include "tests.h"
+#include "shuntingYard.h"
 
-#define LENGTH 51
-#define OK 0
-#define TESTS_FAILED 1
-#define OUT_OF_MEMORY 2
-
-Queue* const getPostfixExpression(char* const expression)
+char* getString(void)
 {
-    size_t i = 0;
-    Queue* const outputQueue = createQueue();
-    Stack* const stack = createStack();
-    int errorCode = ok;
+    size_t allocSize = 16, stringSize = 0;
 
-    while (expression[i] != '\n') 
+    char* string = malloc(sizeof(char) * allocSize);
+    if (string == NULL)
     {
-        if (expression[i] == '0' || expression[i] == '1' || expression[i] == '2' || expression[i] == '3' || \
-            expression[i] == '4' || expression[i] == '5' || expression[i] == '6' || expression[i] == '7' || \
-            expression[i] == '8' || expression[i] == '9') 
+        return NULL;
+    }
+
+    char character;
+    while ((character = getchar()) != '\n')
+    {
+        if (stringSize >= allocSize - 1)
         {
-            enqueue(outputQueue, expression[i]);
-        }
-        else if (expression[i] == '+' || expression[i] == '-') 
-        {
-            while (top(stack, &errorCode) == '+' || top(stack, &errorCode) == '-' || top(stack, &errorCode) == '*' || \
-                top(stack, &errorCode) == '/')
+            allocSize *= 2;
+            string = realloc(string, allocSize * sizeof(char));
+            if (string == NULL)
             {
-                enqueue(outputQueue, pop(&stack));
+                return NULL;
             }
-            push(&stack, expression[i]);
         }
-        else if (expression[i] == '*' || expression[i] == '/')
-        {
-            while (top(stack, &errorCode) == '*' || top(stack, &errorCode) == '/')
-            {
-                enqueue(outputQueue, pop(&stack));
-            }
-            push(&stack, expression[i]);
-        }
-        else if (expression[i] == '(') 
-        {
-            push(&stack, expression[i]);
-        }
-        else if (expression[i] == ')') 
-        {
-            while (top(stack, &errorCode) == '+' || top(stack, &errorCode) == '-' || top(stack, &errorCode) == '*' ||\
-                top(stack, &errorCode) == '/')
-            {
-                enqueue(outputQueue, pop(&stack));
-            }
-            pop(&stack);
-        }
-        ++i;
+        string[stringSize] = character;
+        ++stringSize;
     }
 
-    while (top(stack, &errorCode) != '\0') 
-    {
-        enqueue(outputQueue, pop(&stack));
-    }
+    string[stringSize] = '\0';
 
-    freeStack(&stack);
-    return outputQueue;
-}
-
-bool test1() 
-{
-    const int expressionLength = 11;
-
-    char* const infixExpression = "(5*6-9*3)+8/4\n";
-    char* const postfixExpression = "56*93*-84/+";
-    Queue* const queueExpression = getPostfixExpression(infixExpression);
-    char* const compareExpression = (char*)malloc(expressionLength * sizeof(char));
-    if (compareExpression == NULL) 
-    {
-        return 0;
-    }
-
-    size_t i = 0;
-    while (!isEmpty(queueExpression))
-    {
-        compareExpression[i] = dequeue(queueExpression);
-        ++i;
-    }
-
-    return memcmp(postfixExpression, compareExpression, expressionLength) == 0;
-}
-
-bool test2()
-{
-    const int expressionLength = 11;
-
-    char* const infixExpression = "9/(6-7)*2*(1+1)\n";
-    char* const postfixExpression = "967-/2*11+*";
-    Queue* const queueExpression = getPostfixExpression(infixExpression);
-    char* const compareExpression = (char*)malloc(expressionLength * sizeof(char));
-    if (compareExpression == NULL)
-    {
-        return 0;
-    }
-
-    size_t i = 0;
-    while (!isEmpty(queueExpression))
-    {
-        compareExpression[i] = dequeue(queueExpression);
-        ++i;
-    }
-
-    return memcmp(postfixExpression, compareExpression, expressionLength) == 0;
+    return string;
 }
 
 int main()
 {
-    if (!test1() || !test2()) 
+    if (!passTests()) 
     {
-        printf("~ Tests have failed");
-        return TESTS_FAILED;
+        printf("~ Tests failed\n");
+        return testsFailed;
     }
-    char* const expression = (char*)malloc(LENGTH * sizeof(char));
-    if (expression == NULL) 
-    {
-        printf("~ Memory allocation has failed");
-        return OUT_OF_MEMORY;
-    }
+
     printf("Enter an expression: ");
-    fgets(expression, LENGTH, stdin);
+    char* const expression = getString();
+    if (expression == NULL)
+    {
+        printf("~ Memory allocation has failed\n");
+        return outOfMemory;
+    }
 
-    Queue* const postfixExpression = getPostfixExpression(expression);
-    printQueue(postfixExpression);
-    deleteQueue(&postfixExpression);
+    char* const postfixExpression = getPostfixExpression(expression);
+    if (postfixExpression == NULL)
+    {
+        printf("Wrong input. Please enter a valid expression.\n");
+    }
+    printf("%s\n", postfixExpression);
+    free(expression);
+    free(postfixExpression);
 
-    return OK;
+    return ok;
 }

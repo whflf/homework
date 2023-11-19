@@ -1,12 +1,13 @@
-﻿#include "Queue.h"
-
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "queue.h"
+#include "errors.h"
+
 typedef struct QueueElement
 {
-    Value value;
+    queue_value_t value;
     struct QueueElement* next;
 } QueueElement;
 
@@ -14,35 +15,36 @@ typedef struct Queue
 {
     struct QueueElement* front;
     struct QueueElement* back;
+    size_t size;
 } Queue;
 
-Queue* createQueue()
+Queue* createQueue(void)
 {
     Queue* queue = calloc(1, sizeof(Queue));
     if (queue == NULL) 
     {
-        return 1;
+        return NULL;
     }
     return queue;
 }
 
-void createQueueElement(QueueElement* queueElement, const Value value)
+static void createQueueElement(QueueElement* const queueElement, const queue_value_t value)
 {
-    queueElement->next = 0;
+    queueElement->next = NULL;
     queueElement->value = value;
 }
 
-bool isEmpty(Queue* queue)
+bool isEmpty(Queue* const queue)
 {
     return (queue->front == NULL);
 }
 
-void enqueue(Queue* queue, const Value value)
+void enqueue(Queue* const queue, const queue_value_t value)
 {
-    QueueElement* newElement = malloc(sizeof(QueueElement));
+    QueueElement* newElement = (QueueElement*)malloc(sizeof(QueueElement));
     createQueueElement(newElement, value);
 
-    if ((queue->back == NULL) && (queue->front == NULL))
+    if (queue->back == NULL && queue->front == NULL)
     {
         queue->back = newElement;
         queue->front = newElement;
@@ -52,14 +54,14 @@ void enqueue(Queue* queue, const Value value)
         queue->back->next = newElement;
         queue->back = newElement;
     }
+    ++queue->size;
 }
 
-int dequeue(Queue* queue)
+int dequeue(Queue* const queue)
 {
     if (isEmpty(queue))
     {
-        printf("Queue is empty!");
-        return EXIT_FAILURE;
+        return queueIsEmpty;
     }
     QueueElement* tmpElement = queue->front;
     queue->front = queue->front->next;
@@ -67,13 +69,14 @@ int dequeue(Queue* queue)
     {
         queue->back = NULL;
     }
-    Value value = tmpElement->value;
+    queue_value_t value = tmpElement->value;
     free(tmpElement);
+    --queue->size;
 
     return value;
 }
 
-void deleteQueue(Queue** queue)
+void deleteQueue(Queue** const queue)
 {
     while (!isEmpty(*queue))
     {
@@ -83,17 +86,22 @@ void deleteQueue(Queue** queue)
     *queue = NULL;
 }
 
-int front(Queue* queue)
+int front(Queue* const queue)
 {
     return queue->front->value;
 }
 
-int back(Queue* queue)
+int back(Queue* const queue)
 {
     return queue->back->value;
 }
 
-void printQueue(Queue* queue)
+int queueSize(Queue* const queue)
+{
+    return queue->size;
+}
+
+void printQueue(Queue* const queue)
 {
     QueueElement* tmpElement = queue->front;
     while (tmpElement)

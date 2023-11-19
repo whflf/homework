@@ -4,7 +4,7 @@ typedef enum ErrorCode
 {
     ok,
     stackIsEmpty,
+    queueIsEmpty,
     outOfMemory,
-    divisionByZero,
     testsFailed
 } ErrorCode;
