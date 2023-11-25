@@ -5,7 +5,7 @@
 #include "errors.h"
 #include "tests.h"
 
-int main(void)
+ErrorCode main(void)
 {
     if (!passTests())
     {

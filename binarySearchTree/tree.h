@@ -7,7 +7,7 @@
 typedef struct Node Node;
 
 //adds value to tree with given key
-ErrorCode insert(Node** root, const int key, char* const value);
+ErrorCode insert(Node** root, const int key, const char* const value);
 
 //gets value from tree by key
 char* value(Node* const root, const int key);

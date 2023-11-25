@@ -13,7 +13,7 @@ struct Node
     struct Node* parent;
 };
 
-static Node* createNode(const int key, char* const value)
+static Node* createNode(const int key, const char* const value)
 {
     Node* newNode = (Node*)calloc(1, sizeof(Node));
     if (newNode == NULL)
@@ -25,7 +25,7 @@ static Node* createNode(const int key, char* const value)
     return newNode;
 }
 
-ErrorCode insert(Node** root, const int key, char* const value)
+ErrorCode insert(Node** root, const int key, const char* const value)
 {
     Node* newElement = createNode(key, value);
     if (newElement == NULL)
