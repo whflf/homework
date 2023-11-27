@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 #include "include/list.h"
+#include "include/errors.h"
 #include "dialogue.h"
-#include "errors.h"
 
 #define MENU_TEXT "Enter an operation code to continue:\n\
   0 - Exit\n\
@@ -46,7 +46,7 @@ void programLoop(List** head)
             case '1':
                 if (sortingInsert(head, value) == outOfMemory)
                 {
-                    printf("%s", errorMessages[outOfMemory]);
+                    printf(errorMessages[outOfMemory]);
                     return;
                 }
                 getchar();

@@ -10,7 +10,8 @@ int main(void)
 {
     if (!passTests())
     {
-        printf("%s", errorMessages[testsFailed]);
+        printf(errorMessages[testsFailed]);
+        return testsFailed;
     }
     List* myList = NULL;
     programLoop(&myList);

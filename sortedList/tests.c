@@ -31,7 +31,7 @@ static bool testInserting(void)
     }
 
     char* string = writeListToString(list);
-    bool result = string == "2 3 4 7";
+    bool result = strcmp(string, "2 3 4 7") == 0;
 
     deleteList(&list);
     return result;
@@ -43,7 +43,7 @@ static bool testDeleting(void)
     exclude(&list, 2);
 
     char* string = writeListToString(list);
-    bool result = string == "4 7";
+    bool result = strcmp(string, "4 7") == 0;
 
     deleteList(&list);
     return result;

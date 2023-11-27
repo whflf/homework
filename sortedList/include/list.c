@@ -48,6 +48,7 @@ ErrorCode sortingInsert(List** head, const list_value_t value)
     if (*head == NULL)
     {
         *head = createList(value);
+        return ok;
     }
 
     List* const newNode = createList(value);
@@ -134,7 +135,7 @@ char* writeListToString(const List* const head)
         List* tmpList = head;
         for (size_t i = 0; tmpList != NULL; tmpList = tmpList->next, i += 2)
         {
-            string[i] = atoi(&tmpList->value);
+            itoa(tmpList->value, &string[i], 10);
             string[i + 1] = tmpList->next != NULL ? ' ' : '\0';
         }
     }
@@ -147,25 +148,22 @@ char* writeListToString(const List* const head)
     return string;
 }
 
+
 void deleteList(List** head)
 {
-    if (head == NULL || *head == NULL)
+    if (*head == NULL)
     {
         return;
     }
 
-    List** headPtr = head;
-    for (; (*headPtr)->next != NULL; headPtr = &(*headPtr)->next)
+    while ((*head)->next != NULL)
     {
-        List* tmpNode = (*headPtr)->next;
-        (*headPtr)->next = (*headPtr)->next->next;
+        List* tmpNode = (*head)->next;
+        (*head)->next = (*head)->next->next;
         free(tmpNode);
+        tmpNode = NULL;
     }
-    if (*head != *headPtr)
-    {
-        free(*head);
-        *head = NULL;
-    }
-    free(*headPtr);
-    headPtr = NULL;
+
+    free(*head);
+    *head = NULL;
 }
