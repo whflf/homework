@@ -63,9 +63,9 @@ int getResult(const char* const string, ErrorCode* const errorCode)
     }
 
     int result = pop(&numbers, errorCode);
-    while (!isEmpty(numbers))
+    if (!isEmpty(numbers))
     {
-        result = pop(&numbers, errorCode);
+        return badInput;
     }
 
     freeStack(&numbers);
