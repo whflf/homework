@@ -20,13 +20,7 @@ typedef struct Queue
 
 Queue* createQueue(void)
 {
-    return calloc(1, sizeof(Queue));
-}
-
-static void createQueueElement(QueueElement* const queueElement, const queue_value_t value)
-{
-    queueElement->next = NULL;
-    queueElement->value = value;
+    return (Queue*)calloc(1, sizeof(Queue));
 }
 
 bool isEmpty(const Queue* const queue)
@@ -34,10 +28,16 @@ bool isEmpty(const Queue* const queue)
     return (queue->front == NULL);
 }
 
-void enqueue(Queue* const queue, const queue_value_t value)
+void enqueue(Queue* const queue, const queue_value_t value, ErrorCode* errorCode)
 {
-    QueueElement* newElement = (QueueElement*)malloc(sizeof(QueueElement));
-    createQueueElement(newElement, value);
+    *errorCode = ok;
+    QueueElement* newElement = (QueueElement*)calloc(1, sizeof(QueueElement));
+    if (newElement == NULL)
+    {
+        *errorCode = outOfMemory;
+        return;
+    }
+    newElement->value = value;
 
     if (queue->back == NULL && queue->front == NULL)
     {

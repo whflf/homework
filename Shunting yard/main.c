@@ -3,15 +3,17 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "queue.h"
-#include "stack.h"
-#include "errors.h"
+#include "include/queue.h"
+#include "include/stack.h"
+#include "include/errors.h"
 #include "tests.h"
 #include "shuntingYard.h"
 
+#define DYNAMIC_STRING_MIN_ALLOCATION_SIZE 16
+
 char* getString(void)
 {
-    size_t allocSize = 16, stringSize = 0;
+    size_t allocSize = DYNAMIC_STRING_MIN_ALLOCATION_SIZE, stringSize = 0;
 
     char* string = malloc(sizeof(char) * allocSize);
     if (string == NULL)
@@ -40,30 +42,35 @@ char* getString(void)
     return string;
 }
 
-int main()
+int main(void)
 {
-    if (!passTests()) 
+    if (!passTests())
     {
-        printf("~ Tests failed\n");
+        printf(errorMessages[testsFailed]);
         return testsFailed;
     }
 
     printf("Enter an expression: ");
-    char* const expression = getString();
+    char* expression = getString();
     if (expression == NULL)
     {
-        printf("~ Memory allocation has failed\n");
+        printf(errorMessages[outOfMemory]);
         return outOfMemory;
     }
 
-    char* const postfixExpression = getPostfixExpression(expression);
-    if (postfixExpression == NULL)
+    ErrorCode errorCode;
+    char* postfixExpression = getPostfixExpression(expression, &errorCode);
+    if (errorCode != ok && errorCode != stackIsEmpty)
     {
-        printf("Wrong input. Please enter a valid expression.\n");
+        printf(errorMessages[errorCode]);
+        free(expression);
+        free(postfixExpression);
+        return errorCode;
     }
+
     printf("%s\n", postfixExpression);
+
     free(expression);
     free(postfixExpression);
-
     return ok;
 }

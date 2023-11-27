@@ -23,12 +23,13 @@ ErrorCode push(Stack** const head, const stack_value_t value)
     return ok;
 }
 
-stack_value_t top(const Stack* const head, ErrorCode* const errorCode)
+stack_value_t top(const Stack* const head, ErrorCode* errorCode)
 {
+    *errorCode = ok;
     if (head == NULL)
     {
         *errorCode = stackIsEmpty;
-        return stackIsEmpty;
+        return (stack_value_t)0;
     }
 
     return head->value;
@@ -40,7 +41,7 @@ stack_value_t pop(Stack** const head, ErrorCode* errorCode)
     if (*head == NULL) 
     {
         *errorCode = stackIsEmpty;
-        return 0;
+        return (stack_value_t)0;
     }
 
     Stack* temp = *head;

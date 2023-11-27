@@ -13,12 +13,10 @@ Queue* createQueue(void);
 
 bool isEmpty(const Queue* const queue);
 
-void enqueue(Queue* const queue, const queue_value_t value);
+void enqueue(Queue* const queue, const queue_value_t value, ErrorCode* errorCode);
 
 queue_value_t dequeue(Queue* const queue, ErrorCode* const errorCode);
 
 void deleteQueue(Queue** const queue);
 
 size_t queueSize(const Queue* const queue);
-
-void printQueue(const Queue* const queue);

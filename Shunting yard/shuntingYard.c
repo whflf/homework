@@ -2,91 +2,151 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 
-#include "queue.h"
-#include "stack.h"
-#include "errors.h"
+#include "include/queue.h"
+#include "include/stack.h"
+#include "include/errors.h"
 #include "tests.h"
 
-char* getPostfixExpression(char* const expression)
+static isOperation(const char token)
 {
-    Queue* const outputQueue = createQueue();
-    Stack* const stack = NULL;
-    ErrorCode errorCode = ok;
+    return token == '+' || token == '-' || token == '*' || token == '/';
+}
+
+char* getPostfixExpression(const char* const expression, ErrorCode* const errorCode)
+{
+    *errorCode = ok;
+    Queue* outputQueue = createQueue();
+    if (outputQueue == NULL)
+    {
+        *errorCode = outOfMemory;
+        return NULL;
+    }
+
+    Stack* stack = NULL;
     char token = '\0';
 
     for (size_t i = 0; expression[i] != '\0'; ++i)
     {
-        if ('0' <= expression[i] && expression[i] <= '9')
+        const char curChar = expression[i];
+
+        if (isdigit(curChar))
         {
-            enqueue(outputQueue, expression[i]);
-        }
-        else if (expression[i] == '+' || expression[i] == '-')
-        {
-            token = top(stack, &errorCode);
-            if (errorCode == stackIsEmpty && isEmpty(outputQueue))
+            enqueue(outputQueue, curChar, errorCode);
+            if (*errorCode != ok)
             {
+                deleteQueue(&outputQueue);
                 return NULL;
             }
-            for (; token == '+' || token == '-' || token == '*' || token == '/'; token = top(stack, &errorCode))
-            {
-                enqueue(outputQueue, token);
-                pop(&stack, &errorCode);
-            }
-            push(&stack, expression[i]);
         }
-        else if (expression[i] == '*' || expression[i] == '/')
+        else if (curChar == '+' || curChar == '-')
         {
-            token = top(stack, &errorCode);
-            if (errorCode == stackIsEmpty && isEmpty(outputQueue))
+            token = top(stack, errorCode);
+            if (*errorCode == stackIsEmpty && isEmpty(outputQueue))
             {
+                deleteQueue(&outputQueue);
+                *errorCode = wrongInput;
                 return NULL;
             }
-            for (; token == '*' || token == '/'; token = top(stack, &errorCode))
+
+            while (isOperation(token))
             {
-                enqueue(outputQueue, token);
-                pop(&stack, &errorCode);
+                enqueue(outputQueue, token, errorCode);
+                pop(&stack, errorCode);
+                if (*errorCode != ok)
+                {
+                    deleteQueue(&outputQueue);
+                    return NULL;
+                }
+
+                token = top(stack, errorCode);
             }
-            push(&stack, expression[i]);
+
+            push(&stack, curChar);
         }
-        else if (expression[i] == '(')
+        else if (curChar == '*' || curChar == '/')
         {
-            push(&stack, expression[i]);
-        }
-        else if (expression[i] == ')')
-        {
-            token = top(stack, &errorCode);
-            if (errorCode == stackIsEmpty && isEmpty(outputQueue))
+            token = top(stack, errorCode);
+            if (*errorCode == stackIsEmpty && isEmpty(outputQueue))
             {
+                deleteQueue(&outputQueue);
+                *errorCode = wrongInput;
                 return NULL;
             }
-            for (; token == '+' || token == '-' || token == '*' || token == '/'; token = top(stack, &errorCode))
+
+            while (token == '*' || token == '/')
             {
-                enqueue(outputQueue, token);
-                pop(&stack, &errorCode);
+                enqueue(outputQueue, token, errorCode);
+                pop(&stack, errorCode);
+                if (*errorCode != ok)
+                {
+                    deleteQueue(&outputQueue);
+                    return NULL;
+                }
+
+                token = top(stack, errorCode);
             }
-            pop(&stack, &errorCode);
+
+            push(&stack, curChar);
+        }
+        else if (curChar == '(')
+        {
+            push(&stack, curChar);
+        }
+        else if (curChar == ')')
+        {
+            token = top(stack, errorCode);
+            if (*errorCode == stackIsEmpty && isEmpty(outputQueue))
+            {
+                deleteQueue(&outputQueue);
+                *errorCode = wrongInput;
+                return NULL;
+            }
+
+            while (isOperation(token))
+            {
+                enqueue(outputQueue, token, errorCode);
+                pop(&stack, errorCode);
+                if (*errorCode != ok)
+                {
+                    deleteQueue(&outputQueue);
+                    return NULL;
+                }
+                token = top(stack, errorCode);
+            }
+
+            pop(&stack, errorCode);
         }
     }
 
-
-    for (token = top(stack, &errorCode); stack != NULL; token = top(stack, &errorCode))
+    for (token = top(stack, errorCode); stack != NULL; token = pop(&stack, errorCode))
     {
-        enqueue(outputQueue, token);
-        pop(&stack, &errorCode);
+        enqueue(outputQueue, token, errorCode);
+        if (*errorCode != ok)
+        {
+            deleteQueue(&outputQueue);
+            return NULL;
+        }
     }
 
-    size_t allocSize = queueSize(outputQueue) + 1;
-    char* const outputString = (char*)malloc(allocSize * sizeof(char));
+    const size_t allocSize = queueSize(outputQueue) * 2;
+    char* outputString = (char*)malloc(allocSize * sizeof(char));
     if (outputString == NULL)
     {
+        deleteQueue(&outputQueue);
         return NULL;
     }
-    for (size_t i = 0; !isEmpty(outputQueue); ++i)
+
+    for (size_t i = 0; !isEmpty(outputQueue); i += 2)
     {
-        outputString[i] = dequeue(outputQueue);
+        outputString[i] = dequeue(outputQueue, errorCode);
+        if (*errorCode != ok)
+        {
+            return NULL;
+        }
+        outputString[i + 1] = isEmpty(outputQueue) ? '\0' : ' ';
     }
-    outputString[allocSize - 1] = '\0';
 
     deleteQueue(&outputQueue);
     return outputString;
