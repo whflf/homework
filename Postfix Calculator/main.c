@@ -3,16 +3,18 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "stack.h"
+#include "include/stack.h"
+#include "include/errors.h"
 #include "calculator.h"
 #include "tests.h"
-#include "errors.h"
+
+#define ALLOC_SIZE 16
 
 char* getString(void)
 {
-    size_t allocSize = 16, stringSize = 0;
+    size_t allocSize = ALLOC_SIZE, stringSize = 0;
 
-    char* string = malloc(sizeof(char) * allocSize);
+    char* string = (char*)malloc(sizeof(char) * allocSize);
     if (string == NULL)
     {
         return NULL;
@@ -39,36 +41,32 @@ char* getString(void)
     return string;
 }
 
-int main()
+int main(void)
 {
     if (!passTests())
     {
-        printf("~ Tests failed");
+        printf(errorMessages[testsFailed]);
         return testsFailed;
     }
 
     printf("Enter an expression: ");
-    char* const expression = getString();
+    char* expression = getString();
     if (expression == NULL)
     {
-        printf("~ Memory allocation has failed");
+        printf(errorMessages[outOfMemory]);
         return outOfMemory;
     }
 
-    ErrorCode errorCode = ok;
+    ErrorCode errorCode;
     const int expressionResult = getResult(expression, &errorCode);
-    if (errorCode == stackIsEmpty)
+    if (errorCode != ok)
     {
-        printf("Wrong input. Please enter a valid expression.\n");
-        return stackIsEmpty;
-    }
-    if (errorCode == divisionByZero)
-    {
-        printf("Division by zero is forbidden. Please enter a valid expression.\n");
-        return divisionByZero;
+        printf(errorMessages[errorCode]);
+        free(expression);
+        return errorCode;
     }
 
-    printf("The result is %d\n", expressionResult);
+    printf("The result is %d.\n", expressionResult);
 
     free(expression);
     return ok;

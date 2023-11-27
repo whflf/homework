@@ -1,26 +1,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "stack.h"
+#include "include/stack.h"
+#include "include/errors.h"
 #include "calculator.h"
-#include "errors.h"
 
-static int calcExpression(Stack** head, const char sign)
+static ErrorCode calcExpression(Stack** const head, const char sign)
 {
-    ErrorCode errorCode = ok;
+    ErrorCode errorCode = ok, errorCode2 = ok;
     const int a = pop(head, &errorCode);
-    if (errorCode == stackIsEmpty)
-    {
-        return stackIsEmpty;
-    }
-
-    if (isEmpty(*head))
-    {
-        return stackIsEmpty;
-    }
-
-    const int b = pop(head, &errorCode);
-    if (errorCode == stackIsEmpty)
+    const int b = pop(head, &errorCode2);
+    if (errorCode == stackIsEmpty || errorCode2 == stackIsEmpty)
     {
         return stackIsEmpty;
     }
@@ -29,13 +19,13 @@ static int calcExpression(Stack** head, const char sign)
     switch (sign)
     {
     case '+':
-        operationResult = a + b;
+        operationResult = b + a;
         break;
     case '-':
         operationResult = b - a;
         break;
     case '*':
-        operationResult = a * b;
+        operationResult = b * a;
         break;
     case '/':
         if (a == 0)
@@ -45,29 +35,26 @@ static int calcExpression(Stack** head, const char sign)
         operationResult = b / a;
         break;
     }
-    push(head, operationResult);
-    return ok;
+
+    return push(head, operationResult);
 }
 
-int getResult(char* const string, ErrorCode* errorCode)
+int getResult(const char* const string, ErrorCode* const errorCode)
 {
     Stack* numbers = NULL;
 
     for (size_t i = 0; string[i] != '\0'; ++i)
     {
-        if (string[i] == ' ')
-        {
-            continue;
-        }
         if (string[i] == '+' || string[i] == '-' || string[i] == '*' || string[i] == '/')
         {
-            *errorCode = calcExpression(&numbers, string[i]);
-            if (*errorCode != ok)
+            ;
+            if ((*errorCode = calcExpression(&numbers, string[i])) != ok)
             {
-                return *errorCode == stackIsEmpty ? stackIsEmpty : divisionByZero;
+                freeStack(&numbers);
+                return 0;
             }
         }
-        else
+        else if (string[i] != ' ')
         {
             const char strX = string[i];
             const int x = atoi(&strX);
@@ -80,6 +67,7 @@ int getResult(char* const string, ErrorCode* errorCode)
     {
         result = pop(&numbers, errorCode);
     }
+
     freeStack(&numbers);
     return result;
 }
