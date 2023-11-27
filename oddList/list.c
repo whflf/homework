@@ -19,10 +19,10 @@ struct List
 
 static ListElement* createListElement(const list_value_t value, const size_t position)
 {
-    ListElement* newElement = calloc(1, sizeof(ListElement));
+    ListElement* newElement = (ListElement*)calloc(1, sizeof(ListElement));
     if (newElement == NULL)
     {
-        return outOfMemory;
+        return NULL;
     }
     newElement->value = value;
     newElement->position = position;
@@ -31,10 +31,10 @@ static ListElement* createListElement(const list_value_t value, const size_t pos
 
 static List* createList(void)
 {
-    ListElement* newList = calloc(1, sizeof(ListElement));
+    List* newList = (List*)calloc(1, sizeof(List));
     if (newList == NULL)
     {
-        return outOfMemory;
+        return NULL;
     }
     return newList;
 }
@@ -46,10 +46,14 @@ size_t size(List* head)
 
 ErrorCode append(List** head, const list_value_t value)
 {
-    if (head == NULL || *head == NULL)
+    if (*head == NULL)
     {
         ListElement* const newNode = createListElement(value, 0);
         *head = createList();
+        if (*head == NULL)
+        {
+            return outOfMemory;
+        }
         (*head)->head = newNode;
         (*head)->size = 1;
         return ok;
@@ -73,7 +77,7 @@ ErrorCode append(List** head, const list_value_t value)
 
 ErrorCode delete(List** head, const size_t position)
 {
-    if (head == NULL || *head == NULL)
+    if (*head == NULL)
     {
         return listIsEmpty;
     }
@@ -90,6 +94,7 @@ ErrorCode delete(List** head, const size_t position)
         }
     }
     --(*head)->size;
+    renumber(head);
     return ok;
 }
 
@@ -110,20 +115,18 @@ void printList(const List* const head)
     }
 }
 
-void renumber(List** head)
+static void renumber(List** head)
 {
     ListElement* currentElement = (*head)->head;
-    size_t i = 0;
-    for (; currentElement != NULL; currentElement = currentElement->next)
+    for (size_t i = 0; currentElement != NULL; currentElement = currentElement->next, ++i)
     {
         currentElement->position = i;
-        ++i;
     }
 }
 
 ErrorCode deleteList(List** head)
 {
-    if (head == NULL || *head == NULL)
+    if (*head == NULL)
     {
         return listIsEmpty;
     }
