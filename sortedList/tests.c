@@ -30,7 +30,7 @@ static bool testInserting(void)
         return false;
     }
 
-    char* string[8] = writeListToString(list);
+    char* string = writeListToString(list);
     bool result = string == "2 3 4 7";
 
     deleteList(&list);
@@ -42,7 +42,7 @@ static bool testDeleting(void)
     List* list = testList();
     exclude(&list, 2);
 
-    char* string[8] = writeListToString(list);
+    char* string = writeListToString(list);
     bool result = string == "4 7";
 
     deleteList(&list);

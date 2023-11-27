@@ -27,7 +27,7 @@ static void changeHead(List** head, List* newNode)
     *head = newNode;
 }
 
-static size_t getSize(List* head)
+size_t getSize(List* head)
 {
     size_t size = 0;
     for (; head != NULL; head = head->next)
@@ -41,45 +41,6 @@ static void add(List** head, List* newNode)
 {
     newNode->next = (*head)->next;
     (*head)->next = newNode;
-}
-
-ErrorCode insert(List** head, const list_value_t value, const size_t position)
-{
-    if (head == NULL || *head == NULL)
-    {
-        return listIsEmpty;
-    }
-
-    if ((*head)->value == 0 && (*head)->next == NULL)
-    {
-        (*head)->value = value;
-        return ok;
-    }
-
-    List* const newNode = createList();
-    if (newNode == outOfMemory)
-    {
-        return outOfMemory;
-    }
-    newNode->value = value;
-
-    if (position == 0)
-    {
-        changeHead(head, newNode);
-    }
-
-    size_t i = 0;
-    for (; (*head)->next != NULL; head = &(*head)->next)
-    {
-        if (i == position - 1)
-        {
-            add(head, newNode);
-            return ok;
-        }
-        ++i;
-    }
-    add(head, newNode);
-    return ok;
 }
 
 ErrorCode sortingInsert(List** head, const list_value_t value)
@@ -120,11 +81,11 @@ static void excludeHead(List** head)
     free(tmpList);
 }
 
-ErrorCode exclude(List** head, const list_value_t value)
+void exclude(List** head, const list_value_t value)
 {
     if (head == NULL || *head == NULL)
     {
-        return listIsEmpty;
+        return;
     }
 
     while (*head != NULL && value == (*head)->value)
@@ -141,7 +102,6 @@ ErrorCode exclude(List** head, const list_value_t value)
             free(tmpNode);
         }
     }
-    return ok;
 }
 
 void printList(const List* const head)
@@ -187,11 +147,11 @@ char* writeListToString(const List* const head)
     return string;
 }
 
-ErrorCode deleteList(List** head)
+void deleteList(List** head)
 {
     if (head == NULL || *head == NULL)
     {
-        return listIsEmpty;
+        return;
     }
 
     List** headPtr = head;
@@ -208,5 +168,4 @@ ErrorCode deleteList(List** head)
     }
     free(*headPtr);
     headPtr = NULL;
-    return ok;
 }

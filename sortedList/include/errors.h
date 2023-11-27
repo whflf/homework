@@ -1,6 +1,6 @@
 #pragma once
 
-typedef enum ErrorCode
+typedef enum
 {
     ok,
     outOfMemory,
