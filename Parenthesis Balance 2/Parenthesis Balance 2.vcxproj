@@ -127,11 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="brackets.c" />
+    <ClCompile Include="include\stack.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="stack.c" />
+    <ClCompile Include="tests.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="brackets.h" />
+    <ClInclude Include="include\errors.h" />
+    <ClInclude Include="include\stack.h" />
     <ClInclude Include="stack.h" />
+    <ClInclude Include="tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

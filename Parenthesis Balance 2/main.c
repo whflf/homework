@@ -2,85 +2,71 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "stack.h"
+#include "include/stack.h"
+#include "include/errors.h"
+#include "brackets.h"
+#include "tests.h"
 
-#define LENGTH 51
+#define ALLOC_SIZE 16
 
-#define OK 0
-#define TESTS_FAILED 1
-#define OUT_OF_MEMORY 2
-
-bool parenthesisCheck(char* const string)
+char* getString(void)
 {
-    const int errorCode = ok;
-    Stack* const parenthesisStack = createStack();
-    size_t i = 0;
-    while (string[i] != '\n')
+    size_t allocSize = ALLOC_SIZE, stringSize = 0;
+
+    char* string = (char*)malloc(sizeof(char) * allocSize);
+    if (string == NULL)
     {
-        if (string[i] == '(' || string[i] == '{' || string[i] == '[') 
+        return NULL;
+    }
+
+    char character;
+    while ((character = getchar()) != '\n')
+    {
+        if (stringSize >= allocSize - 1)
         {
-            push(&parenthesisStack, string[i]);
-        }
-        if (string[i] == ')') {
-            const char previousParenthesis = top(parenthesisStack, &errorCode);
-            if (previousParenthesis != '(') 
+            allocSize *= 2;
+            string = realloc(string, allocSize * sizeof(char));
+            if (string == NULL)
             {
-                return 0;
+                return NULL;
             }
-            pop(&parenthesisStack);
         }
-        if (string[i] == ']') {
-            const char previousParenthesis = top(parenthesisStack, &errorCode);
-            if (previousParenthesis != '[')
-            {
-                return 0;
-            }
-            pop(&parenthesisStack);
-        }
-        if (string[i] == '}') {
-            const char previousParenthesis = top(parenthesisStack, &errorCode);
-            if (previousParenthesis != '{')
-            {
-                return 0;
-            }
-            pop(&parenthesisStack);
-        }
-        ++i;
+        string[stringSize] = character;
+        ++stringSize;
     }
 
-    const char stackValue = top(parenthesisStack, &errorCode);
-    freeStack(&parenthesisStack);
-    if (stackValue != '\0')
+    string[stringSize] = '\0';
+
+    return string;
+}
+
+int main(void)
+{
+    if (!passTests())
     {
-        return 0;
+        printf(errorMessages[testsFailed]);
+        return testsFailed;
     }
-    return 1;
-}
 
-bool testCorrectCase()
-{
-    return parenthesisCheck("([{}])");
-}
-
-bool testIncorrectCase()
-{
-    return !parenthesisCheck("({)}");
-}
-
-int main()
-{
-    if (!testCorrectCase() || !testIncorrectCase()) 
+    printf("Enter a string: ");
+    char* string = getString();
+    if (string == NULL)
     {
-        printf("~ Tests failed");
-        return TESTS_FAILED;
+        printf(errorMessages[outOfMemory]);
+        return outOfMemory;
     }
-    char* const string = (char*)malloc(LENGTH * sizeof(char));
-    if (string == NULL) {
-        printf("~ Memory allocation has failed");
-        return OUT_OF_MEMORY;
-    }
-    printf("Enter a string (up to 50 symbols): ");
-    fgets(string, LENGTH, stdin);
 
-    printf("%s", parenthesisCheck(string) ? "true" : "false");
+    ErrorCode errorCode = ok;
+    bool checkResult = parenthesisCheck(string, &errorCode);
+    if (errorCode != ok && errorCode != stackIsEmpty)
+    {
+        printf(errorMessages[errorCode]);
+        free(string);
+        return errorCode;
+    }
+
+    printf("%s\n", checkResult ? "true" : "false");
+
+    free(string);
+    return ok;
 }
