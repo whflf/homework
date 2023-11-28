@@ -65,6 +65,8 @@ void programLoop(Node** root)
     switch (input[0])
     {
     case '0':
+        printf("Goodbye!\n");
+        wait();
         return;
     default:
         if (input[0] < '1' || input[0] > '4')

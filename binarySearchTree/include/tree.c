@@ -161,10 +161,16 @@ void deleteNode(Node**  root, const int key)
                     parent->right = NULL;
                 }
             }
-
+            else
+            {
+                Node* elementCopy = element;
+                *root = NULL;
+                free(elementCopy->value);
+                free(elementCopy);
+                return;
+            }
             free(element->value);
             free(element);
-            element = NULL;
         }
 
         else if (element->left == NULL || element->right == NULL)
