@@ -16,22 +16,27 @@ struct Node
 static Node* createNode(const int key, const char* const value)
 {
     Node* newNode = (Node*)calloc(1, sizeof(Node));
+
     if (newNode == NULL)
     {
         return NULL;
     }
+
     newNode->key = key;
     newNode->value = value;
+
     return newNode;
 }
 
 ErrorCode insert(Node** root, const int key, const char* const value)
 {
     Node* newElement = createNode(key, value);
+
     if (newElement == NULL)
     {
         return outOfMemory;
     }
+
     while (*root != NULL)
     {
         if (key < (*root)->key)
@@ -44,9 +49,11 @@ ErrorCode insert(Node** root, const int key, const char* const value)
             {
                 newElement->parent = *root;
                 (*root)->left = newElement;
+
                 return ok;
             }
         }
+
         else if (key > (*root)->key)
         {
             if ((*root)->right != NULL)
@@ -57,6 +64,7 @@ ErrorCode insert(Node** root, const int key, const char* const value)
             {
                 newElement->parent = *root;
                 (*root)->right = newElement;
+
                 return ok;
             }
         }
@@ -66,10 +74,13 @@ ErrorCode insert(Node** root, const int key, const char* const value)
             (*root)->value = value;
             free(tmp);
             tmp = NULL;
+
             return ok;
         }
     }
+
     *root = newElement;
+
     return ok;
 }
 
@@ -96,10 +107,12 @@ static Node* search(Node* const root, const int key)
 char* value(Node* const root, const int key)
 {
     Node* element = search(root, key);
+
     if (element != NULL)
     {
         return element->value;
     }
+
     return NULL;
 }
 
@@ -114,12 +127,14 @@ static Node* next(Node* element)
     {
         return element;
     }
+
     return next(element->left);
 }
 
 void deleteNode(Node**  root, const int key)
 {
     Node* element = NULL;
+
     if ((*root)->key == key)
     {
         element = *root;
@@ -128,9 +143,11 @@ void deleteNode(Node**  root, const int key)
     {
         element = search(*root, key);
     }
+
     if (element != NULL)
     {
         Node* parent = element->parent;
+
         if (element->left == NULL && element->right == NULL)
         {
             if (parent != NULL)
@@ -144,10 +161,12 @@ void deleteNode(Node**  root, const int key)
                     parent->right = NULL;
                 }
             }
+
             free(element->value);
             free(element);
             element = NULL;
         }
+
         else if (element->left == NULL || element->right == NULL)
         {
             if (element->left == NULL)
@@ -180,10 +199,12 @@ void deleteNode(Node**  root, const int key)
                 }
                 element->left->parent = parent;
             }
+
             free(element->value);
             free(element);
             element = NULL;
         }
+
         else
         {
             Node* successor = next(element->right);
@@ -201,6 +222,7 @@ void deleteNode(Node**  root, const int key)
             {
                 successor->right->parent = successor->parent;
             }
+
             free(successor);
             successor = NULL;
         }

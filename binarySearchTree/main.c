@@ -1,19 +1,21 @@
 ﻿#include <stdlib.h>
 
-#include "tree.h"
+#include "include/tree.h"
+#include "include/errors.h"
 #include "dialogue.h"
-#include "errors.h"
 #include "tests.h"
 
 ErrorCode main(void)
 {
     if (!passTests())
     {
-        printf("Tests failed. Exiting.\n");
+        printf(errorMessages[testsFailed]);
         return testsFailed;
     }
+
     Node* dictionary = NULL;
     programLoop(&dictionary);
     deleteTree(&dictionary);
+
     return ok;
 }

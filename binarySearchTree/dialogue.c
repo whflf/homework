@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "tree.h"
+#include "include/tree.h"
+#include "include/errors.h"
 #include "dialogue.h"
-#include "errors.h"
 
 #define MENU_TEXT "Enter an operation code to continue:\n\
   0 - Exit\n\
@@ -14,9 +14,11 @@
 > "
 #define OUT_OF_MEMORY_TEXT "Failed to allocate memory. Exiting\n"
 
+#define DYNAMIC_STRING_MIN_ALLOCATION_SIZE 16
+
 static char* getString(void)
 {
-    size_t allocSize = 16, stringSize = 0;
+    size_t allocSize = DYNAMIC_STRING_MIN_ALLOCATION_SIZE, stringSize = 0;
 
     char* string = malloc(sizeof(char) * allocSize);
     if (string == NULL)
@@ -69,8 +71,10 @@ void programLoop(Node** root)
         {
             break;
         }
+
         printf("Enter the key: ");
         int inputKey = 0;
+
         if (scanf("%d", &inputKey))
         {
             switch (input[0])
@@ -78,22 +82,27 @@ void programLoop(Node** root)
             case '1':
                 printf("Enter the value: ");
                 getchar();
+
                 char* const inputValue = getString();
                 if (inputValue == NULL)
                 {
-                    printf(OUT_OF_MEMORY_TEXT);
+                    printf(errorMessages[outOfMemory]);
                     return;
                 }
+
                 ErrorCode errorCode = insert(root, inputKey, inputValue);
                 if (errorCode == outOfMemory)
                 {
-                    printf(OUT_OF_MEMORY_TEXT);
+                    printf(errorMessages[outOfMemory]);
                     return;
                 }
+
                 printf("Value \"%s\" was added to the dictionary with key %d.\n", inputValue, inputKey);
                 break;
+
             case '2':;
                 char* const foundValue = value(*root, inputKey);
+
                 if (foundValue == NULL)
                 {
                     printf("Nothing was found for key %d.\n", inputKey);
@@ -102,6 +111,7 @@ void programLoop(Node** root)
                 {
                     printf("The value for key %d is \"%s\".\n", inputKey, foundValue);
                 }
+
                 getchar();
                 break;
             case '3':
@@ -113,6 +123,7 @@ void programLoop(Node** root)
                 {
                     printf("Key %d is not in the dictionary.\n", inputKey);
                 }
+
                 getchar();
                 break;
             case '4':
@@ -125,6 +136,7 @@ void programLoop(Node** root)
                 {
                     printf("Key %d is not in the dictionary.\n", inputKey);
                 }
+
                 getchar();
                 break;
             }

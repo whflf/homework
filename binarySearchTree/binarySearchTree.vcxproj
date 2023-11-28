@@ -128,15 +128,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dialogue.c" />
+    <ClCompile Include="include\tree.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="tests.c" />
-    <ClCompile Include="tree.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dialogue.h" />
-    <ClInclude Include="errors.h" />
+    <ClInclude Include="include\errors.h" />
+    <ClInclude Include="include\tree.h" />
     <ClInclude Include="tests.h" />
-    <ClInclude Include="tree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
