@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <malloc.h>
 
 #include "phoneBook.h"
 
@@ -10,7 +11,7 @@ Book* createBook(void)
     return (Book*)calloc(1, sizeof(Book));
 }
 
-void destroyBook(const Book* const book)
+void destroyBook(Book* book)
 {
     for (size_t i = 0; i < book->entryCount; ++i)
     {
@@ -18,6 +19,16 @@ void destroyBook(const Book* const book)
         free(book->entries[i].phone);
     }
     free(book);
+}
+
+static void replaceCharacterOccurrences(char* const string, const char match, const char replace)
+{
+    const size_t length = strlen(string);
+    for (size_t i = 0; i <= length; ++i) {
+        if (string[i] == match) {
+            string[i] = replace;
+        }
+    }
 }
 
 ErrorCode addEntry(Book* const book, const char* const name, const char* const phone)
@@ -29,16 +40,23 @@ ErrorCode addEntry(Book* const book, const char* const name, const char* const p
 
     book->entries[book->entryCount].name = (char*)malloc(strlen(name) + 1);
     book->entries[book->entryCount].phone = (char*)malloc(strlen(phone) + 1);
-    if (
-        book->entries[book->entryCount].name == NULL ||
-        book->entries[book->entryCount].phone == NULL
-        )
+
+    char* entryName = book->entries[book->entryCount].name;
+    char* entryPhone = book->entries[book->entryCount].phone;
+
+    if (entryName == NULL || entryPhone == NULL)
     {
+        free(entryName);
+        free(entryPhone);
         return outOfMemory;
     }
 
-    strcpy(book->entries[book->entryCount].name, name);
-    strcpy(book->entries[book->entryCount].phone, phone);
+    strcpy(entryName, name);
+    strcpy(entryPhone, phone);
+
+    replaceCharacterOccurrences(entryName, BOOK_FILE_ENTRY_DELIMITER, BOOK_FILE_ENTRY_DELIMITER_ALT);
+    replaceCharacterOccurrences(entryPhone, BOOK_FILE_ENTRY_DELIMITER, BOOK_FILE_ENTRY_DELIMITER_ALT);
+
     ++book->entryCount;
 
     return ok;
@@ -68,7 +86,7 @@ int findPhoneByName(const Book* const book, const char* const name)
     {
         if (strcmp(name, book->entries[i].name) == 0)
         {
-            index = i;
+            index = (int)i;
             break;
         }
     }
@@ -84,62 +102,39 @@ int findNameByPhone(const Book* const book, const char* const phone)
     {
         if (strcmp(phone, book->entries[i].phone) == 0)
         {
-            index = i;
+            index = (int)i;
         }
     }
 
     return index;
 }
 
-static size_t serializeBookContent(const Book* const book, const char** const contentPtr)
+static void serializeAndWriteBookContent(const Book* const book, FILE* const file)
 {
-    size_t tempContentSize = 0, contentSize = 0;
-
     for (size_t i = 0; i < book->entryCount; ++i)
     {
-        const size_t nameLength = strlen(book->entries[i].name);
-        const size_t phoneLength = strlen(book->entries[i].phone);
-        tempContentSize += nameLength + phoneLength + 2;
+        fprintf(
+            file, "%s%c%s%c",
+            book->entries[i].name, BOOK_FILE_ENTRY_DELIMITER,
+            book->entries[i].phone, BOOK_FILE_LINE_DELIMITER
+        );
     }
-
-    char* const temp = (char*)malloc(tempContentSize);
-    if (temp)
-    {
-        for (size_t i = 0; i < book->entryCount; ++i)
-        {
-            const size_t nameLength = strlen(book->entries[i].name);
-            const size_t phoneLength = strlen(book->entries[i].phone);
-            memcpy(temp + contentSize, book->entries[i].name, nameLength);
-            *(temp + contentSize + nameLength) = BOOK_FILE_ENTRY_DELIMITER;
-            memcpy(temp + contentSize + nameLength + 1, book->entries[i].phone, phoneLength);
-            *(temp + contentSize + nameLength + phoneLength + 1) = BOOK_FILE_LINE_DELIMITER;
-            contentSize += nameLength + phoneLength + 2;
-        }
-        *contentPtr = temp;
-    }
-    return contentSize;
 }
 
 ErrorCode saveContentToFile(const Book* const book, const char* const filename)
 {
     FILE* file = NULL;
-    fopen_s(&file, filename, "wb");
+    fopen_s(&file, filename, "w");
     if (file)
     {
-        char* const content = NULL;
-        const size_t contentSize = serializeBookContent(book, &content);
-        if (content)
-        {
-            fwrite(content, 1, contentSize, file);
-            free(content);
-            fclose(file);
-            return ok;
-        }
-        else
-        {
-            fclose(file);
-            return outOfMemory;
-        }
+        fclose(file);
+    }
+    fopen_s(&file, filename, "ab");
+    if (file)
+    {
+        serializeAndWriteBookContent(book, file);
+        fclose(file);
+        return ok;
     }
     else
     {

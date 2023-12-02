@@ -18,33 +18,33 @@
     <ClCompile Include="main.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="phoneBook.c">
+    <ClCompile Include="module\fileParsing.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="fileParsing.c">
+    <ClCompile Include="module\menuInterface.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="tests.c">
+    <ClCompile Include="module\phoneBook.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="menuInterface.c">
+    <ClCompile Include="module\tests.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="errors.h">
+    <ClInclude Include="module\errors.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="phoneBook.h">
+    <ClInclude Include="module\fileParsing.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="fileParsing.h">
+    <ClInclude Include="module\menuInterface.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="tests.h">
+    <ClInclude Include="module\phoneBook.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="menuInterface.h">
+    <ClInclude Include="module\tests.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

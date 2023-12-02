@@ -127,18 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="fileParsing.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="menuInterface.c" />
-    <ClCompile Include="phoneBook.c" />
-    <ClCompile Include="tests.c" />
+    <ClCompile Include="module\fileParsing.c" />
+    <ClCompile Include="module\menuInterface.c" />
+    <ClCompile Include="module\phoneBook.c" />
+    <ClCompile Include="module\tests.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="errors.h" />
-    <ClInclude Include="fileParsing.h" />
-    <ClInclude Include="menuInterface.h" />
-    <ClInclude Include="phoneBook.h" />
-    <ClInclude Include="tests.h" />
+    <ClInclude Include="module\errors.h" />
+    <ClInclude Include="module\fileParsing.h" />
+    <ClInclude Include="module\menuInterface.h" />
+    <ClInclude Include="module\phoneBook.h" />
+    <ClInclude Include="module\tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

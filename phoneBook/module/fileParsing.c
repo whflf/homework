@@ -7,7 +7,7 @@
 #include "errors.h"
 #include "fileParsing.h"
 
-ErrorCode readFile(FILE* file, char** content, long* const fileSize)
+ErrorCode readFile(FILE* file, char** const content, long* const fileSize)
 {
     fseek(file, 0, SEEK_END);
 
@@ -43,22 +43,21 @@ static size_t parseBookFileLine(const char* const line, char** const name, char*
     const size_t nameLength = delimiter - line;
     const size_t phoneLength = newline - delimiter - 1;
 
-    *name = (char*)malloc(nameLength + 1);
+    *name = (char*)calloc(nameLength + 1, sizeof(char));
     if (*name == NULL)
     {
         return 0;
     }
 
-    *phone = (char*)malloc(phoneLength + 1);
+    *phone = (char*)calloc(phoneLength + 1, sizeof(char));
     if (*phone == NULL)
     {
+        free(*name);
         return 0;
     }
 
     memcpy(*name, line, nameLength);
     memcpy(*phone, delimiter + 1, phoneLength);
-    (*name)[nameLength] = '\0';
-    (*phone)[phoneLength] = '\0';
 
     return (size_t)(newline - line + 1);
 }
@@ -74,22 +73,25 @@ ErrorCode readAndSerializeFile(FILE* file, Book* const book)
         return error;
     }
 
-    if (content)
+    char* name = NULL;
+    char* phone = NULL;
+
+    size_t position = 0;
+
+    while (position != fileSize)
     {
-        char* name = NULL;
-        char* phone = NULL;
-
-        size_t position = 0;
-
-        while (position != fileSize && (position += parseBookFileLine(content + position, &name, &phone)))
+        size_t newSize = parseBookFileLine(content + position, &name, &phone);
+        if (newSize == 0)
         {
-            addEntry(book, name, phone);
-            free(name);
-            free(phone);
+            break;
         }
-
-        free(content);
+        position += newSize;
+        addEntry(book, name, phone);
+        free(name);
+        free(phone);
     }
+
+    free(content);
 
     return ok;
 }

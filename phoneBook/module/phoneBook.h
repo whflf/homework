@@ -2,7 +2,8 @@
 
 #define BOOK_FILE_NAME "book.txt"
 #define TEST_BOOK_FILE_NAME "test-book.txt"
-#define BOOK_FILE_ENTRY_DELIMITER '\01'
+#define BOOK_FILE_ENTRY_DELIMITER ' '
+#define BOOK_FILE_ENTRY_DELIMITER_ALT '_'
 #define BOOK_FILE_LINE_DELIMITER '\n'
 #define ENTRY_MAX_COUNT 100
 
@@ -22,7 +23,7 @@ typedef struct Book
 
 Book* createBook(void);
 
-void destroyBook(const Book* const book);
+void destroyBook(Book* book);
 
 ErrorCode addEntry(Book* const book, const char* const name, const char* const phone);
 

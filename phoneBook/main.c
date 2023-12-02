@@ -1,13 +1,11 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
 
-#include "phoneBook.h"
-#include "errors.h"
-#include "tests.h"
-#include "fileParsing.h"
-#include "menuInterface.h"
+#include "module/phoneBook.h"
+#include "module/errors.h"
+#include "module/tests.h"
+#include "module/fileParsing.h"
+#include "module/menuInterface.h"
 
 int main(void)
 {
@@ -19,7 +17,7 @@ int main(void)
 
     FILE* file = NULL;
 
-    Book* const book = createBook();
+    Book* book = createBook();
     if (book == NULL)
     {
         printf("Failed to allocate memory. Exiting.\n");
@@ -39,7 +37,7 @@ int main(void)
     }
 
     programLoop(book);
-    destroyBook(book);
 
+    destroyBook(book);
     return ok;
 }
