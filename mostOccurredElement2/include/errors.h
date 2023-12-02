@@ -7,4 +7,4 @@ typedef enum
     fileError,
     emptyArray,
     testsFailed
-};
+} ErrorCode;

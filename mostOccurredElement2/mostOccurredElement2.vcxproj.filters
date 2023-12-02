@@ -21,12 +21,27 @@
     <ClCompile Include="include\qsort.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="mostOccurredElement.c">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="tests.c">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="errors.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="include\qsort.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="mostOccurredElement.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="tests.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="include\errors.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
