@@ -27,6 +27,7 @@ ErrorCode push(Stack** const head, const stack_value_t value)
 
 int pop(Stack** const head, ErrorCode* const errorCode)
 {
+    *errorCode = ok;
     if (*head == NULL) 
     {
         *errorCode = stackIsEmpty;

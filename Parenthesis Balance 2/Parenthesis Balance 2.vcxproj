@@ -128,9 +128,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="brackets.c" />
+    <ClCompile Include="include\errors.c" />
     <ClCompile Include="include\stack.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="stack.c" />
     <ClCompile Include="tests.c" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,5 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 #include "include/stack.h"
 #include "include/errors.h"
@@ -8,6 +7,8 @@
 #include "tests.h"
 
 #define ALLOC_SIZE 16
+
+#define ERROR_FORMAT_STRING "[E] %s\n"
 
 char* getString(void)
 {
@@ -44,7 +45,7 @@ int main(void)
 {
     if (!passTests())
     {
-        printf(errorMessages[testsFailed]);
+        printf(ERROR_FORMAT_STRING, getErrorMessage(testsFailed));
         return testsFailed;
     }
 
@@ -52,7 +53,7 @@ int main(void)
     char* string = getString();
     if (string == NULL)
     {
-        printf(errorMessages[outOfMemory]);
+        printf(ERROR_FORMAT_STRING, getErrorMessage(outOfMemory));
         return outOfMemory;
     }
 
@@ -60,12 +61,12 @@ int main(void)
     bool checkResult = parenthesisCheck(string, &errorCode);
     if (errorCode != ok && errorCode != stackIsEmpty)
     {
-        printf(errorMessages[errorCode]);
+        printf(ERROR_FORMAT_STRING, getErrorMessage(errorCode));
         free(string);
         return errorCode;
     }
 
-    printf("%s\n", checkResult ? "true" : "false");
+    printf("%s bracket sequence\n", checkResult ? "correct" : "incorrect");
 
     free(string);
     return ok;
