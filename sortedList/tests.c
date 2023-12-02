@@ -23,6 +23,11 @@ static List* testList(void)
 static bool testInserting(void)
 {
     List* list = testList();
+    if (list == NULL)
+    {
+        return false;
+    }
+
     ErrorCode error = sortingInsert(&list, 3);
 
     if (error != ok)
@@ -30,8 +35,9 @@ static bool testInserting(void)
         return false;
     }
 
-    char* string = writeListToString(list);
-    bool result = strcmp(string, "2 3 4 70") == 0;
+    int* vector = writeListToArray(list);
+    int* correctVector[] = {2, 3, 4, 70};
+    bool result = memcmp(vector, correctVector, getLength(list)) == 0;
 
     deleteList(&list);
     return result;
@@ -40,10 +46,16 @@ static bool testInserting(void)
 static bool testDeleting(void)
 {
     List* list = testList();
+    if (list == NULL)
+    {
+        return false;
+    }
+
     exclude(&list, 2);
 
-    char* string = writeListToString(list);
-    bool result = strcmp(string, "4 7") == 0;
+    int* vector = writeListToArray(list);
+    int* correctVector[] = { 4, 70 };
+    bool result = memcmp(vector, correctVector, getLength(list)) == 0;
 
     deleteList(&list);
     return result;

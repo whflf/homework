@@ -2,22 +2,20 @@
 
 #include "errors.h"
 
-#define MAX_DIGITS_COUNT 10
-
 typedef int list_value_t;
 
 typedef struct List List;
 
 List* createList(const list_value_t value);
 
-size_t getSize(List* head);
+size_t getLength(List* const head);
 
-ErrorCode sortingInsert(List** head, const list_value_t value);
+ErrorCode sortingInsert(List** const head, const list_value_t value);
 
-void exclude(List** head, const list_value_t value);
+void exclude(List** const head, const list_value_t value);
 
 void printList(const List* const head);
 
-char* writeListToString(const List* const head);
+int* writeListToArray(const List* const head);
 
-void deleteList(List** head);
+void deleteList(List** const head);

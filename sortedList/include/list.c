@@ -34,20 +34,18 @@ size_t getLength(const List* head)
     size_t size = 0;
     for (; head != NULL; head = head->next)
     {
-        char strValue[MAX_DIGITS_COUNT + 1];
-        itoa(head->value, strValue, 10);
-        size += strlen(strValue) + 1;
+        ++size;
     }
     return size;
 }
 
-static void add(List* const* const head, List* const newNode)
+static void add(List* const head, List* const newNode)
 {
-    newNode->next = (*head)->next;
-    (*head)->next = newNode;
+    newNode->next = head->next;
+    head->next = newNode;
 }
 
-ErrorCode sortingInsert(List** head, const list_value_t value)
+ErrorCode sortingInsert(List** const head, const list_value_t value)
 {
     if (*head == NULL)
     {
@@ -67,15 +65,16 @@ ErrorCode sortingInsert(List** head, const list_value_t value)
         return ok;
     }
 
-    for (; (*head)->next != NULL; head = &(*head)->next)
+    List* tmpList = *head;
+    for (; tmpList->next != NULL; tmpList = tmpList->next)
     {
-        if ((*head)->next->value >= value && (*head)->value <= value)
+        if (tmpList->next->value >= value && tmpList->value <= value)
         {
-            add(head, newNode);
+            add(tmpList, newNode);
             return ok;
         }
     }
-    add(head, newNode);
+    add(tmpList, newNode);
     return ok;
 }
 
@@ -86,7 +85,7 @@ static void excludeHead(List** const head)
     free(tmpList);
 }
 
-void exclude(List** head, const list_value_t value)
+void exclude(List** const head, const list_value_t value)
 {
     if (head == NULL || *head == NULL)
     {
@@ -98,13 +97,17 @@ void exclude(List** head, const list_value_t value)
         excludeHead(head);
     }
 
-    for (; *head != NULL; head = &(*head)->next)
+    List* tmpList = *head;
+    if (tmpList != NULL)
     {
-        while ((*head)->next != NULL && (*head)->next->value == value)
+        for (; tmpList->next != NULL; tmpList = tmpList->next)
         {
-            List* tmpNode = (*head)->next;
-            (*head)->next = (*head)->next->next;
-            free(tmpNode);
+            while (tmpList->next != NULL && tmpList->next->value == value)
+            {
+                List* tmpNode = tmpList->next;
+                tmpList->next = tmpList->next->next;
+                free(tmpNode);
+            }
         }
     }
 }
@@ -125,10 +128,10 @@ void printList(const List* const head)
     }
 }
 
-char* writeListToString(const List* const head)
+int* writeListToArray(const List* const head)
 {
-    char* const string = (char*)malloc(getLength(head));
-    if (string == NULL)
+    int* const vector = (int*)malloc(getLength(head) * sizeof(int));
+    if (vector == NULL)
     {
         return NULL;
     }
@@ -138,22 +141,20 @@ char* writeListToString(const List* const head)
         const List* tmpList = head;
         for (size_t i = 0; tmpList != NULL; tmpList = tmpList->next, i += 2)
         {
-            itoa(tmpList->value, &string[i], 10);
-            if ()
-            string[i + 1] = tmpList->next != NULL ? ' ' : '\0';
+            vector[i] = tmpList->value;
         }
     }
     else
     {
-        free(string);
+        free(vector);
         return NULL;
     }
 
-    return string;
+    return vector;
 }
 
 
-void deleteList(List** head)
+void deleteList(List** const head)
 {
     if (*head == NULL)
     {
@@ -162,9 +163,6 @@ void deleteList(List** head)
 
     while (*head != NULL)
     {
-        List* tmpNode = *head;
-        *head = (*head)->next;
-        free(tmpNode);
-        tmpNode = NULL;
+        exclude(head, (*head)->value);
     }
 }
