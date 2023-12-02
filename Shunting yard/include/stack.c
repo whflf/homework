@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdbool.h>
 
 #include "stack.h"
 #include "errors.h"
@@ -13,7 +12,7 @@ struct Stack
 ErrorCode push(Stack** const head, const stack_value_t value)
 {
     Stack* next = (Stack*)malloc(sizeof(Stack));
-    if (next == NULL) 
+    if (next == NULL)
     {
         return outOfMemory;
     }
@@ -23,7 +22,7 @@ ErrorCode push(Stack** const head, const stack_value_t value)
     return ok;
 }
 
-stack_value_t top(const Stack* const head, ErrorCode* errorCode)
+stack_value_t top(const Stack* const head, ErrorCode* const errorCode)
 {
     *errorCode = ok;
     if (head == NULL)
@@ -35,18 +34,19 @@ stack_value_t top(const Stack* const head, ErrorCode* errorCode)
     return head->value;
 }
 
-stack_value_t pop(Stack** const head, ErrorCode* errorCode)
+stack_value_t pop(Stack** const head, ErrorCode* const errorCode)
 {
     *errorCode = ok;
-    if (*head == NULL) 
+    if (*head == NULL)
     {
         *errorCode = stackIsEmpty;
-        return (stack_value_t)0;
+        return 0;
     }
 
     Stack* temp = *head;
     *head = (*head)->previous;
     stack_value_t value = temp->value;
+
     free(temp);
     return value;
 }
@@ -57,7 +57,7 @@ void freeStack(Stack** const head)
     {
         return;
     }
-    while (head != NULL) 
+    while (head != NULL)
     {
         ErrorCode errorCode;
         pop(head, &errorCode);

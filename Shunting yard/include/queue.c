@@ -1,6 +1,5 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 #include "queue.h"
 #include "errors.h"
@@ -28,7 +27,7 @@ bool isEmpty(const Queue* const queue)
     return (queue->front == NULL);
 }
 
-void enqueue(Queue* const queue, const queue_value_t value, ErrorCode* errorCode)
+void enqueue(Queue* const queue, const queue_value_t value, ErrorCode* const errorCode)
 {
     *errorCode = ok;
     QueueElement* newElement = (QueueElement*)calloc(1, sizeof(QueueElement));
@@ -63,7 +62,7 @@ queue_value_t dequeue(Queue* const queue, ErrorCode* const errorCode)
 
     QueueElement* tmpElement = queue->front;
     queue->front = queue->front->next;
-    if (queue->front == NULL) 
+    if (queue->front == NULL)
     {
         queue->back = NULL;
     }
@@ -88,14 +87,4 @@ void deleteQueue(Queue** const queue)
 size_t queueSize(const Queue* const queue)
 {
     return queue->size;
-}
-
-void printQueue(const Queue* const queue)
-{
-    QueueElement* tmpElement = queue->front;
-    while (tmpElement)
-    {
-        printf("%c ", tmpElement->value);
-        tmpElement = tmpElement->next;
-    }
 }

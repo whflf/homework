@@ -1,7 +1,6 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <string.h>
+#include <malloc.h>
 #include <ctype.h>
 
 #include "include/queue.h"
@@ -9,20 +8,31 @@
 #include "include/errors.h"
 #include "tests.h"
 
-static isOperation(const char token)
+static bool isOperation(const char token)
 {
     return token == '+' || token == '-' || token == '*' || token == '/';
 }
 
-char* getPostfixExpression(const char* const expression, ErrorCode* const errorCode)
+static char getPriority(const char sign)
 {
-    *errorCode = ok;
+    return sign == '+' || sign == '-' ? 0 : 1;
+}
+
+static void destroyQueueAndStack(Queue** const queue, Stack** const stack)
+{
+    deleteQueue(queue);
+    freeStack(stack);
+}
+
+char* getPostfixExpression(const char* const expression)
+{
     Queue* outputQueue = createQueue();
     if (outputQueue == NULL)
     {
-        *errorCode = outOfMemory;
         return NULL;
     }
+
+    ErrorCode errorCode = ok;
 
     Stack* stack = NULL;
     char token = '\0';
@@ -33,121 +43,78 @@ char* getPostfixExpression(const char* const expression, ErrorCode* const errorC
 
         if (isdigit(curChar))
         {
-            enqueue(outputQueue, curChar, errorCode);
-            if (*errorCode != ok)
+            enqueue(outputQueue, curChar, &errorCode);
+            if (errorCode != ok)
             {
-                deleteQueue(&outputQueue);
+                destroyQueueAndStack(&outputQueue, &stack);
                 return NULL;
             }
         }
-        else if (curChar == '+' || curChar == '-')
+        else if (curChar == '+' || curChar == '-' || curChar == '*' || curChar == '/' || curChar == ')')
         {
-            token = top(stack, errorCode);
-            if (*errorCode == stackIsEmpty && isEmpty(outputQueue))
+            token = pop(&stack, &errorCode);
+            if (errorCode == stackIsEmpty && isEmpty(outputQueue))
             {
-                deleteQueue(&outputQueue);
-                *errorCode = wrongInput;
+                destroyQueueAndStack(&outputQueue, &stack);
                 return NULL;
             }
 
-            while (isOperation(token))
+            while (isOperation(token) && (curChar == ')' || getPriority(curChar) <= getPriority(token)))
             {
-                enqueue(outputQueue, token, errorCode);
-                pop(&stack, errorCode);
-                if (*errorCode != ok)
+                enqueue(outputQueue, token, &errorCode);
+                if (errorCode != ok)
                 {
-                    deleteQueue(&outputQueue);
+                    destroyQueueAndStack(&outputQueue, &stack);
                     return NULL;
                 }
 
-                token = top(stack, errorCode);
+                token = pop(&stack, &errorCode);
             }
 
-            push(&stack, curChar);
-        }
-        else if (curChar == '*' || curChar == '/')
-        {
-            token = top(stack, errorCode);
-            if (*errorCode == stackIsEmpty && isEmpty(outputQueue))
-            {
-                deleteQueue(&outputQueue);
-                *errorCode = wrongInput;
-                return NULL;
-            }
-
-            while (token == '*' || token == '/')
-            {
-                enqueue(outputQueue, token, errorCode);
-                pop(&stack, errorCode);
-                if (*errorCode != ok)
-                {
-                    deleteQueue(&outputQueue);
-                    return NULL;
-                }
-
-                token = top(stack, errorCode);
-            }
-
-            push(&stack, curChar);
+            curChar == ')' ? pop(&stack, &errorCode) : push(&stack, curChar);
         }
         else if (curChar == '(')
         {
             push(&stack, curChar);
         }
-        else if (curChar == ')')
-        {
-            token = top(stack, errorCode);
-            if (*errorCode == stackIsEmpty && isEmpty(outputQueue))
-            {
-                deleteQueue(&outputQueue);
-                *errorCode = wrongInput;
-                return NULL;
-            }
-
-            while (isOperation(token))
-            {
-                enqueue(outputQueue, token, errorCode);
-                pop(&stack, errorCode);
-                if (*errorCode != ok)
-                {
-                    deleteQueue(&outputQueue);
-                    return NULL;
-                }
-                token = top(stack, errorCode);
-            }
-
-            pop(&stack, errorCode);
-        }
     }
 
-    for (token = top(stack, errorCode); stack != NULL; token = pop(&stack, errorCode))
+    if (isEmpty(outputQueue))
     {
-        enqueue(outputQueue, token, errorCode);
-        if (*errorCode != ok)
+        destroyQueueAndStack(&outputQueue, &stack);
+        return NULL;
+    }
+
+    for (token = top(stack, &errorCode); stack != NULL; token = pop(&stack, &errorCode))
+    {
+        enqueue(outputQueue, token, &errorCode);
+        if (errorCode != ok)
         {
-            deleteQueue(&outputQueue);
+            destroyQueueAndStack(&outputQueue, &stack);
             return NULL;
         }
     }
 
     const size_t allocSize = queueSize(outputQueue) * 2;
-    char* outputString = (char*)malloc(allocSize * sizeof(char));
+    char* outputString = (char*)calloc(allocSize, sizeof(char));
     if (outputString == NULL)
     {
-        deleteQueue(&outputQueue);
+        destroyQueueAndStack(&outputQueue, &stack);
         return NULL;
     }
 
     for (size_t i = 0; !isEmpty(outputQueue); i += 2)
     {
-        outputString[i] = dequeue(outputQueue, errorCode);
-        if (*errorCode != ok)
+        outputString[i] = dequeue(outputQueue, &errorCode);
+        if (errorCode != ok)
         {
+            destroyQueueAndStack(&outputQueue, &stack);
             return NULL;
         }
         outputString[i + 1] = isEmpty(outputQueue) ? '\0' : ' ';
     }
 
-    deleteQueue(&outputQueue);
+    destroyQueueAndStack(&outputQueue, &stack);
     return outputString;
 }
+

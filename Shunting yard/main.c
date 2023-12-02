@@ -11,6 +11,8 @@
 
 #define DYNAMIC_STRING_MIN_ALLOCATION_SIZE 16
 
+#define ERROR_FORMAT_STRING "[E] %s\n"
+
 char* getString(void)
 {
     size_t allocSize = DYNAMIC_STRING_MIN_ALLOCATION_SIZE, stringSize = 0;
@@ -46,7 +48,7 @@ int main(void)
 {
     if (!passTests())
     {
-        printf(errorMessages[testsFailed]);
+        printf(ERROR_FORMAT_STRING, getErrorMessage(testsFailed));
         return testsFailed;
     }
 
@@ -54,18 +56,17 @@ int main(void)
     char* expression = getString();
     if (expression == NULL)
     {
-        printf(errorMessages[outOfMemory]);
+        printf(ERROR_FORMAT_STRING, getErrorMessage(outOfMemory));
         return outOfMemory;
     }
 
-    ErrorCode errorCode;
-    char* postfixExpression = getPostfixExpression(expression, &errorCode);
-    if (errorCode != ok && errorCode != stackIsEmpty)
+    char* postfixExpression = getPostfixExpression(expression);
+    if (postfixExpression == NULL)
     {
-        printf(errorMessages[errorCode]);
+        printf(ERROR_FORMAT_STRING, getErrorMessage(-1));
         free(expression);
         free(postfixExpression);
-        return errorCode;
+        return -1;
     }
 
     printf("%s\n", postfixExpression);
