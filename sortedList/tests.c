@@ -10,7 +10,7 @@ static List* testList(void)
 
     ErrorCode errorFirst = sortingInsert(&list, 4);
     ErrorCode errorSecond = sortingInsert(&list, 2);
-    ErrorCode errorThird = sortingInsert(&list, 7);
+    ErrorCode errorThird = sortingInsert(&list, 70);
 
     if (errorFirst != ok || errorSecond != ok || errorThird != ok)
     {
@@ -31,7 +31,7 @@ static bool testInserting(void)
     }
 
     char* string = writeListToString(list);
-    bool result = strcmp(string, "2 3 4 7") == 0;
+    bool result = strcmp(string, "2 3 4 70") == 0;
 
     deleteList(&list);
     return result;

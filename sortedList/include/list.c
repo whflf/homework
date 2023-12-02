@@ -12,32 +12,36 @@ struct List
 
 static List* createList(const list_value_t value)
 {
-    List* newList = calloc(1, sizeof(List));
+    List* const newList = calloc(1, sizeof(List));
     if (newList == NULL)
     {
-        return outOfMemory;
+        return NULL;
     }
+
     newList->value = value;
+
     return newList;
 }
 
-static void changeHead(List** head, List* newNode)
+static void changeHead(List** const head, List* const newNode)
 {
     newNode->next = *head;
     *head = newNode;
 }
 
-size_t getSize(List* head)
+size_t getLength(const List* head)
 {
     size_t size = 0;
     for (; head != NULL; head = head->next)
     {
-        ++size;
+        char strValue[MAX_DIGITS_COUNT + 1];
+        itoa(head->value, strValue, 10);
+        size += strlen(strValue) + 1;
     }
     return size;
 }
 
-static void add(List** head, List* newNode)
+static void add(List* const* const head, List* const newNode)
 {
     newNode->next = (*head)->next;
     (*head)->next = newNode;
@@ -48,11 +52,11 @@ ErrorCode sortingInsert(List** head, const list_value_t value)
     if (*head == NULL)
     {
         *head = createList(value);
-        return ok;
+        return *head == NULL ? outOfMemory : ok;
     }
 
     List* const newNode = createList(value);
-    if (newNode == outOfMemory)
+    if (newNode == NULL)
     {
         return outOfMemory;
     }
@@ -75,7 +79,7 @@ ErrorCode sortingInsert(List** head, const list_value_t value)
     return ok;
 }
 
-static void excludeHead(List** head)
+static void excludeHead(List** const head)
 {
     List* tmpList = *head;
     *head = (*head)->next;
@@ -109,12 +113,11 @@ void printList(const List* const head)
 {
     if (head != NULL)
     {
-        List* tmpList = head;
+        const List* tmpList = head;
         for (; tmpList != NULL; tmpList = tmpList->next)
         {
-            printf("%d ", tmpList->value);
+            printf("%d%s", tmpList->value, tmpList->next == NULL ? "\n" : ", ");
         }
-        printf("\n");
     }
     else
     {
@@ -124,7 +127,7 @@ void printList(const List* const head)
 
 char* writeListToString(const List* const head)
 {
-    char* string = (char*)malloc(getSize(head) * 2);
+    char* const string = (char*)malloc(getLength(head));
     if (string == NULL)
     {
         return NULL;
@@ -132,10 +135,11 @@ char* writeListToString(const List* const head)
 
     if (head != NULL)
     {
-        List* tmpList = head;
+        const List* tmpList = head;
         for (size_t i = 0; tmpList != NULL; tmpList = tmpList->next, i += 2)
         {
             itoa(tmpList->value, &string[i], 10);
+            if ()
             string[i + 1] = tmpList->next != NULL ? ' ' : '\0';
         }
     }
@@ -156,14 +160,11 @@ void deleteList(List** head)
         return;
     }
 
-    while ((*head)->next != NULL)
+    while (*head != NULL)
     {
-        List* tmpNode = (*head)->next;
-        (*head)->next = (*head)->next->next;
+        List* tmpNode = *head;
+        *head = (*head)->next;
         free(tmpNode);
         tmpNode = NULL;
     }
-
-    free(*head);
-    *head = NULL;
 }

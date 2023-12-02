@@ -2,6 +2,8 @@
 
 #include "errors.h"
 
+#define MAX_DIGITS_COUNT 10
+
 typedef int list_value_t;
 
 typedef struct List List;
