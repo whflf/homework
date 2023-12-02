@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "include/stack.h"
 #include "include/errors.h"
@@ -34,6 +35,8 @@ static ErrorCode calcExpression(Stack** const head, const char sign)
         }
         operationResult = b / a;
         break;
+    default:
+        return badInput;
     }
 
     return push(head, operationResult);
@@ -45,20 +48,20 @@ int getResult(const char* const string, ErrorCode* const errorCode)
 
     for (size_t i = 0; string[i] != '\0'; ++i)
     {
-        if (string[i] == '+' || string[i] == '-' || string[i] == '*' || string[i] == '/')
+        const char currChar = string[i];
+        if (isdigit(currChar))
         {
-            ;
-            if ((*errorCode = calcExpression(&numbers, string[i])) != ok)
+            const char strX = currChar;
+            const int x = atoi(&strX);
+            push(&numbers, x);
+        }
+        else if (currChar != ' ')
+        {
+            if ((*errorCode = calcExpression(&numbers, currChar)) != ok)
             {
                 freeStack(&numbers);
                 return 0;
             }
-        }
-        else if (string[i] != ' ')
-        {
-            const char strX = string[i];
-            const int x = atoi(&strX);
-            push(&numbers, x);
         }
     }
 

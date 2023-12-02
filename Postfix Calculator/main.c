@@ -10,6 +10,8 @@
 
 #define ALLOC_SIZE 16
 
+#define ERROR_FORMAT_STRING "[E] %s\n"
+
 char* getString(void)
 {
     size_t allocSize = ALLOC_SIZE, stringSize = 0;
@@ -45,7 +47,7 @@ int main(void)
 {
     if (!passTests())
     {
-        printf(errorMessages[testsFailed]);
+        printf(ERROR_FORMAT_STRING, getErrorMessage(testsFailed));
         return testsFailed;
     }
 
@@ -53,7 +55,7 @@ int main(void)
     char* expression = getString();
     if (expression == NULL)
     {
-        printf(errorMessages[outOfMemory]);
+        printf(ERROR_FORMAT_STRING, getErrorMessage(outOfMemory));
         return outOfMemory;
     }
 
@@ -61,7 +63,7 @@ int main(void)
     const int expressionResult = getResult(expression, &errorCode);
     if (errorCode != ok)
     {
-        printf(errorMessages[errorCode]);
+        printf(ERROR_FORMAT_STRING, getErrorMessage(errorCode));
         free(expression);
         return errorCode;
     }

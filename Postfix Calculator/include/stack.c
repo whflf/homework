@@ -13,7 +13,7 @@ struct Stack
 ErrorCode push(Stack** const head, const int value)
 {
     Stack* next = (Stack*)malloc(sizeof(Stack));
-    if (next == NULL) 
+    if (next == NULL)
     {
         return outOfMemory;
     }
@@ -23,9 +23,9 @@ ErrorCode push(Stack** const head, const int value)
     return ok;
 }
 
-int pop(Stack** const head, ErrorCode* errorCode)
+int pop(Stack** const head, ErrorCode* const errorCode)
 {
-    if (*head == NULL) 
+    if (*head == NULL)
     {
         *errorCode = stackIsEmpty;
         return stackIsEmpty;
@@ -44,7 +44,7 @@ void freeStack(Stack** const head)
     {
         return;
     }
-    while (head != NULL) 
+    while (head != NULL)
     {
         ErrorCode errorCode = ok;
         pop(head, &errorCode);
