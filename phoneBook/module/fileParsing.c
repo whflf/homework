@@ -7,20 +7,22 @@
 #include "errors.h"
 #include "fileParsing.h"
 
-ErrorCode readFile(FILE* file, char** const content, long* const fileSize)
+ErrorCode readFile(FILE* const file, char** const content, size_t* const fileSize)
 {
     fseek(file, 0, SEEK_END);
 
-    *fileSize = ftell(file);
-    if (*fileSize == -1L)
+    const long ftellResult = ftell(file);
+    if (ftellResult == -1L)
     {
         printf("File error occurred. Exiting.\n");
         return fileError;
     }
 
+    *fileSize = (size_t)ftellResult;
+
     fseek(file, 0, SEEK_SET);
 
-    *content = (char*)calloc((size_t)*fileSize + 1, sizeof(char));
+    *content = (char*)calloc(*fileSize + 1, sizeof(char));
     if (*content == NULL)
     {
         return outOfMemory;
@@ -62,10 +64,10 @@ static size_t parseBookFileLine(const char* const line, char** const name, char*
     return (size_t)(newline - line + 1);
 }
 
-ErrorCode readAndSerializeFile(FILE* file, Book* const book)
+ErrorCode readAndDeserializeFile(FILE* const file, Book* const book)
 {
     char* content = NULL;
-    long fileSize = 0;
+    size_t fileSize = 0;
 
     ErrorCode error = ok;
     if (error = readFile(file, &content, &fileSize) != ok)
@@ -80,13 +82,18 @@ ErrorCode readAndSerializeFile(FILE* file, Book* const book)
 
     while (position != fileSize)
     {
-        size_t newSize = parseBookFileLine(content + position, &name, &phone);
+        const size_t newSize = parseBookFileLine(content + position, &name, &phone);
         if (newSize == 0)
         {
             break;
         }
         position += newSize;
-        addEntry(book, name, phone);
+        if ((error = addEntry(book, name, phone)) != ok)
+        {
+            free(name);
+            free(phone);
+            return error;
+        }
         free(name);
         free(phone);
     }
@@ -95,4 +102,3 @@ ErrorCode readAndSerializeFile(FILE* file, Book* const book)
 
     return ok;
 }
-

@@ -23,7 +23,7 @@ typedef struct Book
 
 Book* createBook(void);
 
-void destroyBook(Book* book);
+void destroyBook(Book* const book);
 
 ErrorCode addEntry(Book* const book, const char* const name, const char* const phone);
 

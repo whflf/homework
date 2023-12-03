@@ -104,7 +104,7 @@ void programLoop(Book* const book)
                     break;
                 case outOfMemory:
                     printf(OUT_OF_MEMORY_TEXT);
-                    break;
+                    return;
                 case entryLimitReached:
                     printf("Entry count is 100. Can't add more entries.\n");
                     break;

@@ -11,7 +11,7 @@ Book* createBook(void)
     return (Book*)calloc(1, sizeof(Book));
 }
 
-void destroyBook(Book* book)
+void destroyBook(Book* const book)
 {
     for (size_t i = 0; i < book->entryCount; ++i)
     {
@@ -24,8 +24,10 @@ void destroyBook(Book* book)
 static void replaceCharacterOccurrences(char* const string, const char match, const char replace)
 {
     const size_t length = strlen(string);
-    for (size_t i = 0; i <= length; ++i) {
-        if (string[i] == match) {
+    for (size_t i = 0; i <= length; ++i)
+    {
+        if (string[i] == match)
+        {
             string[i] = replace;
         }
     }

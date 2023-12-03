@@ -5,6 +5,6 @@
 #include "errors.h"
 #include "phoneBook.h"
 
-ErrorCode readFile(FILE* file, char** content, long* const fileSize);
+ErrorCode readFile(FILE* const file, char** const content, size_t* const fileSize);
 
-ErrorCode readAndSerializeFile(FILE* file, Book* const book);
+ErrorCode readAndDeserializeFile(FILE* const file, Book* const book);

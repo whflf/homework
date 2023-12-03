@@ -27,9 +27,9 @@ int main(void)
     fopen_s(&file, BOOK_FILE_NAME, "rb");
     if (file)
     {
-        const ErrorCode error = readAndSerializeFile(file, book);
+        const ErrorCode error = readAndDeserializeFile(file, book);
         fclose(file);
-        if (error)
+        if (error != ok)
         {
             destroyBook(book);
             return error;
