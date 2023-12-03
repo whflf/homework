@@ -1,18 +1,19 @@
 #include <stdlib.h>
-#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "include/errors.h"
 #include "include/list.h"
+#include "tests.h"
 
 static List* testList(void)
 {
     List* list = NULL;
 
-    ErrorCode errorFirst = sortingInsert(&list, 4);
-    ErrorCode errorSecond = sortingInsert(&list, 2);
-    ErrorCode errorThird = sortingInsert(&list, 70);
-
-    if (errorFirst != ok || errorSecond != ok || errorThird != ok)
+    const ErrorCode error = sortingInsert(&list, 4);
+    const ErrorCode error2 = sortingInsert(&list, 2);
+    const ErrorCode error3 = sortingInsert(&list, 70);
+    if (error != ok || error2 != ok || error3 != ok)
     {
         return NULL;
     }
@@ -28,18 +29,26 @@ static bool testInserting(void)
         return false;
     }
 
-    ErrorCode error = sortingInsert(&list, 3);
-
-    if (error != ok)
+    if (sortingInsert(&list, 3) != ok)
     {
+        deleteList(&list);
         return false;
     }
 
-    int* vector = writeListToArray(list);
-    int* correctVector[] = {2, 3, 4, 70};
-    bool result = memcmp(vector, correctVector, getLength(list)) == 0;
+    int* const vector = writeListToArray(list);
+    if (vector == NULL)
+    {
+        deleteList(&list);
+        return false;
+    }
 
+    const int correctVector[] = { 2, 3, 4, 70 };
+
+    const bool result = memcmp(vector, correctVector, getLength(list) * sizeof(int)) == 0;
+
+    free(vector);
     deleteList(&list);
+
     return result;
 }
 
@@ -53,11 +62,20 @@ static bool testDeleting(void)
 
     exclude(&list, 2);
 
-    int* vector = writeListToArray(list);
-    int* correctVector[] = { 4, 70 };
-    bool result = memcmp(vector, correctVector, getLength(list)) == 0;
+    int* const vector = writeListToArray(list);
+    if (vector == NULL)
+    {
+        deleteList(&list);
+        return false;
+    }
 
+    const int correctVector[] = { 4, 70 };
+
+    const bool result = memcmp(vector, correctVector, getLength(list) * sizeof(int)) == 0;
+
+    free(vector);
     deleteList(&list);
+
     return result;
 }
 

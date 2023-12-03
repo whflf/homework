@@ -74,6 +74,7 @@ ErrorCode sortingInsert(List** const head, const list_value_t value)
             return ok;
         }
     }
+
     add(tmpList, newNode);
     return ok;
 }
@@ -130,39 +131,32 @@ void printList(const List* const head)
 
 int* writeListToArray(const List* const head)
 {
-    int* const vector = (int*)malloc(getLength(head) * sizeof(int));
-    if (vector == NULL)
-    {
-        return NULL;
-    }
-
     if (head != NULL)
     {
+        int* const vector = (int*)malloc(getLength(head) * sizeof(int));
+        if (vector == NULL)
+        {
+            return NULL;
+        }
+
         const List* tmpList = head;
-        for (size_t i = 0; tmpList != NULL; tmpList = tmpList->next, i += 2)
+        for (size_t i = 0; tmpList != NULL; tmpList = tmpList->next, ++i)
         {
             vector[i] = tmpList->value;
         }
-    }
-    else
-    {
-        free(vector);
-        return NULL;
+
+        return vector;
     }
 
-    return vector;
+    return NULL;
 }
 
 
 void deleteList(List** const head)
 {
-    if (*head == NULL)
-    {
-        return;
-    }
-
     while (*head != NULL)
     {
         exclude(head, (*head)->value);
     }
 }
+

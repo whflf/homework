@@ -1,6 +1,7 @@
 #pragma once
 
 #include "include/errors.h"
+#include "include/list.h"
 
 typedef enum menuOptions {
     exitProgram,
@@ -11,12 +12,5 @@ typedef enum menuOptions {
     menuOptionsCount
 } MenuOption;
 
-static const char* const menuOptionsNames[] = {
-    [exitProgram] = "Exit",
-    [addValueToList] = "Add a value to the sorted list",
-    [removeValueFromList] = "Remove a value from the list",
-    [showList] = "Print the list"
-};
-
-ErrorCode programLoop(List** head);
+ErrorCode programLoop(List** const head);
 

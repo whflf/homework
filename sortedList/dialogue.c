@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "include/list.h"
 #include "dialogue.h"
 
 #define TEXT_BAD_INPUT "Bad input\n"
@@ -10,11 +9,18 @@
 static void wait(void)
 {
     printf("\nPress enter to continue...");
-    getchar();
+    while (getchar() != '\n');
 }
 
-ErrorCode programLoop(List** head)
+ErrorCode programLoop(List** const head)
 {
+    const char* const menuOptionsNames[] = {
+        [exitProgram] = "Exit",
+        [addValueToList] = "Add a value to the sorted list",
+        [removeValueFromList] = "Remove a value from the list",
+        [showList] = "Print the list"
+    };
+
     while (true)
     {
         system("cls");
@@ -56,10 +62,15 @@ ErrorCode programLoop(List** head)
                 break;
             case addValueToList:
             case removeValueFromList:
-                printf("Enter the value: ");
+            {
                 int value;
                 char forNewLine;
-                if (scanf("%d%c", &value, &forNewLine))
+                printf("Enter the value: ");
+                const int filledFields = scanf("%d%c", &value, &forNewLine);
+
+                system("cls");
+
+                if (filledFields == 2 && forNewLine == '\n')
                 {
                     if (coercedInput == addValueToList && sortingInsert(head, value) == outOfMemory)
                     {
@@ -72,13 +83,16 @@ ErrorCode programLoop(List** head)
                 }
                 else
                 {
-                    printf("Wrong input. Please enter an integer and nothing else");
+                    while (getchar() != '\n');
+                    printf("Wrong input. Please enter an integer and nothing else\n");
                 }
                 break;
+            }
+            default:
+                printf(TEXT_BAD_INPUT);
             }
         }
 
         wait();
     }
 }
-

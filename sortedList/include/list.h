@@ -8,7 +8,7 @@ typedef struct List List;
 
 List* createList(const list_value_t value);
 
-size_t getLength(List* const head);
+size_t getLength(const List* head);
 
 ErrorCode sortingInsert(List** const head, const list_value_t value);
 
