@@ -1,18 +1,18 @@
 #pragma once
 
 #include "phoneBook.h"
+#include "errors.h"
 
-#define ALLOC_SIZE 16
+typedef enum menuOptions
+{
+    optExitProgram,
+    optAddEntry,
+    optPrintEntries,
+    optFindPhoneByName,
+    optFindNameByPhone,
+    optSaveToFile,
 
-#define MENU_TEXT "\
-Enter an operation code to continue:\n\
-  0 - Exit\n\
-  1 - Add an entry\n\
-  2 - Print existing entries\n\
-  3 - Find phone number by name\n\
-  4 - Find name by phone number\n\
-  5 - Save everything to database file\n\
-> "
-#define OUT_OF_MEMORY_TEXT "Couldn't allocate memory.\n"
+    menuOptionsCount
+} MenuOption;
 
-void programLoop(Book* const book);
+ErrorCode programLoop(Book* const book);

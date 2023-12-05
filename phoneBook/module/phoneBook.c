@@ -80,31 +80,18 @@ void printEntries(const Book* const book)
     }
 }
 
-int findPhoneByName(const Book* const book, const char* const name)
+int findEntry(const Book* const book, char* const string, const bool toFindPhone)
 {
     int index = -1;
 
+    replaceCharacterOccurrences(string, BOOK_FILE_ENTRY_DELIMITER, BOOK_FILE_ENTRY_DELIMITER_ALT);
+
     for (size_t i = 0; i < book->entryCount; ++i)
     {
-        if (strcmp(name, book->entries[i].name) == 0)
+        if (strcmp(string, toFindPhone ? book->entries[i].name : book->entries[i].phone) == 0)
         {
             index = (int)i;
             break;
-        }
-    }
-
-    return index;
-}
-
-int findNameByPhone(const Book* const book, const char* const phone)
-{
-    int index = -1;
-
-    for (size_t i = 0; i < book->entryCount; ++i)
-    {
-        if (strcmp(phone, book->entries[i].phone) == 0)
-        {
-            index = (int)i;
         }
     }
 

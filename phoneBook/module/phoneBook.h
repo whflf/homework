@@ -7,6 +7,7 @@
 #define BOOK_FILE_LINE_DELIMITER '\n'
 #define ENTRY_MAX_COUNT 100
 
+#include <stdbool.h>
 #include "errors.h"
 
 typedef struct BookEntry
@@ -29,8 +30,6 @@ ErrorCode addEntry(Book* const book, const char* const name, const char* const p
 
 void printEntries(const Book* const book);
 
-int findPhoneByName(const Book* const book, const char* const name);
-
-int findNameByPhone(const Book* const book, const char* const phone);
+int findEntry(const Book* const book, char* const string, const bool toFindPhone);
 
 ErrorCode saveContentToFile(const Book* const book, const char* const filename);

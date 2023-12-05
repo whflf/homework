@@ -33,8 +33,8 @@ static Book* createBookAndAddEntries(
 
 static bool testGetPhone(void)
 {
-    const char* const names[] = { "Michael", "Yuri" };
-    const char* const phones[] = { "+73837778899", "+78123331818" };
+    char* const names[] = { "Michael", "Yuri" };
+    char* const phones[] = { "+73837778899", "+78123331818" };
 
     Book* testBook = createBookAndAddEntries(names, phones, 2);
     if (testBook == NULL)
@@ -42,8 +42,8 @@ static bool testGetPhone(void)
         return false;
     }
 
-    const int michaelIndex = findPhoneByName(testBook, names[0]);
-    const int yuriIndex = findPhoneByName(testBook, names[1]);
+    const int michaelIndex = findEntry(testBook, names[0], true);
+    const int yuriIndex = findEntry(testBook, names[1], true);
     if (michaelIndex == -1 || yuriIndex == -1)
     {
         return false;
@@ -59,8 +59,8 @@ static bool testGetPhone(void)
 
 static bool testGetName(void)
 {
-    const char* const names[] = { "Yuri", "Michael" };
-    const char* const phones[] = { "+78123331818", "+73837778899" };
+    char* const names[] = { "Yuri", "Michael" };
+    char* const phones[] = { "+78123331818", "+73837778899" };
 
     Book* testBook = createBookAndAddEntries(names, phones, 2);
     if (testBook == NULL)
@@ -68,8 +68,8 @@ static bool testGetName(void)
         return false;
     }
 
-    const int yuriIndex = findNameByPhone(testBook, phones[0]);
-    const int michaelIndex = findNameByPhone(testBook, phones[1]);
+    const int yuriIndex = findEntry(testBook, phones[0], false);
+    const int michaelIndex = findEntry(testBook, phones[1], false);
     if (yuriIndex == -1 || michaelIndex == -1)
     {
         return false;
@@ -85,8 +85,8 @@ static bool testGetName(void)
 
 static bool testCorrectSaveToFile(void)
 {
-    const char* const names[] = { "Kate", "Fox Mulder"};
-    const char* const phones[] = { "+78428880696", "555-3574"};
+    const char* const names[] = { "Kate", "Fox Mulder" };
+    const char* const phones[] = { "+78428880696", "555-3574" };
 
     Book* testBook = createBookAndAddEntries(names, phones, 2);
     if (testBook == NULL)
@@ -105,7 +105,7 @@ static bool testCorrectSaveToFile(void)
     }
 
     char* content = NULL;
-    long fileSize = 0;
+    size_t fileSize = 0;
     if (readFile(file, &content, &fileSize) != ok)
     {
         return false;

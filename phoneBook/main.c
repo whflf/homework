@@ -11,8 +11,7 @@ int main(void)
 {
     if (!passTests())
     {
-        printf("Tests failed. Exiting.\n");
-        return testsFailed;
+        return printErrorMessage(testsFailed, NULL, true);
     }
 
     FILE* file = NULL;
@@ -20,14 +19,15 @@ int main(void)
     Book* book = createBook();
     if (book == NULL)
     {
-        printf("Failed to allocate memory. Exiting.\n");
-        return outOfMemory;
+        return printErrorMessage(outOfMemory, "While allocating memory for book in main()", true);
     }
+
+    ErrorCode error = ok;
 
     fopen_s(&file, BOOK_FILE_NAME, "rb");
     if (file)
     {
-        const ErrorCode error = readAndDeserializeFile(file, book);
+        error = readAndDeserializeFile(file, book);
         fclose(file);
         if (error != ok)
         {
@@ -36,8 +36,8 @@ int main(void)
         }
     }
 
-    programLoop(book);
+    error = programLoop(book);
 
     destroyBook(book);
-    return ok;
+    return error;
 }

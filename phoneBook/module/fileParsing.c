@@ -14,8 +14,7 @@ ErrorCode readFile(FILE* const file, char** const content, size_t* const fileSiz
     const long ftellResult = ftell(file);
     if (ftellResult == -1L)
     {
-        printf("File error occurred. Exiting.\n");
-        return fileError;
+        return printErrorMessage(fileError, "ftell() failed in readFile()", true);
     }
 
     *fileSize = (size_t)ftellResult;
@@ -25,7 +24,7 @@ ErrorCode readFile(FILE* const file, char** const content, size_t* const fileSiz
     *content = (char*)calloc(*fileSize + 1, sizeof(char));
     if (*content == NULL)
     {
-        return outOfMemory;
+        return printErrorMessage(outOfMemory, "While allocating memory for content in readFile()", true);
     }
 
     fread(*content, sizeof(char), *fileSize, file);
