@@ -1,6 +1,5 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
 #include "include/queue.h"
@@ -53,19 +52,17 @@ int main(void)
     }
 
     printf("Enter an expression: ");
-    char* expression = getString();
+    char* const expression = getString();
     if (expression == NULL)
     {
         printf(ERROR_FORMAT_STRING, getErrorMessage(outOfMemory));
         return outOfMemory;
     }
 
-    char* postfixExpression = getPostfixExpression(expression);
+    char* const postfixExpression = getPostfixExpression(expression);
     if (postfixExpression == NULL)
     {
-        printf(ERROR_FORMAT_STRING, getErrorMessage(-1));
         free(expression);
-        free(postfixExpression);
         return -1;
     }
 

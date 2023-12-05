@@ -11,7 +11,11 @@ static bool testOrdinaryCase(void)
     const char* const infixExpression = "(5*6-9*3)+8/4";
     const char* const postfixExpression = "5 6 * 9 3 * - 8 4 / +";
 
-    char* queueExpression = getPostfixExpression(infixExpression);
+    char* const queueExpression = getPostfixExpression(infixExpression);
+    if (queueExpression == NULL)
+    {
+        return false;
+    }
 
     const bool result = memcmp(postfixExpression, queueExpression, TEST_EXPRESSION_LENGTH) == 0;
 
@@ -24,7 +28,11 @@ static bool testSpaceCase(void)
     const char* const infixExpression = "9 / (6 - 7) * 2 * (1 + 1)";
     const char* const postfixExpression = "9 6 7 - / 2 * 1 1 + *";
 
-    char* queueExpression = getPostfixExpression(infixExpression);
+    char* const queueExpression = getPostfixExpression(infixExpression);
+    if (queueExpression == NULL)
+    {
+        return false;
+    }
 
     const bool result = memcmp(postfixExpression, queueExpression, TEST_EXPRESSION_LENGTH) == 0;
 

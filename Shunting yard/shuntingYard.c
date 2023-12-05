@@ -50,7 +50,7 @@ char* getPostfixExpression(const char* const expression)
                 return NULL;
             }
         }
-        else if (curChar == '+' || curChar == '-' || curChar == '*' || curChar == '/' || curChar == ')')
+        else if (isOperation(curChar) || curChar == ')')
         {
             token = pop(&stack, &errorCode);
             if (errorCode == stackIsEmpty && isEmpty(outputQueue))
@@ -117,4 +117,3 @@ char* getPostfixExpression(const char* const expression)
     destroyQueueAndStack(&outputQueue, &stack);
     return outputString;
 }
-
