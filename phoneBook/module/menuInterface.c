@@ -152,7 +152,7 @@ ErrorCode programLoop(Book* const book)
         {
             ErrorCode errorCode = ok;
 
-            const MenuOption coercedInput = input - 0x30;
+            const MenuOption coercedInput = input - '0';
             switch (coercedInput)
             {
             case optExitProgram:

@@ -5,7 +5,7 @@
 
 typedef enum menuOptions
 {
-    optExitProgram,
+    optExitProgram = '0',
     optAddEntry,
     optPrintEntries,
     optFindPhoneByName,
