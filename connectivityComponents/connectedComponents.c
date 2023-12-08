@@ -16,8 +16,10 @@ static void depthFirstSearch(const int source, const int vertex, const int numbe
         }
     }
 
-    for (size_t nextVertex = 0; nextVertex < numberOfVertices; ++nextVertex) {
-        if (incidenceMatrix[vertex][nextVertex] == 1 && !visitedFlags[nextVertex]) {
+    for (size_t nextVertex = 0; nextVertex < numberOfVertices; ++nextVertex) 
+    {
+        if (incidenceMatrix[vertex][nextVertex] == 1 && !visitedFlags[nextVertex]) 
+        {
             depthFirstSearch(source, nextVertex, numberOfVertices, incidenceMatrix, components, visitedFlags);
         }
     }
