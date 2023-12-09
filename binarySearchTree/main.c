@@ -1,9 +1,9 @@
 ﻿#include <stdlib.h>
 
-#include "include/tree.h"
-#include "include/errors.h"
-#include "dialogue.h"
-#include "tests.h"
+#include "modules/tree.h"
+#include "modules/errors.h"
+#include "modules/dialogue.h"
+#include "modules/tests.h"
 
 int main(void)
 {

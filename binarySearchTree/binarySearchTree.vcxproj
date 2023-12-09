@@ -19,17 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dialogue.c" />
-    <ClCompile Include="include\errors.c" />
-    <ClCompile Include="include\tree.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="tests.c" />
+    <ClCompile Include="modules\dialogue.c" />
+    <ClCompile Include="modules\errors.c" />
+    <ClCompile Include="modules\tests.c" />
+    <ClCompile Include="modules\tree.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dialogue.h" />
-    <ClInclude Include="include\errors.h" />
-    <ClInclude Include="include\tree.h" />
-    <ClInclude Include="tests.h" />
+    <ClInclude Include="modules\dialogue.h" />
+    <ClInclude Include="modules\errors.h" />
+    <ClInclude Include="modules\tests.h" />
+    <ClInclude Include="modules\tree.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

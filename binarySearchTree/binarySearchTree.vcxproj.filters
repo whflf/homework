@@ -15,33 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dialogue.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="main.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="tests.c">
+    <ClCompile Include="modules\dialogue.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="include\errors.c">
+    <ClCompile Include="modules\errors.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="include\tree.c">
+    <ClCompile Include="modules\tests.c">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\tree.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dialogue.h">
+    <ClInclude Include="modules\dialogue.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="tests.h">
+    <ClInclude Include="modules\errors.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="include\errors.h">
+    <ClInclude Include="modules\tests.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="include\tree.h">
+    <ClInclude Include="modules\tree.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

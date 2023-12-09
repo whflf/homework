@@ -29,6 +29,12 @@ static Node* createNode(const int key, char* const value)
     return newNode;
 }
 
+static void freeNode(Node* const root)
+{
+    free(root->value);
+    free(root);
+}
+
 ErrorCode insert(Node** const root, const int key, const char* const value)
 {
     char* const valueCopy = calloc(strlen(value) + 1, sizeof(char));
@@ -38,10 +44,11 @@ ErrorCode insert(Node** const root, const int key, const char* const value)
     }
 
     strcpy(valueCopy, value);
-    
+
     Node* newElement = createNode(key, valueCopy);
     if (newElement == NULL)
     {
+        free(valueCopy);
         return outOfMemory;
     }
 
@@ -92,7 +99,7 @@ ErrorCode insert(Node** const root, const int key, const char* const value)
     return ok;
 }
 
-static Node* search(const Node* const root, const int key)
+static Node* search(Node* const root, const int key)
 {
     if (root == NULL)
     {
@@ -113,7 +120,7 @@ static Node* search(const Node* const root, const int key)
     return NULL;
 }
 
-char* value(Node* const root, const int key)
+const char* value(Node* const root, const int key)
 {
     const Node* const element = search(root, key);
     if (element != NULL)
@@ -129,14 +136,37 @@ bool isInDictionary(Node* const root, const int key)
     return search(root, key) != NULL;
 }
 
-static Node* next(const Node* const element)
+static Node* mostLeft(const Node* const element)
 {
-    if (element->left == NULL)
+    if (element->left != NULL)
     {
-        return element;
+        Node* temp = element->left;
+        for (; temp->left != NULL; temp = temp->left);
+        return temp;
     }
 
-    return next(element->left);
+    return element;
+}
+
+static bool changeChild(Node* const parent, const Node* const oldChild, Node* const newChild)
+{
+    const bool parentIsNotNull = parent != NULL;
+    if (parentIsNotNull)
+    {
+        if (parent->left == oldChild)
+        {
+            parent->left = newChild;
+        }
+        else
+        {
+            parent->right = newChild;
+        }
+        if (newChild != NULL)
+        {
+            newChild->parent = parent;
+        }
+    }
+    return parentIsNotNull;
 }
 
 void deleteNode(Node** const root, const int key)
@@ -152,92 +182,52 @@ void deleteNode(Node** const root, const int key)
         element = search(*root, key);
     }
 
-    if (element != NULL)
+    if (element == NULL)
     {
-        Node* const parent = element->parent;
+        return;
+    }
 
-        if (element->left == NULL && element->right == NULL)
+    Node* const parent = element->parent;
+
+    if (element->left == NULL && element->right == NULL)
+    {
+        if (!changeChild(parent, element, NULL))
         {
-            if (parent != NULL)
-            {
-                if (parent->left == element)
-                {
-                    parent->left = NULL;
-                }
-                else
-                {
-                    parent->right = NULL;
-                }
-            }
-            else
-            {
-                Node* const elementCopy = element;
-                *root = NULL;
-                free(elementCopy->value);
-                free(elementCopy);
-                return;
-            }
-            free(element->value);
-            free(element);
+            Node* const elementCopy = element;
+            *root = NULL;
+            freeNode(elementCopy);
+            return;
         }
+        freeNode(element);
+    }
 
-        else if (element->left == NULL || element->right == NULL)
+    else if (element->left == NULL || element->right == NULL)
+    {
+        if (element->left == NULL)
         {
-            if (element->left == NULL)
+            if (!changeChild(parent, element, element->right))
             {
-                if (parent != NULL)
-                {
-                    if (parent->left == element)
-                    {
-                        parent->left = element->right;
-                    }
-                    else
-                    {
-                        parent->right = element->right;
-                    }
-                }
-                element->right->parent = parent;
+                *root = element->right;
             }
-            else
-            {
-                if (parent != NULL)
-                {
-                    if (parent->left == element)
-                    {
-                        parent->left = element->left;
-                    }
-                    else
-                    {
-                        parent->right = element->left;
-                    }
-                }
-                element->left->parent = parent;
-            }
-
-            free(element->value);
-            free(element);
         }
-
         else
         {
-            Node* const successor = next(element->right);
-            element->key = successor->key;
-            element->value = successor->value;
-            if (successor == successor->parent->left)
+            if (!changeChild(parent, element, element->left))
             {
-                successor->parent->left = successor->right;
+                *root = element->left;
             }
-            else
-            {
-                successor->parent->right = successor->right;
-            }
-            if (successor->right != NULL)
-            {
-                successor->right->parent = successor->parent;
-            }
-
-            free(successor);
         }
+
+        freeNode(element);
+    }
+    else
+    {
+        Node* const successor = mostLeft(element->right);
+        element->key = successor->key;
+        element->value = successor->value;
+        changeChild(successor->parent, successor, successor->right);
+
+        free(successor);
     }
 }
 
@@ -247,8 +237,7 @@ void deleteTree(Node** const root)
     {
         deleteTree(&(*root)->left);
         deleteTree(&(*root)->right);
-        free((*root)->value);
-        free(*root);
+        freeNode(*root);
         *root = NULL;
     }
 }

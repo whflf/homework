@@ -10,10 +10,10 @@ typedef struct Node Node;
 ErrorCode insert(Node** const root, const int key, const char* const value);
 
 //gets value from tree by key
-char* value(const Node* const root, const int key);
+const char* value(Node* const root, const int key);
 
 //checks for a key in tree
-bool isInDictionary(const Node* const root, const int key);
+bool isInDictionary(Node* const root, const int key);
 
 //deletes certain node from tree by key
 void deleteNode(Node** const root, const int key);

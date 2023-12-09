@@ -1,7 +1,7 @@
 #pragma once
 
-#include "include/errors.h"
-#include "include/tree.h"
+#include "errors.h"
+#include "tree.h"
 
 typedef enum menuOptions {
     exitProgram,
