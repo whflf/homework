@@ -3,7 +3,14 @@
 
 #include "circularList.h"
 
-static List* createList(const list_value_t value)
+struct CircularList
+{
+    ListValue value;
+    List* previous;
+    List* next;
+};
+
+static List* createNode(const ListValue value)
 {
     List* const newList = (List*)calloc(1, sizeof(List));
     if (newList == NULL)
@@ -15,29 +22,25 @@ static List* createList(const list_value_t value)
     return newList;
 }
 
-ErrorCode insertElement(List** const head, const list_value_t value)
+ErrorCode insertElement(List** const head, const ListValue value)
 {
-    List* const newNode = createList(value);
+    List* const newNode = createNode(value);
     if (newNode == NULL)
     {
         return outOfMemory;
     }
 
-    newNode->next = *head;
-
     if (*head == NULL)
     {
-        newNode->next = newNode;
+        newNode->previous = newNode->next = newNode;
         *head = newNode;
     }
     else
     {
-        List* last = *head;
-        while (last->next != *head)
-        {
-            last = last->next;
-        }
-        last->next = newNode;
+        newNode->next = *head;
+        newNode->previous = (*head)->previous;
+        newNode->previous->next = newNode;
+        (*head)->previous = newNode;
     }
 
     return ok;
@@ -51,19 +54,13 @@ static void removeHead(List** const head)
     }
 
     List* const tmpList = *head;
-    *head = (*head)->next;
-    List* last = *head;
-    while (last->next != tmpList)
-    {
-        last = last->next;
-    }
-    last->next = *head;
+    *head = tmpList->next;
+    (*head)->previous = tmpList->previous;
+    (*head)->previous->next = *head;
     free(tmpList);
-
-    return ok;
 }
 
-void removeElement(List** const head, const List* const element)
+void removeElement(List** const head, List* const element)
 {
     if (head == NULL || *head == NULL)
     {
@@ -76,24 +73,9 @@ void removeElement(List** const head, const List* const element)
         return;
     }
 
-    List* prev = NULL;
-    List* tmpList = *head;
-    do
-    {
-        if (tmpList == element)
-        {
-            if (prev)
-            {
-                prev->next = tmpList->next;
-            }
-            free(tmpList);
-            break;
-        }
-        prev = tmpList;
-        tmpList = tmpList->next;
-    } while (prev != tmpList);
-
-    return ok;
+    element->previous->next = element->next;
+    element->next->previous = element->previous;
+    free(element);
 }
 
 void printList(const List* const head)
@@ -103,7 +85,7 @@ void printList(const List* const head)
         const List* tmpList = head;
         do
         {
-            printf("%d ", tmpList->value);
+            printf("%zu ", tmpList->value);
             tmpList = tmpList->next;
         } while (tmpList != head);
         printf("\n");
@@ -114,36 +96,32 @@ void printList(const List* const head)
     }
 }
 
-void deleteList(List* const head)
+void deleteList(List** const head)
 {
-    if (head == NULL)
+    if (*head == NULL)
     {
         return;
     }
 
-    List* curr = head;
+    List* current = *head;
     List* next = NULL;
     do
     {
-        next = curr->next;
-        free(curr);
-        curr = next;
-    } while (curr != head);
+        next = current->next;
+        free(current);
+        current = next;
+    } while (current != *head);
+
+    *head = NULL;
 }
 
-List* getElementAtPosition(List* const head, const int position)
+ListValue getValue(const List* const head)
 {
-    int positionCounter = 0;
-    List* tmpList = head;
-    do
-    {
-        if (positionCounter == position)
-        {
-            return tmpList;
-        }
-        tmpList = tmpList->next;
-        ++positionCounter;
-    } while (head != head->next);
-
-    return NULL;
+    return head == NULL ? (ListValue)0 : head->value;
 }
+
+List* getNext(const List* const head)
+{
+    return head == NULL ? NULL : head->next;
+}
+

@@ -2,56 +2,21 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "include/circularList.h"
-#include "tests.h"
+#include "include/counting.h"
+#include "include/tests.h"
 
-#define TEXT_WRONG_INPUT_SCANF "Wrong input. Enter a positive integer.\n"
-
-List* calculateLastSoldierPosition(const int n, const int m)
-{
-    List* soldiers = NULL;
-
-    if (m == 1)
-    {
-        if (insertElement(&soldiers, n) != ok)
-        {
-            return NULL;
-        }
-    }
-    else
-    {
-        for (size_t i = 1; i <= n; ++i) 
-        {
-            if (insertElement(&soldiers, i) != ok)
-            {
-                return NULL;
-            }
-        }
-
-        int steps = 0;
-
-        const List* element = getElementAtPosition(soldiers, 0);
-        while (element != element->next)
-        {
-            ++steps;
-            if ((steps + 1) % m == 0) 
-            {
-                removeElement(&soldiers, element->next);
-                ++steps;
-            }
-            element = element->next;
-        }
-    }
-
-    return soldiers;
-}
-
-static bool processIntInput(const char* const prompt, int* const intPtr)
+static bool processSizeInput(const char* const prompt, size_t* const intPtr)
 {
     printf(prompt);
-    if (scanf_s("%d", intPtr) == 0)
+    if (scanf_s("%zu", intPtr) == 0)
     {
-        printf(TEXT_WRONG_INPUT_SCANF);
+        printf("Wrong input. Enter a positive integer.\n");
+        return false;
+    }
+
+    if (*intPtr == 0 || *intPtr > LLONG_MAX)
+    {
+        printf("Input can't be zero or negative.\n");
         return false;
     }
 
@@ -68,29 +33,21 @@ int main(void)
         return testsFailed;
     }
 
-    int n, m;
-    if (!processIntInput("> n (number of soldiers) = ", &n) || !processIntInput("> m (destroy step) = ", &m))
+    size_t n, m;
+    if (!processSizeInput("> n (number of soldiers) = ", &n) || !processSizeInput("> m (destroy step) = ", &m))
     {
         return wrongInput;
     }
 
-    if (n <= 0 || m <= 0)
+    ErrorCode errorCode = ok;
+    const size_t lastSoldierPosition = calculateLastSoldierPosition(n, m, &errorCode);
+    if (errorCode != ok)
     {
-        printf("n or m can't be zero or negative.\n");
-        return wrongInput;
+        printf("Error in calculateLastSoldierPosition(). Code: %d.\n", errorCode);
+        return errorCode;
     }
 
-    List* const soldiers = calculateLastSoldierPosition(n, m);
-    if (!soldiers)
-    {
-        printf("Couldn't create soldiers list (out of memory).\n");
-        return outOfMemory;
-    }
-
-    printf("Last soldier position: ");
-    printList(soldiers);
-
-    deleteList(soldiers);
+    printf("\nLast soldier position: %zu\n", lastSoldierPosition);
 
     return ok;
 }

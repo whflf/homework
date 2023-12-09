@@ -20,12 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\circularList.c" />
+    <ClCompile Include="include\counting.c" />
+    <ClCompile Include="include\tests.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="tests.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\circularList.h" />
-    <ClInclude Include="tests.h" />
+    <ClInclude Include="include\counting.h" />
+    <ClInclude Include="include\errors.h" />
+    <ClInclude Include="include\tests.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
