@@ -22,3 +22,4 @@ ErrorCode printErrorMessage(const ErrorCode errorCode)
     printf("[E] %s\n", getErrorMessage(errorCode));
     return errorCode;
 }
+
