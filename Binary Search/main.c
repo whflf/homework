@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 {
     if (argc > 1 && strcmp(argv[1], "run tests") == 0)
     {
-        return (testCorrectCase() || testIncorrectCase());
+        return testCorrectCase() && testIncorrectCase();
     }
 
     if (!testCorrectCase() || !testIncorrectCase()) 

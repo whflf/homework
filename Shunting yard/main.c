@@ -43,8 +43,13 @@ char* getString(void)
     return string;
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    if (argc > 1 && strcmp(argv[1], "run tests") == 0)
+    {
+        return passTests();
+    }
+
     if (!passTests())
     {
         printf(ERROR_FORMAT_STRING, getErrorMessage(testsFailed));

@@ -162,8 +162,13 @@ bool testNegativeCase(void)
     return sumTest(x, y, correctSumBits, correctSum);
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    if (argc > 1 && strcmp(argv[1], "run tests") == 0)
+    {
+        return testPositiveCase() && testNegativeCase();
+    }
+
     setlocale(LC_ALL, "ru-RU");
 
     if (!testPositiveCase() || !testNegativeCase())

@@ -178,11 +178,11 @@ bool testBoundaryCase(void)
         compareArrays(countof(unsortedArray2), unsortedArray2, sortedArray);
 }
 
-int main(int argc, char* argv)
+int main(int argc, char* argv[])
 {
     if (argc > 1 && strcmp(argv[1], "run tests") == 0)
     {
-        return testCorrectCase() || testIncorrectCase() || testBoundaryCase();
+        return testCorrectCase() && testIncorrectCase() && testBoundaryCase();
     }
 
     if (!testCorrectCase() || !testIncorrectCase() || !testBoundaryCase())

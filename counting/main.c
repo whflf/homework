@@ -1,6 +1,7 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "include/counting.h"
 #include "include/tests.h"
@@ -25,8 +26,13 @@ static bool processSizeInput(const char* const prompt, size_t* const intPtr)
     return true;
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    if (argc > 1 && strcmp(argv[1], "run tests") == 0)
+    {
+        return passTests();
+    }
+
     if (!passTests())
     {
         printf("Tests failed.\n");

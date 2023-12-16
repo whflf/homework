@@ -1,5 +1,6 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "module/phoneBook.h"
 #include "module/errors.h"
@@ -7,8 +8,13 @@
 #include "module/fileParsing.h"
 #include "module/menuInterface.h"
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    if (argc > 1 && strcmp(argv[1], "run tests") == 0)
+    {
+        return passTests();
+    }
+
     if (!passTests())
     {
         return printErrorMessage(testsFailed, NULL, true);
