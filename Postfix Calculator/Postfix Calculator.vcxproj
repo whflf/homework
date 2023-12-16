@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4bbe43dc-2dbc-49db-9de3-059a1684eb9f}</ProjectGuid>
-    <RootNamespace>SmartQsort</RootNamespace>
+    <ProjectGuid>{4d761021-ad0e-4171-a102-a32c34f9e51e}</ProjectGuid>
+    <RootNamespace>PostfixCalculator</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,7 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="calculator.c" />
+    <ClCompile Include="include\errors.c" />
+    <ClCompile Include="include\stack.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="tests.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="calculator.h" />
+    <ClInclude Include="include\errors.h" />
+    <ClInclude Include="include\stack.h" />
+    <ClInclude Include="stack.h" />
+    <ClInclude Include="tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
