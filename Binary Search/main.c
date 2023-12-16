@@ -75,7 +75,7 @@ bool testIncorrectCase()
     return binarySearch(testArray, 0, 4, 5) == NOT_FOUND;
 }
 
-int main(int argc, char* argv) 
+int main(int argc, char* argv[])
 {
     if (argc > 1 && strcmp(argv[1], "run tests") == 0)
     {
