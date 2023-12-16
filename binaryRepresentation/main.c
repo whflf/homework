@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
 {
     if (argc > 1 && strcmp(argv[1], "run tests") == 0)
     {
-        return testPositiveCase() && testNegativeCase();
+        return testPositiveCase() && testNegativeCase() ? 0 : 1;
     }
 
     setlocale(LC_ALL, "ru-RU");

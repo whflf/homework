@@ -46,7 +46,7 @@ ErrorCode main(int argc, char* argv[])
 {
     if (argc > 1 && strcmp(argv[1], "run tests") == 0)
     {
-        return passTests();
+        return passTests() ? 0 : 1;
     }
 
     if (!passTests())

@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 {
     if (argc > 1 && strcmp(argv[1], "run tests") == 0)
     {
-        return testCorrectCase() && testBoundaryCase1() && testBoundaryCase2();
+        return testCorrectCase() && testBoundaryCase1() && testBoundaryCase2() ? 0 : 1;
     }
 
     if (!testCorrectCase() || !testBoundaryCase1() || !testBoundaryCase2()) 
