@@ -6,6 +6,8 @@ static char* getErrorMessage(const ErrorCode errorCode)
 {
     switch (errorCode)
     {
+    case ok:
+        return "";
     case outOfMemory:
         return "~ Memory allocation has failed. Exiting";
     case testsFailed:

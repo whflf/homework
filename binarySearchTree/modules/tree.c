@@ -138,12 +138,9 @@ bool isInDictionary(Node* const root, const int key)
 
 static Node* mostLeft(const Node* const element)
 {
-    if (element->left != NULL)
-    {
-        Node* temp = element->left;
-        for (; temp->left != NULL; temp = temp->left);
-        return temp;
-    }
+    Node* temp = element;
+    for (; temp->left != NULL; temp = temp->left);
+    return temp;
 
     return element;
 }

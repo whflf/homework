@@ -15,11 +15,7 @@ int main(void)
     Node* dictionary = NULL;
     
     const ErrorCode error = programLoop(&dictionary);
-    if (error != ok)
-    {
-        printErrorMessage(error);
-    }
 
     deleteTree(&dictionary);
-    return error;
+    return printErrorMessage(error);
 }

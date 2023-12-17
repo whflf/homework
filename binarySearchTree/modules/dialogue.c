@@ -9,6 +9,17 @@
 
 #define DYNAMIC_STRING_MIN_ALLOCATION_SIZE 16
 
+typedef enum menuOptions 
+{
+    exitProgram,
+    addValueToDictionary,
+    getValueByKeyFromDictionary,
+    checkForKeyInDictionary,
+    deleteKeyFromDictionary,
+
+    menuOptionsCount
+} MenuOption;
+
 static char* getString(void)
 {
     size_t allocSize = DYNAMIC_STRING_MIN_ALLOCATION_SIZE, stringSize = 0;
