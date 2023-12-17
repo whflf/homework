@@ -1,12 +1,19 @@
 ﻿#include <stdlib.h>
+#include <string.h>
 
 #include "modules/tree.h"
 #include "modules/errors.h"
 #include "modules/dialogue.h"
 #include "modules/tests.h"
 
-int main(void)
+ErrorCode main(int argc, char* argv[])
 {
+    if (argc > 1 && strcmp(argv[1], "run tests") == 0)
+    {
+        return passTests() ? 0 : 1;
+    }
+
+
     if (!passTests())
     {
         return printErrorMessage(testsFailed);
