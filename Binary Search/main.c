@@ -1,4 +1,6 @@
-﻿#include <stdio.h>
+﻿#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -77,9 +79,12 @@ bool testIncorrectCase()
 
 int main(int argc, char* argv[])
 {
-    if (argc > 1 && strcmp(argv[1], "run tests") == 0)
+    for (size_t i = 0; i < argc; ++i)
     {
-        return testCorrectCase() && testIncorrectCase() ? 0 : 1;
+        if (strcmp(argv[i], "-tests") == 0)
+        {
+            return testCorrectCase() && testIncorrectCase() ? 0 : 1;
+        }
     }
 
     if (!testCorrectCase() || !testIncorrectCase()) 

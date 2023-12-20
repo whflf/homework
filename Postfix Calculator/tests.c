@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "include/stack.h"
+#include "include/errors.h"
 #include "calculator.h"
 #include "tests.h"
 

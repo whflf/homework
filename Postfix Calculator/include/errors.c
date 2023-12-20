@@ -14,6 +14,7 @@ char* getErrorMessage(const ErrorCode errorCode)
         return "The expression isn't correct.";
     case testsFailed:
         return "~ Tests failed.";
+    default:
+        return "Unknown error.";
     }
-    return "Unknown error.";
 }

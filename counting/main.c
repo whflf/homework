@@ -28,9 +28,12 @@ static bool processSizeInput(const char* const prompt, size_t* const intPtr)
 
 int main(int argc, char* argv[])
 {
-    if (argc > 1 && strcmp(argv[1], "run tests") == 0)
+    for (size_t i = 0; i < argc; ++i)
     {
-        return passTests() ? 0 : 1;
+        if (strcmp(argv[i], "-tests") == 0)
+        {
+            return passTests() ? 0 : 1;
+        }
     }
 
     if (!passTests())

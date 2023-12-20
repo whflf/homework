@@ -1,4 +1,6 @@
-﻿#include <stdio.h>
+﻿#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
 #include <stdbool.h>
@@ -164,9 +166,12 @@ bool testNegativeCase(void)
 
 int main(int argc, char* argv[])
 {
-    if (argc > 1 && strcmp(argv[1], "run tests") == 0)
+    for (size_t i = 0; i < argc; ++i)
     {
-        return testPositiveCase() && testNegativeCase() ? 0 : 1;
+        if (strcmp(argv[i], "-tests") == 0)
+        {
+            return testPositiveCase() && testNegativeCase() ? 0 : 1;
+        }
     }
 
     setlocale(LC_ALL, "ru-RU");
