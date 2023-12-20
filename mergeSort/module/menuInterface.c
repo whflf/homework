@@ -8,16 +8,24 @@
 
 #define TEXT_BAD_INPUT "Bad input\n"
 
+typedef enum menuOptions {
+    exitProgram,
+    sortByName,
+    sortByPhone,
+    printUnsorted,
+
+    menuOptionsCount
+} MenuOption;
+
 static void wait(void)
 {
     printf("\nPress enter to continue...");
     while (getchar() != '\n');
 }
 
-static ErrorCode sortBook(const List* const phoneBook, const BookSortOption sortOption)
+static ErrorCode sortBook(List* phoneBook, const BookSortOption sortOption)
 {
-    const size_t bookSize = getSize(phoneBook);
-    List* sortedBook = mergeSort(&phoneBook, 0, bookSize, sortOption);
+    List* sortedBook = mergeSort(cloneList(phoneBook), sortOption);
     if (sortedBook == NULL)
     {
         return printErrorMessage(outOfMemory, "mergeSort() result in sortBook() is NULL");
@@ -27,7 +35,7 @@ static ErrorCode sortBook(const List* const phoneBook, const BookSortOption sort
     return ok;
 }
 
-ErrorCode programLoop(const List* const phoneBook)
+ErrorCode programLoop(List* const phoneBook)
 {
     const char* const menuOptionsNames[] = {
         [exitProgram] = "Exit",
@@ -49,11 +57,9 @@ ErrorCode programLoop(const List* const phoneBook)
 
         const char input = getchar();
         while (getchar() != '\n');
-
         system("cls");
 
         ErrorCode errorCode = ok;
-
         const MenuOption coercedInput = input - '0';
         switch (coercedInput)
         {

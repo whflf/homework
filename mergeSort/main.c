@@ -43,6 +43,5 @@ int main(void)
 
     deleteList(&phoneBook);
     free(content);
-
     return error;
 }

@@ -6,9 +6,9 @@
 #include "list.h"
 #include "errors.h"
 
-static List* createListElement(ListValue* const name, ListValue* const phone)
+static List* createListElement(ListValue name, ListValue phone)
 {
-    List* newElement = (List*)calloc(1, sizeof(List));
+    List* const newElement = (List*)calloc(1, sizeof(List));
     if (newElement == NULL)
     {
         return NULL;
@@ -16,27 +16,30 @@ static List* createListElement(ListValue* const name, ListValue* const phone)
 
     newElement->name = name;
     newElement->phone = phone;
-    newElement->previous = newElement->next = newElement;
 
     return newElement;
 }
 
-size_t getSize(const List* const head)
+size_t getSize(const List* head)
 {
     size_t size = 0;
-    if (head != NULL)
+    while (head != NULL)
     {
-        List* tempNode = head;
-        do
-        {
-            ++size;
-            tempNode = tempNode->next;
-        } while (tempNode != head);
+        ++size;
+        head = head->next;
     }
     return size;
 }
 
-ErrorCode append(List** head, ListValue* const name, ListValue* const phone)
+void convertCircularListToNonCircular(List* const head)
+{
+    if (head != NULL)
+    {
+        head->previous = head->previous->next = NULL;
+    }
+}
+
+ErrorCode append(List** const head, ListValue name, ListValue phone)
 {
     List* const newElement = createListElement(name, phone);
     if (newElement == NULL)
@@ -46,6 +49,7 @@ ErrorCode append(List** head, ListValue* const name, ListValue* const phone)
 
     if (*head == NULL)
     {
+        newElement->previous = newElement->next = newElement;
         *head = newElement;
     }
     else
@@ -59,166 +63,158 @@ ErrorCode append(List** head, ListValue* const name, ListValue* const phone)
     return ok;
 }
 
-List* getElement(List* const* head, const size_t position)
+List* getElement(List* head, const size_t position)
 {
-    List* tempNode = *head;
     size_t tempPosition = 0;
     do
     {
-        if (tempPosition == position) return tempNode;
+        if (tempPosition == position)
+        {
+            return head;
+        }
         ++tempPosition;
-        tempNode = tempNode->next;
-    } while (tempNode != *head);
+        head = head->next;
+    } while (head != NULL);
 
     return NULL;
 }
 
-static bool isInList(List* const head, ListValue* const name, ListValue* const phone)
+static ListValue copyString(const ListValue string)
 {
-    if (head != NULL)
+    ListValue const newString = (ListValue)malloc(strlen(string) + 1);
+    if (newString == NULL)
     {
-        List* tempNode = head;
-        do
+        return NULL;
+    }
+    strcpy(newString, string);
+    return newString;
+}
+
+List* cloneList(const List* head)
+{
+    List* clonedList = NULL;
+    while (head != NULL)
+    {
+        ListValue clonedName = copyString(head->name);
+        ListValue clonedPhone = copyString(head->phone);
+        if (append(&clonedList, clonedName, clonedPhone) != ok)
         {
-            if (strcmp(name, tempNode->name) == 0 && strcmp(phone, tempNode->phone) == 0) return true;
-            tempNode = tempNode->next;
-        } while (tempNode != head);
+            free(clonedName);
+            free(clonedPhone);
+            return NULL;
+        }
+        head = head->next;
     }
-
-    return false;
+    convertCircularListToNonCircular(clonedList);
+    return clonedList;
 }
 
-static char* copyName(const List* const element)
-{
-    char* const name = (char*)malloc(strlen(element->name) + 1);
-    if (name == NULL)
-    {
-        return NULL;
-    }
-
-    strcpy(name, element->name);
-    return name;
-}
-
-static char* copyPhone(const List* const element)
-{
-    char* const phone = (char*)malloc(strlen(element->phone) + 1);
-    if (phone == NULL)
-    {
-        return NULL;
-    }
-
-    strcpy(phone, element->phone);
-    return phone;
-}
-
-void deleteList(List** head)
+void deleteList(List** const head)
 {
     if (*head == NULL)
     {
         return;
     }
 
-    List* current = *head;
     List* next = NULL;
     do
     {
-        next = current->next;
-        free(current->name);
-        free(current->phone);
-        free(current);
-        current = next;
-    } while (current != *head);
-
-    *head = NULL;
+        next = (*head)->next;
+        free((*head)->name);
+        free((*head)->phone);
+        free(*head);
+        *head = next;
+    } while (*head != NULL);
 }
 
-List* mergeSort(const List* const* head, const size_t left, const size_t right, const BookSortOption option)
+static List* merge(List* left, List* right, const BookSortOption option)
 {
-    if (left + 1 == right)
-    {
-        const List* const tmpElement = getElement(head, left);
+    ListValue firstValue = option == byName ? left->name : left->phone;
+    ListValue secondValue = option == byName ? right->name : right->phone;
 
-        List* const element = createListElement(copyName(tmpElement), copyPhone(tmpElement));
-        if (element == NULL)
+    List* head = NULL;
+    List* tail = NULL;
+
+    while (left && right)
+    {
+        if (strcmp(firstValue, secondValue) <= 0)
         {
-            return NULL;
-        }
-
-        return element;
-    }
-
-    const size_t middle = left + (right - left) / 2;
-
-    List* firstElement = mergeSort(head, left, middle, option);
-    List* secondElement = mergeSort(head, middle, right, option);
-    if (firstElement == NULL || secondElement == NULL)
-    {
-        free(firstElement);
-        free(secondElement);
-        return NULL;
-    }
-
-    List* firstList = firstElement;
-    List* secondList = secondElement;
-    const size_t firstListSize = getSize(firstList), 
-                 secondListSize = getSize(secondList);
-
-    List* mergedList = NULL;
-
-    ListValue* firstValue = NULL;
-    ListValue* secondValue = NULL;
-
-    do
-    {
-        if (option == byName)
-        {
-            firstValue = firstElement->name;
-            secondValue = secondElement->name;
+            if (head == NULL)
+            {
+                head = tail = left;
+            }
+            else
+            {
+                tail->next = left;
+                left->previous = tail;
+                tail = left;
+            }
+            left = left->next;
         }
         else
         {
-            firstValue = firstElement->phone;
-            secondValue = secondElement->phone;
-        }
-        if (
-            !isInList(mergedList, firstElement->name, firstElement->phone) &&
-            (strcmp(firstValue, secondValue) <= 0 || isInList(mergedList, secondElement->name, secondElement->phone))
-            )
-        {
-            if (append(&mergedList, copyName(firstElement), copyPhone(firstElement)) == outOfMemory)
+            if (head == NULL)
             {
-                return NULL;
+                head = tail = right;
             }
-            firstElement = firstElement->next;
-        }
-        else
-        {
-            if (append(&mergedList, copyName(secondElement), copyPhone(secondElement)) == outOfMemory)
+            else
             {
-                return NULL;
+                tail->next = right;
+                right->previous = tail;
+                tail = right;
             }
-            secondElement = secondElement->next;
+            right = right->next;
         }
-    } while (firstElement != firstList || secondElement != secondList || getSize(mergedList) != firstListSize + secondListSize);
+    }
 
-    deleteList(&firstList);
-    deleteList(&secondList);
+    if (left)
+    {
+        tail->next = left;
+        left->previous = tail;
+    }
+    else if (right)
+    {
+        tail->next = right;
+        right->previous = tail;
+    }
 
-    return mergedList;
+    return head;
 }
 
-void printList(const List* const head)
+List* mergeSort(List* const head, const BookSortOption option)
+{
+    if (head == NULL || head->next == NULL)
+    {
+        return head;
+    }
+
+    List* slow = head;
+    List* fast = head->next;
+    while (fast && fast->next)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    List* rightHead = slow->next;
+    slow->next = NULL;
+
+    List* left = mergeSort(head, option);
+    List* right = mergeSort(rightHead, option);
+
+    return merge(left, right, option);
+}
+
+void printList(const List* head)
 {
     if (head != NULL)
     {
-        List* tmpList = head;
         printf("Entries:\n");
         do
         {
-            printf("  Name:  %s\n  Phone: %s\n\n", tmpList->name, tmpList->phone);
-            tmpList = tmpList->next;
-        } while (tmpList != head);
+            printf("- Name:  %s\n  Phone: %s\n\n", head->name, head->phone);
+            head = head->next;
+        } while (head != NULL);
     }
     else
     {

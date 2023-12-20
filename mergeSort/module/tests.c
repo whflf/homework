@@ -8,25 +8,31 @@
 
 #define TEST_FILE "test.txt"
 
+#define countof(array) sizeof(array) / sizeof(array[0])
+
 static bool sortByOptionTest(
-    const List* const phoneBook,
+    List* phoneBook,
     const BookSortOption option,
-    const char* const expectedName,
-    const char* const expectedPhone
+    const ListValue* const expectedOrderedNames,
+    const ListValue* const expectedOrderedPhones,
+    const size_t expectedOrderedEntriesLength
 )
 {
-    const size_t bookSize = getSize(phoneBook);
-    List* sortedBook = mergeSort(&phoneBook, 0, bookSize, option);
-    
-    List* firstElement = getElement(&sortedBook, 0);
+    List* sortedBook = mergeSort(cloneList(phoneBook), option);
 
-    const bool result =
-        strcmp(firstElement->name, expectedName) == 0 &&
-        strcmp(firstElement->phone, expectedPhone) == 0;
+    for (size_t i = 0; i < expectedOrderedEntriesLength; ++i)
+    {
+        List* element = getElement(sortedBook, i);
+        if (strcmp(element->name, expectedOrderedNames[i]) != 0 ||
+            strcmp(element->phone, expectedOrderedPhones[i]) != 0)
+        {
+            deleteList(&sortedBook);
+            return false;
+        }
+    }
 
     deleteList(&sortedBook);
-    
-    return result;
+    return true;
 }
 
 bool passTests(void)
@@ -50,9 +56,16 @@ bool passTests(void)
         return false;
     }
 
+    const ListValue expectedNamesSortByName[] = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+    const ListValue expectedPhonesSortByName[] = { "9", "8", "7", "6", "5", "4", "3", "2", "1", "0" };
+    const ListValue expectedNamesSortByPhone[] = { "J", "I", "H", "G", "F", "E", "D", "C", "B", "A" };
+    const ListValue expectedPhonesSortByPhone[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
+    const size_t size = countof(expectedNamesSortByName);
+
     const bool result =
-        sortByOptionTest(phoneBook, byName, "A", "9") &&
-        sortByOptionTest(phoneBook, byPhone, "J", "0");
+        sortByOptionTest(phoneBook, byName, expectedNamesSortByName, expectedPhonesSortByName, size) &&
+        sortByOptionTest(phoneBook, byPhone, expectedNamesSortByPhone, expectedPhonesSortByPhone, size);
 
     deleteList(&phoneBook);
     free(content);

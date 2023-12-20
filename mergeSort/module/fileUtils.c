@@ -88,5 +88,6 @@ int deserializeBookContent(const char* const content, List** book)
         }
     }
 
+    convertCircularListToNonCircular(*book);
     return ok;
 }
