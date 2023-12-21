@@ -140,9 +140,8 @@ static Node* mostLeft(const Node* const element)
 {
     Node* temp = element;
     for (; temp->left != NULL; temp = temp->left);
-    return temp;
 
-    return element;
+    return temp;
 }
 
 static bool changeChild(Node* const parent, const Node* const oldChild, Node* const newChild)
