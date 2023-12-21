@@ -8,7 +8,7 @@
 
 ErrorCode main(int argc, char* argv[])
 {
-    if (argc > 1 && strcmp(argv[1], "run tests") == 0)
+    if (argc > 1 && strcmp(argv[1], "-tests") == 0)
     {
         return passTests() ? 0 : 1;
     }
