@@ -41,8 +41,13 @@ static bool testGettingValue(void)
 static bool testInserting(void)
 {
     Node* tree = initTestTree();
-    const char* const testValue = value(tree, 4);
-    if (tree == NULL || !testGettingValue() || insert(&tree, 4, "cow") != ok || testValue == NULL)
+    if (tree == NULL || !testGettingValue())
+    {
+        return false;
+    }
+
+    char* testValue;
+    if (insert(&tree, 4, "cow") != ok || (testValue = value(tree, 4)) == NULL)
     {
         return false;
     }
