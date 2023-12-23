@@ -30,6 +30,9 @@
     <ClCompile Include="module\tests.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="module\errors.c">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\errors.h">

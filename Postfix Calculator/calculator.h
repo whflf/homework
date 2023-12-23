@@ -1,5 +1,5 @@
 #pragma once
 
-#include "errors.h"
+#include "include/errors.h"
 
 int getResult( const char* string, ErrorCode* errorCode);
