@@ -8,3 +8,7 @@ G - 3
 H - 2
 I - 1
 J - 0
+Eva - 720
+Dylan - 982
+Mom - 908
+Brother - 451

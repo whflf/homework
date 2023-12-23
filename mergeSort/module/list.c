@@ -129,19 +129,20 @@ void deleteList(List** const head)
 
 static List* merge(List* left, List* right, const BookSortOption option)
 {
-    ListValue firstValue = option == byName ? left->name : left->phone;
-    ListValue secondValue = option == byName ? right->name : right->phone;
-
     List* head = NULL;
     List* tail = NULL;
 
     while (left && right)
     {
+        ListValue firstValue = option == byName ? left->name : left->phone;
+        ListValue secondValue = option == byName ? right->name : right->phone;
+
         if (strcmp(firstValue, secondValue) <= 0)
         {
             if (head == NULL)
             {
-                head = tail = left;
+                head = createListElement(left->name, left->phone);
+                tail = head;
             }
             else
             {
@@ -155,7 +156,8 @@ static List* merge(List* left, List* right, const BookSortOption option)
         {
             if (head == NULL)
             {
-                head = tail = right;
+                head = createListElement(right->name, right->phone);
+                tail = head;
             }
             else
             {

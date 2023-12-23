@@ -56,10 +56,10 @@ bool passTests(void)
         return false;
     }
 
-    const ListValue expectedNamesSortByName[] = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
-    const ListValue expectedPhonesSortByName[] = { "9", "8", "7", "6", "5", "4", "3", "2", "1", "0" };
-    const ListValue expectedNamesSortByPhone[] = { "J", "I", "H", "G", "F", "E", "D", "C", "B", "A" };
-    const ListValue expectedPhonesSortByPhone[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+    const ListValue expectedNamesSortByName[] = { "A", "B", "Brother", "C", "D", "Dylan", "E", "Eva", "F", "G", "H", "I", "J", "Mom" };
+    const ListValue expectedPhonesSortByName[] = { "9", "8", "451", "7", "6", "982", "5", "720", "4", "3", "2", "1", "0", "908" };
+    const ListValue expectedNamesSortByPhone[] = { "J", "I", "H", "G", "F", "Brother", "E", "D", "C", "Eva", "B", "A", "Mom", "Dylan" };
+    const ListValue expectedPhonesSortByPhone[] = { "0", "1", "2", "3", "4", "451", "5", "6", "7", "720", "8", "9", "908", "982"};
 
     const size_t size = countof(expectedNamesSortByName);
 
