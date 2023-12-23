@@ -19,6 +19,6 @@ static char* getErrorMessage(const ErrorCode errorCode)
 
 ErrorCode printErrorMessage(const ErrorCode errorCode)
 {
-    printf("[E] %s\n", getErrorMessage(errorCode));
+    printf("%s %s\n", errorCode == ok ? "" : "[E]", getErrorMessage(errorCode));
     return errorCode;
 }

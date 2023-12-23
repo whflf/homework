@@ -3,27 +3,20 @@
 #include "tests.h"
 #include "lexer.h"
 
-static bool testFloatNumber(void)
-{
-    return isNumber("359.158e-56");
-}
-
-static bool testIntegerNumber(void)
-{
-    return isNumber("6382730");
-}
-
-static bool testNotNumber(void)
-{
-    return !isNumber("42x13");
-}
-
-static bool testEmptyString(void)
-{
-    return !isNumber("");
-}
+#define TESTS_NUMBER 8
 
 bool passTests(void)
 {
-    return testFloatNumber() && testIntegerNumber() && testNotNumber() && testEmptyString();
+    char* testStrings[] = { "359.158e-56", "6382730", "42x13", "", "123.32E+123+12", "123.32E-123", "123.23E123+12", "123.23E123" };
+    bool testResults[] = { true, true, false, false, false, true, false, true };
+
+    for (size_t i = 0; i < TESTS_NUMBER; ++i)
+    {
+        if (isNumber(testStrings[i]) != testResults[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
 }

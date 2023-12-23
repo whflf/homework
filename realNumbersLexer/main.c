@@ -41,7 +41,7 @@ ErrorCode main(int argc, char* argv[])
 {
     if (argc > 1 && strcmp(argv[1], "-tests") == 0)
     {
-        return passTests() ? 0 : 1;
+        return passTests() ? ok : testsFailed;
     }
 
     if (!passTests())

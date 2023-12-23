@@ -10,13 +10,19 @@ typedef enum
     stateIntegerPart,
     stateFractionalPart,
     stateExponent,
+    stateDigitsAfterExp,
     stateIsNumber,
     stateIsNotNumber
 } State;
 
+static bool isExpSign(const char character)
+{
+    return character == 'E' || character == 'e';
+}
+
 static void checkCaseStart(State* const currentState, const char character)
 {
-    if (isdigit(character) && character != '0')
+    if (isdigit(character))
     {
         *currentState = stateIntegerPart;
     }
@@ -32,7 +38,7 @@ static void checkCaseIntegerPart(State* const currentState, const char character
     {
         *currentState = stateFractionalPart;
     }
-    else if (character == 'E' || character == 'e')
+    else if (isExpSign(character))
     {
         *currentState = stateExponent;
     }
@@ -44,7 +50,7 @@ static void checkCaseIntegerPart(State* const currentState, const char character
 
 static void checkCaseFractionalPart(State* const currentState, const char character)
 {
-    if (character == 'E' || character == 'e')
+    if (isExpSign(character))
     {
         *currentState = stateExponent;
     }
@@ -56,7 +62,19 @@ static void checkCaseFractionalPart(State* const currentState, const char charac
 
 static void checkCaseExponent(State* const currentState, const char character)
 {
-    if (!isdigit(character) && character != '+' && character != '-')
+    if (isdigit(character) || character == '+' || character == '-')
+    {
+        *currentState = stateDigitsAfterExp;
+    }
+    else
+    {
+        *currentState = stateIsNotNumber;
+    }
+}
+
+static void checkCaseDigitsAfterExp(State* const currentState, const char character)
+{
+    if (!isdigit(character))
     {
         *currentState = stateIsNotNumber;
     }
@@ -86,6 +104,9 @@ static State analyzeString(const char* const string)
             break;
         case stateExponent:
             checkCaseExponent(&currentState, string[i]);
+            break;
+        case stateDigitsAfterExp:
+            checkCaseDigitsAfterExp(&currentState, string[i]);
             break;
         }
 
