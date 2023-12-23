@@ -133,11 +133,28 @@
     <ClCompile Include="tests.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="errors.h" />
     <ClInclude Include="include\errors.h" />
     <ClInclude Include="include\qsort.h" />
     <ClInclude Include="mostOccurredElement.h" />
     <ClInclude Include="tests.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="input.txt">
+      <TargetPath>%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="staticFiles\testBadFile.txt">
+      <TargetPath>staticFiles\%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="staticFiles\testCorrectFile.txt">
+      <TargetPath>staticFiles\%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="staticFiles\testMixedFile.txt">
+      <TargetPath>staticFiles\%(Filename)%(Extension)</TargetPath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

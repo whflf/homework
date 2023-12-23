@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Файлы ресурсов\staticFiles">
+      <UniqueIdentifier>{d6935a0e-9979-4fb7-957f-931264bf76a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -29,9 +32,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="errors.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="include\qsort.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
@@ -44,5 +44,17 @@
     <ClInclude Include="include\errors.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="input.txt" />
+    <None Include="staticFiles\testBadFile.txt">
+      <Filter>Файлы ресурсов\staticFiles</Filter>
+    </None>
+    <None Include="staticFiles\testCorrectFile.txt">
+      <Filter>Файлы ресурсов\staticFiles</Filter>
+    </None>
+    <None Include="staticFiles\testMixedFile.txt">
+      <Filter>Файлы ресурсов\staticFiles</Filter>
+    </None>
   </ItemGroup>
 </Project>
