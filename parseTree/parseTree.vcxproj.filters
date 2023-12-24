@@ -52,5 +52,8 @@
     <Text Include="expression.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
+    <Text Include="testFiles\test3.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
   </ItemGroup>
 </Project>
