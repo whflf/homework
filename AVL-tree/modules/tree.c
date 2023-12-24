@@ -10,6 +10,7 @@ struct Node
 {
     char* key;
     char* value;
+    unsigned int height;
     int difference;
     Node* left;
     Node* right;
@@ -21,7 +22,20 @@ typedef enum
     fromRight
 } NodeUpdatingOption;
 
-static Node* createNode(char* const key, char* const value)
+static char* copyString(const char* const string)
+{
+    char* const stringCopy = (char*)calloc(strlen(string) + 1, sizeof(char));
+    if (stringCopy == NULL)
+    {
+        return NULL;
+    }
+
+    strcpy(stringCopy, string);
+
+    return stringCopy;
+}
+
+static Node* createNode(const char* const key, const char* const value)
 {
     Node* const newNode = (Node*)calloc(1, sizeof(Node));
     if (newNode == NULL)
@@ -29,8 +43,21 @@ static Node* createNode(char* const key, char* const value)
         return NULL;
     }
 
-    newNode->key = key;
-    newNode->value = value;
+    char* const keyCopy = copyString(key);
+    if (keyCopy == NULL)
+    {
+        return NULL;
+    }
+
+    char* const valueCopy = copyString(value);
+    if (valueCopy == NULL)
+    {
+        free(keyCopy);
+        return NULL;
+    }
+
+    newNode->key = keyCopy;
+    newNode->value = valueCopy;
 
     return newNode;
 }
@@ -42,16 +69,21 @@ static void freeNode(Node* const root)
     free(root);
 }
 
-static unsigned int calcHeight(const Node* const node)
+static int getHeight(const Node* const node)
 {
-    if (node == NULL)
-    {
-        return 0;
-    }
+    return node == NULL ? -1 : node->height;
+}
 
-    unsigned int leftHeight = calcHeight(node->left),
-                 rightHeight = calcHeight(node->right);
-    return (leftHeight >= rightHeight ? leftHeight : rightHeight) + 1;
+static void updateHeight(Node* const node)
+{
+    const int leftHeight = getHeight(node->left),
+        rightHeight = getHeight(node->right);
+    node->height = (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
+}
+
+static void updateDifference(Node* const node)
+{
+    node->difference = getHeight(node->left) - getHeight(node->right);
 }
 
 static Node* rotateLeft(Node* const a)
@@ -61,11 +93,11 @@ static Node* rotateLeft(Node* const a)
     b->left = a;
     a->right = c;
 
-    unsigned int leftHeight = calcHeight(a->left),
-                 rightHeight = calcHeight(a->right);
+    updateHeight(a);
+    updateHeight(b);
 
-    a->difference = leftHeight - rightHeight;
-    b->difference = (leftHeight >= rightHeight ? leftHeight : rightHeight) + 1 - calcHeight(b->right);
+    updateDifference(a);
+    updateDifference(b);
 
     return b;
 }
@@ -77,11 +109,11 @@ static Node* rotateRight(Node* const a)
     b->right = a;
     a->left = c;
 
-    unsigned int leftHeight = calcHeight(a->left),
-        rightHeight = calcHeight(a->right);
+    updateHeight(a);
+    updateHeight(b);
 
-    a->difference = leftHeight - rightHeight;
-    b->difference = calcHeight(b->left) - (leftHeight >= rightHeight ? leftHeight : rightHeight) - 1;
+    updateDifference(a);
+    updateDifference(b);
 
     return b;
 }
@@ -106,7 +138,7 @@ static Node* balance(Node* root)
 {
     if (root->difference == -2)
     {
-        if (root->right->difference <= 0)
+        if (root->right != NULL && root->right->difference <= 0)
         {
             return rotateLeft(root);
         }
@@ -115,7 +147,7 @@ static Node* balance(Node* root)
 
     if (root->difference == 2)
     {
-        if (root->right->difference >= 0)
+        if (root->left != NULL && root->left->difference >= 0)
         {
             return rotateRight(root);
         }
@@ -125,105 +157,37 @@ static Node* balance(Node* root)
     return root;
 }
 
-static char* copyString(const char* const string)
-{
-    char* const stringCopy = (char*)calloc(strlen(string) + 1, sizeof(char));
-    if (stringCopy == NULL)
-    {
-        return NULL;
-    }
-
-    strcpy(stringCopy, string);
-
-    return stringCopy;
-}
-
-static bool isRefreshed(const Node* const oldNode, const Node* const newNode)
-{
-    if (oldNode != NULL && strcmp(oldNode->value, newNode->value) != 0)
-    {
-        return true;
-    }
-
-    return false;
-}
-
-static Node* insertionNodeUpdate(Node* root, const NodeUpdatingOption option, const char* const key, const char* const value)
-{
-    Node* const oldChild = option == fromLeft ? root->left : root->right;
-    const int oldDifference = oldChild != NULL ? oldChild->difference : 0;
-
-    Node* newChild = NULL;
-    if (option == fromLeft)
-    {
-        root->left = insert(root->left, key, value);
-        if (root->left == NULL)
-        {
-            return NULL;
-        }
-        newChild = root->left;
-    }
-    else
-    {
-        root->right = insert(root->right, key, value);
-        if (root->right == NULL)
-        {
-            return NULL;
-        }
-        newChild = root->right;
-    }
-
-    if (oldChild == NULL || !isRefreshed(oldChild, newChild)
-        && newChild->difference != 0 && oldDifference != newChild->difference)
-    {
-        root->difference = option == fromLeft ? root->difference + 1 : root->difference - 1;
-    }
-
-    return root;
-}
-
 Node* insert(Node* root, const char* const key, const char* const value)
 {
     if (root == NULL)
     {
-        char* const keyCopy = copyString(key);
-        if (keyCopy == NULL)
-        {
-            return NULL;
-        }
-
-        char* const valueCopy = copyString(value);
-        if (valueCopy == NULL)
-        {
-            free(keyCopy);
-            return NULL;
-        }
-
-        Node* newElement = createNode(keyCopy, valueCopy);
-        if (newElement == NULL)
-        {
-            free(keyCopy);
-            free(valueCopy);
-        }
-
+        Node* newElement = createNode(key, value);
         return newElement;
     }
 
     if (strcmp(key, root->key) < 0)
     {
-        root = insertionNodeUpdate(root, fromLeft, key, value);
-        if (root == NULL)
+        Node* const temp = insert(root->left, key, value);
+        if (temp == NULL)
         {
             return NULL;
         }
+
+        root->left = temp;
+        updateHeight(root);
+        updateDifference(root);
     }
     else if (strcmp(key, root->key) > 0)
     {
-        root = insertionNodeUpdate(root, fromRight, key, value);
-        if (root == NULL)
+        Node* const temp = insert(root->right, key, value);
+        if (temp == NULL)
         {
             return NULL;
         }
+
+        root->right = temp;
+        updateHeight(root);
+        updateDifference(root);
     }
     else
     {
@@ -290,28 +254,6 @@ static Node* mostLeft(const Node* const element)
     return temp;
 }
 
-static void deletionNodeUpdate(Node* root, const NodeUpdatingOption option, const char* const key)
-{
-    const int oldDifference = option == fromLeft ? root->left->difference : root->right->difference;
-
-    Node* newChild = NULL;
-    if (option == fromLeft)
-    {
-        root->left = deleteNode(root->left, key);
-        newChild = root->left;
-    }
-    else
-    {
-        root->right = deleteNode(root->right, key);
-        newChild = root->right;
-    }
-
-    if (newChild == NULL || newChild->difference == 0 && oldDifference != newChild->difference)
-    {
-        root->difference = option == fromLeft ? root->difference - 1 : root->difference + 1;
-    }
-}
-
 Node* deleteNode(Node* root, const char* const key)
 {
     if (strcmp(root->key, key) == 0)
@@ -359,7 +301,9 @@ Node* deleteNode(Node* root, const char* const key)
                 return NULL;
             }
 
-            deletionNodeUpdate(root, fromRight, successor->key);
+            root->right = deleteNode(root->right, successor->key);
+            updateHeight(root);
+            updateDifference(root);
 
             return balance(root);
         }
@@ -367,11 +311,15 @@ Node* deleteNode(Node* root, const char* const key)
 
     if (strcmp(key, root->key) < 0)
     {
-        deletionNodeUpdate(root, fromLeft, key);
+        root->left = deleteNode(root->left, key);
+        updateHeight(root);
+        updateDifference(root);
     }
     else if (strcmp(key, root->key) > 0)
     {
-        deletionNodeUpdate(root, fromRight, key);
+        root->right = deleteNode(root->right, key);
+        updateHeight(root);
+        updateDifference(root);
     }
 
     return balance(root);

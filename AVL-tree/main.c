@@ -6,11 +6,13 @@
 #include "modules/dialogue.h"
 #include "modules/tests.h"
 
+#define CONSOLE_TESTS_ARGUMENT "-tests"
+
 ErrorCode main(int argc, char* argv[])
 {
     for (size_t i = 0; i < argc; ++i)
     {
-        if (strcmp(argv[i], "-tests") == 0)
+        if (strcmp(argv[i], CONSOLE_TESTS_ARGUMENT) == 0)
         {
             return passTests() ? 0 : 1;
         }

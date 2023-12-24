@@ -155,7 +155,7 @@ ErrorCode programLoop(Node** const root)
             return ok;
         case addValueToDictionary:
         {
-            if (!getKeyInput(&keyInput) || getKeyInput(&keyInput) && choiceAddValueToDictionary(root, keyInput) == outOfMemory)
+            if (!getKeyInput(&keyInput) || choiceAddValueToDictionary(root, keyInput) == outOfMemory)
             {
                 return outOfMemory;
             }
