@@ -13,46 +13,44 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Исходные файлы\modules">
+      <UniqueIdentifier>{2f0e416e-2dd4-4c8a-8ea3-7fccab490cef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="modules\errors.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\fileParsing.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="modules\stack.c">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="modules\tree.c">
+      <Filter>Исходные файлы\modules</Filter>
     </ClCompile>
     <ClCompile Include="modules\tests.c">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\modules</Filter>
     </ClCompile>
-    <ClCompile Include="modules\tree.c">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="modules\errors.c">
+      <Filter>Исходные файлы\modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="modules\errors.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="modules\fileParsing.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="modules\stack.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="modules\tests.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="modules\tree.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="modules\errors.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="testFiles\test1.txt" />
-    <Text Include="testFiles\test2.txt" />
+    <Text Include="testFiles\test1.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="testFiles\test2.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="expression.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
   </ItemGroup>
 </Project>

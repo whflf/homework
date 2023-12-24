@@ -6,7 +6,8 @@ typedef enum
     outOfMemory,
     fileOpeningError,
     fileParsingError,
-    testsFailed
+    testsFailed,
+    divisionByZero
 } ErrorCode;
 
 ErrorCode printErrorMessage(const ErrorCode errorCode);

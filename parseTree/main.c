@@ -3,7 +3,6 @@
 
 #include "modules/errors.h"
 #include "modules/tree.h"
-#include "modules/fileParsing.h"
 #include "modules/tests.h"
 
 #define INPUT_FILE_NAME "expression.txt"
@@ -23,9 +22,17 @@ ErrorCode main(void)
     }
 
     printTree(parseTree, stdout);
-    printf("= %d\n", getResult(parseTree));
-    deleteTree(&parseTree);
+    
+    bool isDivisionByZero = false;
+    const int result = getResult(parseTree, &isDivisionByZero);
+    if (isDivisionByZero)
+    {
+        deleteTree(&parseTree);
+        return printErrorMessage(divisionByZero);
+    }
 
+    printf("= %d\n", result);
+    
+    deleteTree(&parseTree);
     return ok;
 }
-

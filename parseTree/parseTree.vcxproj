@@ -129,19 +129,16 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="modules\errors.c" />
-    <ClCompile Include="modules\fileParsing.c" />
-    <ClCompile Include="modules\stack.c" />
     <ClCompile Include="modules\tests.c" />
     <ClCompile Include="modules\tree.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modules\errors.h" />
-    <ClInclude Include="modules\fileParsing.h" />
-    <ClInclude Include="modules\stack.h" />
     <ClInclude Include="modules\tests.h" />
     <ClInclude Include="modules\tree.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="expression.txt" />
     <Text Include="testFiles\test1.txt" />
     <Text Include="testFiles\test2.txt" />
   </ItemGroup>
