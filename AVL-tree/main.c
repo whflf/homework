@@ -14,7 +14,7 @@ ErrorCode main(int argc, char* argv[])
     {
         if (strcmp(argv[i], CONSOLE_TESTS_ARGUMENT) == 0)
         {
-            return passTests() ? 0 : 1;
+            return passTests() ? ok : testsFailed;
         }
     }
 

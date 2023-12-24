@@ -46,12 +46,14 @@ static Node* createNode(const char* const key, const char* const value)
     char* const keyCopy = copyString(key);
     if (keyCopy == NULL)
     {
+        free(newNode);
         return NULL;
     }
 
     char* const valueCopy = copyString(value);
     if (valueCopy == NULL)
     {
+        free(newNode);
         free(keyCopy);
         return NULL;
     }
@@ -246,12 +248,30 @@ bool isInDictionary(Node* const root, const char* const key)
     return search(root, key) != NULL;
 }
 
-static Node* mostLeft(const Node* const element)
+static Node* mostLeft(Node* element)
 {
-    Node* temp = element;
-    for (; temp->left != NULL; temp = temp->left);
+    if (element->left == NULL)
+    {
+        return element;
+    }
 
-    return temp;
+    if (element->left->left == NULL)
+    {
+        Node* const mostLeftNode = element->left;
+        element->left = element->left->right;
+        updateHeight(element);
+        updateDifference(element);
+        element = balance(element);
+
+        return mostLeftNode;
+    }
+
+    Node* const mostLeftNode = mostLeft(element->left);
+    updateHeight(element);
+    updateDifference(element);
+    element = balance(element);
+
+    return mostLeftNode;
 }
 
 Node* deleteNode(Node* root, const char* const key)
@@ -286,22 +306,12 @@ Node* deleteNode(Node* root, const char* const key)
 
         else
         {
-            Node* const successor = mostLeft(root->right);
+            Node* const oldRoot = root;
+            root = mostLeft(root->right);
+            root->left = oldRoot->left;
+            root->right = oldRoot->right;
+            freeNode(oldRoot);
 
-            root->key = copyString(successor->key);
-            if (root->key == NULL)
-            {
-                return NULL;
-            }
-
-            root->value = copyString(successor->value);
-            if (root->value == NULL)
-            {
-                free(root->key);
-                return NULL;
-            }
-
-            root->right = deleteNode(root->right, successor->key);
             updateHeight(root);
             updateDifference(root);
 
