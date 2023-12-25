@@ -32,7 +32,7 @@ static bool testParseTreeOnFile(
 
     const size_t expectedLength = strlen(expectedTreeStr);
 
-    char* const testOutput = calloc(expectedLength + 1, sizeof(char));
+    char* const testOutput = (char*)calloc(expectedLength + 1, sizeof(char));
     if (testOutput == NULL)
     {
         deleteTree(&parseTree);
