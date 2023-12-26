@@ -17,10 +17,17 @@ static bool testPrintCommentsToFile(const char* const filename, const char* cons
     FILE* const testOutputFile = tmpfile();
     if (testOutputFile == NULL)
     {
+        fclose(testInputFile);
         return false;
     }
 
     const ErrorCode error = printComments(testInputFile, testOutputFile);
+    fclose(testInputFile);
+    if (error)
+    {
+        fclose(testOutputFile);
+        return false;
+    }
     fseek(testOutputFile, 0, SEEK_SET);
 
     const size_t expectedLength = strlen(expectedStrings);
@@ -31,12 +38,17 @@ static bool testPrintCommentsToFile(const char* const filename, const char* cons
         return false;
     }
 
-    fread(testOutput, sizeof(char), expectedLength, testOutputFile);
+    const size_t count = fread(testOutput, sizeof(char), expectedLength, testOutputFile);
+    fclose(testOutputFile);
+    if (count < expectedLength)
+    {
+        free(testOutput);
+        return false;
+    }
+
     const bool result = strcmp(testOutput, expectedStrings) == 0;
 
     free(testOutput);
-    fclose(testInputFile);
-    fclose(testOutputFile);
 
     return result;
 }
