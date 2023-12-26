@@ -35,6 +35,7 @@ static ErrorCode insert(Node** const root, const char* const value)
     Node* const newElement = createNode(valueCopy);
     if (newElement == NULL)
     {
+        free(valueCopy);
         return outOfMemory;
     }
 
@@ -212,6 +213,10 @@ static ErrorCode parseExpression(FILE* const file, Node** currentTree)
         }
 
         return ok;
+    }
+    else
+    {
+        return fileParsingError;
     }
     return parseExpression(file, currentTree);
 }
