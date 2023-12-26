@@ -6,7 +6,7 @@
 
 #define INPUT_FILE_NAME "input.txt"
 
-ErrorCode main(void)
+int main(void)
 {
     if (!passTests())
     {

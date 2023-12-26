@@ -83,9 +83,9 @@ float getLoadFactor(const HashTable* const table)
 
 size_t getAverageLength(const HashTable* const table)
 {
-    if (table->numberOfEntries > 0)
+    if (table->size > 0)
     {
-        return table->sumOfLengths / table->numberOfEntries;
+        return table->sumOfLengths / table->size;
     }
 
     return 0;
@@ -109,7 +109,7 @@ static size_t hash(const char* const key, const size_t tableSize)
 
     for (size_t i = 0; i < keyLength; ++i)
     {
-        index = (index * POLYNOMIAL_POINT + (int)(key[i])) % tableSize;
+        index = (index * POLYNOMIAL_POINT + (int)(key[i])) % 1000000007 % tableSize;
     }
 
     return index;
@@ -128,29 +128,9 @@ static char* copyKey(const char* const key)
     return copiedKey;
 }
 
-static bool isPrime(const unsigned long long number)
-{
-    for (int i = 2; i <= number / 2; ++i)
-    {
-        if (number % i == 0)
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-static void makePrime(size_t* const size)
-{
-    for (; !isPrime(*size); ++(*size));
-}
-
-
 static ErrorCode resize(HashTable* const* const table)
 {
     size_t newSize = (*table)->size * 2 + 1;
-    makePrime(&newSize);
 
     List** const newBucketsArray = (List**)calloc(newSize, sizeof(List*));
     if (newBucketsArray == NULL)

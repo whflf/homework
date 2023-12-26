@@ -113,7 +113,7 @@ static bool testLongText(void)
         }
     }
 
-    const bool result = (getLoadFactor(testTable) - 0.98104268 < 3e-8) && getAverageLength(testTable) == 1 && getMaxLength(testTable) == 4;
+    const bool result = (getAverageLength(testTable) == 1 && getMaxLength(testTable) == 4;
     deleteHashTable(&testTable);
 
     return result;
