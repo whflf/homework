@@ -13,7 +13,7 @@ static char* getErrorMessage(const ErrorCode errorCode)
     case testsFailed:
          return "~ Tests failed.";
     default:
-         return "Unknown error.";
+         return "~ Unknown error.";
     }
 }
 
@@ -22,4 +22,3 @@ ErrorCode printErrorMessage(const ErrorCode errorCode)
     printf("[E] %s\n", getErrorMessage(errorCode));
     return errorCode;
 }
-

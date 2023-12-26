@@ -10,15 +10,37 @@ struct HashTable
     size_t size;
     size_t numberOfEntries;
     List** buckets;
-    size_t* listLengths;
-    size_t maxLength;
     size_t sumOfLengths;
 };
 
-HashTable* createHashTable(void)
+static void freeBuckets(List** const array, const size_t size)
 {
-    const size_t initialSize = 101; 
+    for (size_t i = 0; i < size; ++i)
+    {
+        free(array[i]);
+    }
+    free(array);
+}
 
+static ErrorCode initializeBuckets(List** const array, const size_t size)
+{
+    for (size_t i = 0; i < size; ++i)
+    {
+        array[i] = (List*)calloc(1, sizeof(List));
+        {
+            if (array[i] == NULL)
+            {
+                freeBuckets(array, i);
+                return outOfMemory;
+            }
+        }
+    }
+
+    return ok;
+}
+
+HashTable* createHashTable(const size_t initialSize)
+{
     HashTable* newTable = (HashTable*)calloc(1, sizeof(HashTable));
     if (newTable == NULL)
     {
@@ -32,8 +54,7 @@ HashTable* createHashTable(void)
         return NULL;
     }
 
-    newTable->listLengths = (size_t*)calloc(initialSize, sizeof(size_t));
-    if (newTable->listLengths == NULL)
+    if (initializeBuckets(newTable->buckets, initialSize) == outOfMemory)
     {
         deleteHashTable(&newTable);
         return NULL;
@@ -52,7 +73,6 @@ void deleteHashTable(HashTable** const table)
     }
 
     free((*table)->buckets);
-    free((*table)->listLengths);
     free(*table);
 }
 
@@ -73,25 +93,13 @@ size_t getAverageLength(const HashTable* const table)
 
 size_t getMaxLength(const HashTable* const table)
 {
-    return table->maxLength;
-}
-
-static bool isPrime(const unsigned long long number)
-{
-    for (int i = 2; i <= number / 2; ++i)
+    size_t maxLength = 0;
+    for (size_t i = 0; i < table->size; ++i)
     {
-        if (number % i == 0)
-        {
-            return false;
-        }
+        maxLength = table->buckets[i]->size > maxLength ? table->buckets[i]->size : maxLength;
     }
 
-    return true;
-}
-
-static void makePrime(size_t* const size)
-{
-    for (; !isPrime(*size); ++(*size));
+    return maxLength;
 }
 
 static size_t hash(const char* const key, const size_t tableSize)
@@ -120,32 +128,24 @@ static char* copyKey(const char* const key)
     return copiedKey;
 }
 
-
-static ErrorCode recalculateListLengths(HashTable* const* const table)
+static bool isPrime(const unsigned long long number)
 {
-    size_t* const newLengthsArray = (size_t*)calloc((*table)->size, sizeof(size_t));
-    if (newLengthsArray == NULL)
+    for (int i = 2; i <= number / 2; ++i)
     {
-        return outOfMemory;
-    }
-
-    (*table)->maxLength = 0, (*table)->sumOfLengths = 0;
-
-    for (size_t i = 0; i < (*table)->size; ++i)
-    {
-        newLengthsArray[i] = getSize((*table)->buckets[i]);
-        if (newLengthsArray[i] > (*table)->maxLength)
+        if (number % i == 0)
         {
-            (*table)->maxLength = newLengthsArray[i];
+            return false;
         }
-        (*table)->sumOfLengths += newLengthsArray[i];
     }
 
-    free((*table)->listLengths);
-    (*table)->listLengths = newLengthsArray;
-
-    return ok;
+    return true;
 }
+
+static void makePrime(size_t* const size)
+{
+    for (; !isPrime(*size); ++(*size));
+}
+
 
 static ErrorCode resize(HashTable* const* const table)
 {
@@ -158,35 +158,34 @@ static ErrorCode resize(HashTable* const* const table)
         return outOfMemory;
     }
 
+    if (initializeBuckets(newBucketsArray, newSize) == outOfMemory)
+    {
+        return outOfMemory;
+    }
+
     for (size_t i = 0; i < (*table)->size; ++i)
     {
         List* currentBucket = (*table)->buckets[i];
-        const List* currentEntry = (*table)->buckets[i];
+        const ListNode* currentEntry = (*table)->buckets[i]->head;
         while (currentEntry != NULL)
         {
             const char* const currentKey = getKey(currentEntry);
             const size_t newIndex = hash(currentKey, newSize);
 
             const ReturnCode returnCode =
-                append(&newBucketsArray[newIndex], copyKey(currentKey), currentEntry->value);
+                append(newBucketsArray[newIndex], currentKey, currentEntry->count);
             if (returnCode == failedToAdd)
             {
+                freeBuckets(newBucketsArray, newSize);
                 return outOfMemory;
             }
 
             currentEntry = currentEntry->next;
         }
-
-        deleteList(&currentBucket);
     }
 
-    free((*table)->buckets);
+    freeBuckets((*table)->buckets, (*table)->size);
     (*table)->size = newSize, (*table)->buckets = newBucketsArray;
-
-    if (recalculateListLengths(table) == outOfMemory)
-    {
-        return outOfMemory;
-    }
 
     return ok;
 }
@@ -195,22 +194,29 @@ ErrorCode addEntry(HashTable* const* const table, const char* const key)
 {
     const size_t entryIndex = hash(key, (*table)->size);
 
-    const ReturnCode returnCode = append(&(*table)->buckets[entryIndex], copyKey(key), 1);
+    char* const keyCopy = copyKey(key);
+    if (keyCopy == NULL)
+    {
+        return outOfMemory;
+    }
+
+    const ReturnCode returnCode = append((*table)->buckets[entryIndex], keyCopy, 1);
 
     if (returnCode == failedToAdd)
     {
+        free(keyCopy);
         return outOfMemory;
+    }
+
+    if (returnCode == existingElementRefreshed)
+    {
+        free(keyCopy);
     }
 
     if (returnCode == newElementAdded)
     {
         ++(*table)->numberOfEntries;
         ++(*table)->sumOfLengths;
-
-        if (++(*table)->listLengths[entryIndex] > (*table)->maxLength)
-        {
-            (*table)->maxLength = (*table)->listLengths[entryIndex];
-        }
 
         if (getAverageLength(*table) >= AVERAGE_LIST_LENGTH_THRESHOLD || getLoadFactor(*table) > 1.0)
         {
@@ -227,11 +233,11 @@ ErrorCode addEntry(HashTable* const* const table, const char* const key)
 int getValue(const HashTable* const table, const char* const key)
 {
     const size_t searchIndex = hash(key, table->size);
-    const List* entry = table->buckets[searchIndex];
+    const ListNode* entry = table->buckets[searchIndex]->head;
     if (entry != NULL)
     {
         for (; entry != NULL && strcmp(entry->key, key) != 0; entry = entry->next);
-        return entry != NULL ? entry->value : 0;
+        return entry != NULL ? entry->count : 0;
     }
 
     return 0;

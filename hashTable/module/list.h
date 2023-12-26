@@ -2,14 +2,18 @@
 
 #include "errors.h"
 
-typedef struct List List;
-
-struct List
+typedef struct ListNode
 {
     char* key;
-    int value;
-    List* next;
-};
+    size_t count;
+    struct ListNode* next;
+} ListNode;
+
+typedef struct List
+{
+    ListNode* head;
+    size_t size;
+} List;
 
 typedef enum
 {
@@ -18,17 +22,14 @@ typedef enum
     failedToAdd
 } ReturnCode;
 
-// returns list size
-size_t getSize(const List* head);
-
 // adds an element to the beginning of the list
-ErrorCode append(List** const head, char* const key, const int value);
+ReturnCode append(List* const list, const char* const key, const size_t count);
 
 // returns element key
-const char* getKey(const List* const element);
+const char* getKey(const ListNode* const element);
 
 // deletes the list
-void deleteList(List** head);
+void deleteList(List* const list);
 
 // prints the list
-void printList(const List* const head);
+void printList(const List* const list);

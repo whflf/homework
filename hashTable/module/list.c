@@ -6,104 +6,96 @@
 #include "list.h"
 #include "errors.h"
 
-static List* createListElement(char* const key, const int value)
+static ListNode* createListElement(char* const key, const size_t count)
 {
-    List* newElement = (List*)calloc(1, sizeof(List));
+    ListNode* newElement = (ListNode*)calloc(1, sizeof(ListNode));
     if (newElement == NULL)
     {
         return NULL;
     }
 
     newElement->key = key;
-    newElement->value = value;
+    newElement->count = count;
 
     return newElement;
 }
 
-static List* getElement(List* const* const head, const char* const key)
+static ListNode* getElement(const List* const list, const char* const key)
 {
-    List* tmpList = *head;
-    for (; tmpList != NULL; tmpList = tmpList->next)
+    ListNode* currentNode = list->head;
+    for (; currentNode != NULL; currentNode = currentNode->next)
     {
-        if (strcmp(tmpList->key, key) == 0)
+        if (strcmp(currentNode->key, key) == 0)
         {
-            return tmpList;
+            return currentNode;
         }
     }
     return NULL;
 }
 
-size_t getSize(const List* head)
+ReturnCode append(List* const list, const char* const key, const size_t count)
 {
-    size_t size = 0;
-    for (; head != NULL; head = head->next)
+    if (list->head == NULL)
     {
-        ++size;
-    }
-    return size;
-}
-
-ReturnCode append(List** const head, char* const key, const int value)
-{
-    if (*head == NULL)
-    {
-        if ((*head = createListElement(key, value)) == NULL)
+        if ((list->head = createListElement(key, count)) == NULL)
         {
             return failedToAdd;
         }
+        ++list->size;
         return newElementAdded;
     }
 
-    List* const element = getElement(head, key);
+    ListNode* const element = getElement(list, key);
     if (element != NULL)
     {
-        ++element->value;
+        ++element->count;
         return existingElementRefreshed;
     }
 
-    List* const newElement = createListElement(key, value);
+    ListNode* const newElement = createListElement(key, count);
     if (newElement == NULL)
     {
-        return newElementAdded;
+        return failedToAdd;
     }
 
-    newElement->next = *head;
-    *head = newElement;
+    newElement->next = list->head;
+    list->head = newElement;
+    ++list->size;
 
     return newElementAdded;
 }
 
-const char* getKey(const List* const element)
+const char* getKey(const ListNode* const element)
 {
     return element->key;
 }
 
-void deleteList(List** const head)
+void deleteList(List* const list)
 {
-    if (*head == NULL)
+    if (list == NULL || list->head)
     {
         return;
     }
 
-    while ((*head)->next != NULL)
+    while (list->head != NULL)
     {
-        List* const tmpNode = (*head)->next;
+        ListNode* const tmpNode = list->head;
         free(tmpNode->key);
-        (*head)->next = (*head)->next->next;
+        list->head = list->head->next;
         free(tmpNode);
     }
 
-    free((*head)->key);
-    free(*head);
+    free(list);
 }
 
-void printList(const List* head)
+void printList(const List* const list)
 {
+    ListNode* head = list->head;
     if (head != NULL)
     {
-        for (; head != NULL; head = head->next)
+        for (; head != NULL; head = list->head->next)
         {
-            printf("\"%s\" - %d time%c\n", head->key, head->value, head->value == 1 ? '\0' : 's');
+            printf("\"%s\" - %llu time%c\n", head->key, head->count, head->count == 1 ? '\0' : 's');
         }
     }
 }

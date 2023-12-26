@@ -44,7 +44,7 @@ HashTable* getFrequencyTableFromFile(const char* const filename, ErrorCode* cons
         return NULL;
     }
 
-    HashTable* frequencyTable = createHashTable();
+    HashTable* frequencyTable = createHashTable(TABLE_INITIAL_SIZE);
     while (!feof(file))
     {
         char* const key = getString(file);

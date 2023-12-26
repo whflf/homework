@@ -25,7 +25,7 @@ ErrorCode main(void)
     if (loadFactor > 0)
     {
         printf(
-            "\nLoad factor: %.3f\nMax list length: % llu\nAverage list length: %llu\n",
+            "\nLoad factor: %.3f\nMax list length: %llu\nAverage list length: %llu\n",
             loadFactor,
             getMaxLength(frequencyTable),
             getAverageLength(frequencyTable)

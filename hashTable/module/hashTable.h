@@ -3,13 +3,14 @@
 #include "errors.h"
 #include "list.h"
 
+#define TABLE_INITIAL_SIZE 101
 #define POLYNOMIAL_POINT 257
 #define AVERAGE_LIST_LENGTH_THRESHOLD 5
 
 typedef struct HashTable HashTable;
 
 // initializes new hash table
-HashTable* createHashTable(void);
+HashTable* createHashTable(const size_t initialSize);
 
 // deletes hash table
 void deleteHashTable(HashTable** const table);
