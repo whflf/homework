@@ -16,7 +16,7 @@ typedef enum
     atSign,
     charactersAfterAtSign,
     dotSign,
-    finalLetters
+    finalLetter
 } State;
 
 static bool isValid(const char character, const char* const correctCharacters)
@@ -79,7 +79,7 @@ static State analyzeString(const char* const string)
         case dotSign:
             if (isValid(string[i], UPPERCASE_LETTERS))
             {
-                currentState = finalLetters;
+                currentState = finalLetter;
                 continue;
             }
             else if (isdigit(string[i]))
@@ -88,12 +88,12 @@ static State analyzeString(const char* const string)
                 continue;
             }
             return currentState;
-        case finalLetters:
+        case finalLetter:
             if (string[i] == '.')
             {
                 currentState = dotSign;
             }
-            else if (isdigit(string[i]))
+            else if (isdigit(string[i]) || isValid(string[i], UPPERCASE_LETTERS))
             {
                 currentState = charactersAfterAtSign;
             }
@@ -105,5 +105,5 @@ static State analyzeString(const char* const string)
 
 bool isCorrect(const char* const string)
 {
-    return analyzeString(string) == finalLetters;
+    return analyzeString(string) == finalLetter;
 }

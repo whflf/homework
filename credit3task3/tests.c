@@ -5,7 +5,7 @@
 
 static bool test1(void)
 {
-    return isCorrect("Q1W2E3R4.R_%-TY+@ABC123.123ABC.COM");
+    return isCorrect("Q1W2E3R4.R_%-TY+@ABC123.123ABC.C");
 }
 
 static bool test2(void)
