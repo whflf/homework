@@ -9,4 +9,3 @@ int main(void)
     const ErrorCode error = passTests() ? ok : testsFailed;
     return printErrorMessage(error);
 }
-
