@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-internal class Trie
+﻿/// <summary>
+/// Trie, a tree data structure used for locating specific keys from within a set.
+/// </summary>
+public class Trie
 {
     private Trie?[] next;
     private bool isTerminal;
@@ -16,6 +12,12 @@ internal class Trie
         this.next = new Trie[256];
     }
 
+    /// <summary>
+    /// Adds the string to trie.
+    /// </summary>
+    /// <param name="element">String to add.</param>
+    /// <param name="position">Character index in the string from which it is necessary to add it (initially 0).</param>
+    /// <returns>True if the string was added, otherwise false.</returns>
     public bool Add(string element, int position = 0)
     {
         if (position == element.Length)
@@ -52,6 +54,12 @@ internal class Trie
         return isNewElement;
     }
 
+    /// <summary>
+    /// Checks whether the string is in trie or not.
+    /// </summary>
+    /// <param name="element">String to check.</param>
+    /// <param name="position">Character index in the string from which it is necessary to check it (initially 0).</param>
+    /// <returns>True if the string is in trie, otherwise false.</returns>
     public bool Contains(string element, int position = 0)
     {
         if (position == element.Length)
@@ -67,6 +75,12 @@ internal class Trie
         return this.next[element[position]].Contains(element, ++position);
     }
 
+    /// <summary>
+    /// Removes the string from trie.
+    /// </summary>
+    /// <param name="element">String to remove.</param>
+    /// <param name="position">Character index in the string from which it is necessary to remove it (initially 0).</param>
+    /// <returns></returns>
     public bool Remove(string element, int position = 0)
     {
         if (this.next[element[position]] == null)
@@ -81,14 +95,34 @@ internal class Trie
                 return false;
             }
 
-            this.next[element[position]] = null;
+            if (this.size == 1)
+            {
+                this.next[element[position]] = null;
+            }
+            else
+            {
+                this.next[element[position]].isTerminal = false;
+            }
             --this.size;
             return true;
         }
 
-        return this.next[element[position]].Remove(element, ++position);   
+        bool isRemoved = this.next[element[position]].Remove(element, ++position);
+        if (isRemoved && this.size == 1)
+        {
+            this.next[element[position]] = null;
+        }
+        --this.size;
+
+        return isRemoved;
     }
 
+    /// <summary>
+    /// Counts how many strings in trie starts with a certain prefix.
+    /// </summary>
+    /// <param name="prefix">Prefix to check.</param>
+    /// <param name="position">Character index in the prefix from which it is necessary to count strings (initially 0).</param>
+    /// <returns></returns>
     public int HowManyStartsWithPrefix(string prefix, int position = 0)
     {
         if (position == prefix.Length)
