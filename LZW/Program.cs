@@ -1,5 +1,5 @@
-﻿string option;
-string filePath;
+﻿string option = "";
+string filePath = "";
 try
 {
     option = args[0];

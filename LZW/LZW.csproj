@@ -13,4 +13,10 @@
     <None Remove="Trie\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="translation1.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

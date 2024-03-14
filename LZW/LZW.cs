@@ -186,31 +186,15 @@ public static class LZW
         while (index != bitCodes.Count)
         {
             bool[] currentCode;
-            if (dictionary.Count < 511)
+            currentCode = new bool[codeLength];
+            for (int j = 0; j < codeLength; ++j)
             {
-                currentCode = new bool[codeLength];
-                for (int j = 0; j < codeLength; ++j)
+                if (index == bitCodes.Count)
                 {
-                    if (index == bitCodes.Count)
-                    {
-                        inputEnd = true;
-                        break;
-                    }
-                    currentCode[j] = bitCodes[index++];
+                    inputEnd = true;
+                    break;
                 }
-            }
-            else
-            {
-                currentCode = new bool[codeLength];
-                for (int j = 0; j < codeLength; ++j)
-                {
-                    if (index == bitCodes.Count)
-                    {
-                        inputEnd = true;
-                        break;
-                    }
-                    currentCode[j] = bitCodes[index++];
-                }
+                currentCode[j] = bitCodes[index++];
             }
 
             if (inputEnd)

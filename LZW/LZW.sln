@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LZW", "LZW.csproj", "{D5E6895C-CAD1-4DC2-BE48-2E146F7736AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LZW", "LZW.csproj", "{D5E6895C-CAD1-4DC2-BE48-2E146F7736AA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trie", "..\Trie\Trie.csproj", "{3AEB6FE6-22D9-4988-A068-B8B81F5EBDEC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LZW.tests", "..\LZW.tests\LZW.tests.csproj", "{DD63A1F0-7DB8-4D42-B0FF-7A71EEDC67E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{3AEB6FE6-22D9-4988-A068-B8B81F5EBDEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AEB6FE6-22D9-4988-A068-B8B81F5EBDEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AEB6FE6-22D9-4988-A068-B8B81F5EBDEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD63A1F0-7DB8-4D42-B0FF-7A71EEDC67E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD63A1F0-7DB8-4D42-B0FF-7A71EEDC67E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD63A1F0-7DB8-4D42-B0FF-7A71EEDC67E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD63A1F0-7DB8-4D42-B0FF-7A71EEDC67E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
