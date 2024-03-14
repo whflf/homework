@@ -6,6 +6,9 @@ public class Trie
     private Trie?[] next;
     private bool isTerminal;
     private int size;
+    public int code;
+
+    public static int Total { get; private set; } = 0;
 
     public Trie()
     {
@@ -28,10 +31,11 @@ public class Trie
             }
 
             this.isTerminal = true;
+            this.code = Total++;
             return true;
         }
 
-        bool newVertexCreated = false;
+        var newVertexCreated = false;
         if (this.next[element[position]] == null)
         {
             this.next[element[position]] = new Trie();
@@ -41,6 +45,7 @@ public class Trie
             if (position == element.Length - 1)
             {
                 this.next[element[position]].isTerminal = true;
+                this.next[element[position]].code = Total++;
                 return true;
             }
         }
@@ -73,6 +78,21 @@ public class Trie
         }
 
         return this.next[element[position]].Contains(element, ++position);
+    }
+
+    public int GetCode(string element, int position = 0)
+    {
+        if (position == element.Length)
+        {
+            return this.code;
+        }
+
+        if (this.next[element[position]] == null)
+        {
+            return -1;
+        }
+
+        return this.next[element[position]].GetCode(element, ++position);
     }
 
     /// <summary>
