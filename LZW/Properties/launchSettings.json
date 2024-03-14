@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LZW": {
+      "commandName": "Project",
+      "commandLineArgs": "-comp \"C:\\Users\\Eleno\\homework\\LZW\\test.txt\""
+    }
+  }
+}
