@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Trie\Trie.csproj" />
+    <Compile Remove="Trie\**" />
+    <EmbeddedResource Remove="Trie\**" />
+    <None Remove="Trie\**" />
   </ItemGroup>
 
 </Project>

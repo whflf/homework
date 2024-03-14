@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Trie;
 
 /// <summary>
 /// Provides methods for compressing and decompressing data using the LZW algorithm.
@@ -103,7 +103,7 @@ public static class LZW
     {
         byte[] data = ReadDataFromFile(filePathRead);
 
-        Trie dictionary = new Trie();
+        var dictionary = new Trie();
         for (int i = 0; i < 256; ++i)
         {
             dictionary.Add(Convert.ToString(Convert.ToChar(i)));
