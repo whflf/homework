@@ -1,6 +1,16 @@
-﻿string option = args[0];
+﻿string option;
+string filePath;
+try
+{
+    option = args[0];
+    filePath = args[1];
+}
+catch (IndexOutOfRangeException)
+{
+    Console.WriteLine("No cmd arguments detected.");
+    Environment.Exit(1);
+}
 
-string filePath = args[1];
 string[] splittedFilePath = filePath.Split('.');
 splittedFilePath = splittedFilePath[0..(splittedFilePath.Length - 1)];
 
