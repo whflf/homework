@@ -11,28 +11,27 @@ using static Trie;
 /// </remarks>
 public static class LZW
 {
-    private static byte[] ReadDataFromFile(string filePath)
+    private static List<byte> ReadDataFromFile(string filePath)
     {
         BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open));
-        var data = new byte[reader.BaseStream.Length];
-        var dataIndex = 0;
+        var data = new List<byte>();
 
         using (reader)
         {
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
-                data[dataIndex++] = reader.ReadByte();
+                data.Add(reader.ReadByte());
             }
         }
 
         return data;
     }
 
-    private static void WriteDataToFile(string filePath, byte[] data)
+    private static void WriteDataToFile(string filePath, List<byte> data)
     {
         using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
         {
-            for (int i = 0; i < data.Length; ++i)
+            for (int i = 0; i < data.Count; ++i)
             {
                 writer.Write(data[i]);
             }
@@ -59,13 +58,11 @@ public static class LZW
         return bits;
     }
 
-    private static byte[] BitsToBytes(List<bool> bits)
+    private static List<byte> BitsToBytes(List<bool> bits)
     {
-        var bytesCount = bits.Count / 8 + (bits.Count % 8 != 0 ? 1 : 0);
-        var result = new byte[bytesCount];
+        var result = new List<byte>();
 
         var bitIndex = 0;
-        var byteIndex = 0;
         byte currentByte = 0;
 
         foreach (bool bit in bits)
@@ -79,7 +76,7 @@ public static class LZW
 
             if (bitIndex == 8)
             {
-                result[byteIndex++] = currentByte;
+                result.Add(currentByte);
                 bitIndex = 0;
                 currentByte = 0;
             }
@@ -87,7 +84,7 @@ public static class LZW
 
         if (bitIndex != 0)
         {
-            result[byteIndex] = currentByte;
+            result.Add(currentByte);
         }
 
         return result;
@@ -101,7 +98,7 @@ public static class LZW
     /// <returns>The compression ratio achieved by the compression process.</returns>
     public static double Compress(string filePathRead, string filePathWrite)
     {
-        byte[] data = ReadDataFromFile(filePathRead);
+        List<byte> data = ReadDataFromFile(filePathRead);
 
         var dictionary = new Trie();
         for (int i = 0; i < 256; ++i)
@@ -113,7 +110,7 @@ public static class LZW
         var currentPhrase = "";
         var previousPhrase = "";
 
-        for (int i = 0; i < data.Length; ++i)
+        for (int i = 0; i < data.Count; ++i)
         {
             var character = Convert.ToString(Convert.ToChar(data[i]));
             currentPhrase += character;
@@ -131,10 +128,10 @@ public static class LZW
         var result = BitsToBytes(bits);
         WriteDataToFile(filePathWrite, result);
 
-        return (double)data.Length / (double)result.Length;
+        return (double)data.Count / (double)result.Count;
     }
 
-    private static List<bool> GetBits(byte[] data)
+    private static List<bool> GetBits(List<byte> data)
     {
         var bits = new List<bool>();
 
@@ -167,9 +164,9 @@ public static class LZW
     /// <param name="filePathWrite">The path of the file to write the decompressed data to.</param>
     public static void Uncompress(string filePathRead, string filePathWrite)
     {
-        byte[] data = ReadDataFromFile(filePathRead);
+        List<byte> data = ReadDataFromFile(filePathRead);
 
-        var result = "";
+        List<byte> result = [];
         List<bool> bitCodes = GetBits(data);
 
         var dictionary = new List<string>();
@@ -228,10 +225,13 @@ public static class LZW
                 }
             }
 
-            result += entry;
+            foreach (var character in entry)
+            {
+                result.Add(Convert.ToByte(character));
+            }
             currentPhrase = entry;
         }
 
-        WriteDataToFile(filePathWrite, System.Text.Encoding.Default.GetBytes(result));
+        WriteDataToFile(filePathWrite, result);
     }
 }
