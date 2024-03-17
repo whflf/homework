@@ -1,4 +1,4 @@
-﻿string option = "";
+﻿/*string option = "";
 string filePath = "";
 try
 {
@@ -16,13 +16,18 @@ splittedFilePath = splittedFilePath[0..(splittedFilePath.Length - 1)];
 
 if (option == "-comp")
 {
-    string newFilePath = string.Join(".", splittedFilePath) + ".zipped";
+    var newFilePath = string.Join(".", splittedFilePath) + ".zipped";
     var compressionCoefficient = LZW.Compress(filePath, newFilePath);
     Console.WriteLine($"File \"{filePath}\" was successfully compressed with coefficient {compressionCoefficient}.");
 }
 else if (option == "-unc")
 {
-    string newFilePath = string.Join(".", splittedFilePath);
+    var newFilePath = string.Join(".", splittedFilePath);
     LZW.Uncompress(filePath, newFilePath);
     Console.WriteLine($"File \"{filePath}\" was successfully uncompressed.");
-}
+}*/
+
+LZW.Compress("""C:\Users\Eleno\homework\LZW.tests\bin\Debug\net8.0\TestTexts\TestLong.txt""",
+    """C:\Users\Eleno\homework\LZW.tests\bin\Debug\net8.0\TestTexts\TestLong.zipped""");
+LZW.Uncompress("""C:\Users\Eleno\homework\LZW.tests\bin\Debug\net8.0\TestTexts\TestLong.zipped""",
+    """C:\Users\Eleno\homework\LZW.tests\bin\Debug\net8.0\TestTexts\TestLong""");

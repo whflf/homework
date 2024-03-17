@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using static Trie;
 
 /// <summary>
@@ -43,7 +44,7 @@ public static class LZW
         var bitLength = 9;
         var bits = new List<bool>();
 
-        while ((1 << bitLength) < Trie.Total)
+        while ((1 << bitLength) < dictionary.Total)
         {
             ++bitLength;
         }
@@ -109,6 +110,12 @@ public static class LZW
         var bits = new List<bool>();
         var currentPhrase = "";
         var previousPhrase = "";
+        if (data.Count == 0)
+        {
+            bits = new List<bool>();
+            currentPhrase = "";
+            previousPhrase = "";
+        }
 
         for (int i = 0; i < data.Count; ++i)
         {
@@ -117,18 +124,34 @@ public static class LZW
 
             if (dictionary.Add(currentPhrase))
             {
-                bits.AddRange(GetOutputCode(previousPhrase, dictionary));
+                if (currentPhrase == "the")
+                {
+                    bits.AddRange(GetOutputCode(previousPhrase, dictionary));
+                }
+                else
+                {
+                    bits.AddRange(GetOutputCode(previousPhrase, dictionary));
+                }
                 currentPhrase = character;
             }
             previousPhrase = currentPhrase;
         }
-        bits.AddRange(GetOutputCode(previousPhrase, dictionary));
-
+        if (data.Count > 0)
+        {
+            bits.AddRange(GetOutputCode(previousPhrase, dictionary));
+        }
 
         var result = BitsToBytes(bits);
         WriteDataToFile(filePathWrite, result);
 
-        return (double)data.Count / (double)result.Count;
+        try 
+        { 
+            return (double)data.Count / (double)result.Count;
+        }
+        catch (DivideByZeroException) 
+        {
+            return 1;
+        }
     }
 
     private static List<bool> GetBits(List<byte> data)
@@ -157,6 +180,23 @@ public static class LZW
         return code;
     }
 
+    private static bool[] SeparateCurrentCode(int codeLength, List<bool> bitCodes, ref int index, ref bool inputEnd)
+    {
+        bool[] currentCode;
+        currentCode = new bool[codeLength];
+        for (int j = 0; j < codeLength; ++j)
+        {
+            if (index == bitCodes.Count)
+            {
+                inputEnd = true;
+                break;
+            }
+            currentCode[j] = bitCodes[index++];
+        }
+
+        return currentCode;
+    }
+
     /// <summary>
     /// Decompresses the data from a specified file and writes the decompressed data to another file.
     /// </summary>
@@ -182,17 +222,7 @@ public static class LZW
 
         while (index != bitCodes.Count)
         {
-            bool[] currentCode;
-            currentCode = new bool[codeLength];
-            for (int j = 0; j < codeLength; ++j)
-            {
-                if (index == bitCodes.Count)
-                {
-                    inputEnd = true;
-                    break;
-                }
-                currentCode[j] = bitCodes[index++];
-            }
+            var currentCode = SeparateCurrentCode(codeLength, bitCodes, ref index, ref inputEnd);
 
             if (inputEnd)
             {
