@@ -1,7 +1,0 @@
-#include <stdio.h>
-
-/* comment 1 */
-int main(void)
-{
-    printf("Hello world!"); /* comment 2 */
-}
