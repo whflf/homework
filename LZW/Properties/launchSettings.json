@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LZW": {
+      "commandName": "Project",
+      "commandLineArgs": "-unc \"C:\\Users\\Eleno\\homework\\LZW.tests\\bin\\Debug\\net8.0\\TestTexts\\TestBasic-2.zipped\""
+    }
+  }
+}
