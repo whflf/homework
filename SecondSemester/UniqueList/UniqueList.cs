@@ -2,14 +2,14 @@ namespace UniqueList;
 
 public class UniqueList<T> : CommonList<T>
 {
-    public override void Add(T value, int position)
+    public override void Add(T value)
     {
         if (this.Contains(value))
         {
             throw new RepeatingValueException();
         }
         
-        base.Add(value, position);
+        base.Add(value);
     }
 
     public override void Change(T value, int position)

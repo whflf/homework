@@ -6,58 +6,42 @@ public class CommonList<T>
 
     public int Count { get; private set; } = 0;
 
-    public virtual void Add(T value, int position)
+    public virtual void Add(T value)
     {
-        if (position > this.Count)
-        {
-            throw new IndexOutOfRangeException();
-        }
-
         ++this.Count;
-        
-        if (position == 0)
-        {
-            _head = new ListElement(value, _head);
-            return;
-        }
-        
-        for (var i = 0; i < this.Count; ++i)
-        {
-            if (i != position - 1)
-            {
-                continue;
-            }
-            
-            var previous = this.GetElement(i);
-            previous.Next = new ListElement(value, previous.Next);
-        }
+        _head = new ListElement(value, _head, null);
     }
 
-    public virtual void Remove(int position)
+    public virtual void Remove(T value)
     {
-        if (position > this.Count - 1)
-        {
-            throw new ElementNotFoundException();
-        }
-
-        --this.Count;
-        
-        if (position == 0)
-        {
-            _head = _head.Next;
-            return;
-        }
+        var current = _head;
         
         for (var i = 0; i < this.Count; ++i)
         {
-            if (i != position - 1)
+            if (!Equals(value, current.Value))
             {
+                current = current.Next;
                 continue;
             }
-            
-            var previous = this.GetElement(i);
-            previous.Next = previous.Next.Next;
+
+            if (current.Previous != null)
+            {
+                current.Previous.Next = current.Next;
+            }
+            else
+            {
+                _head = _head.Next;
+                if (_head is not null)
+                {
+                    _head.Previous = null;
+                }
+            }
+
+            --this.Count;
+            return;
         }
+
+        throw new ElementNotFoundException();
     }
 
     public virtual void Change(T value, int position)
@@ -67,24 +51,18 @@ public class CommonList<T>
             throw new IndexOutOfRangeException();
         }
 
-        this.GetElement(position).Value = value;
-    }
-
-    protected ListElement GetElement(int position)
-    {
         var current = _head;
-
         for (var i = 0; i < position; ++i)
         {
             current = current.Next;
         }
-
-        return current;
+        current.Value = value;
     }
 
-    protected class ListElement(T value, ListElement? next)
+    protected class ListElement(T value, ListElement? next, ListElement? previous)
     {
         public T Value { get; set; } = value;
         public ListElement? Next { get; set; } = next;
+        public ListElement? Previous { get; set; } = previous;
     }
 }
