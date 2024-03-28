@@ -2,17 +2,6 @@ namespace UniqueList.tests;
 
 public class UniqueListTests
 {
-    private UniqueList<int> CreateTestList()
-    {
-        var testList = new UniqueList<int>();
-        for (var i = 9; i > 0; i -= 2)
-        {
-            testList.Add(i);
-        }
-
-        return testList;
-    }
-    
     [Test]
     public void TestAdding()
     {
@@ -24,8 +13,8 @@ public class UniqueListTests
     [Test]
     public void TestRemoving()
     {
-        var testList = CreateTestList();
-        
+        var testList = this.CreateTestList();
+
         testList.Remove(1);
         testList.Remove(9);
         Assert.Throws<ElementNotFoundException>(() => testList.Remove(1));
@@ -34,9 +23,20 @@ public class UniqueListTests
     [Test]
     public void TestChangingValue()
     {
-        var testList = CreateTestList();
-        
+        var testList = this.CreateTestList();
+
         testList.Change(11, 1);
         Assert.Throws<RepeatingValueException>(() => testList.Change(1, 0));
+    }
+
+    private UniqueList<int> CreateTestList()
+    {
+        var testList = new UniqueList<int>();
+        for (var i = 9; i > 0; i -= 2)
+        {
+            testList.Add(i);
+        }
+
+        return testList;
     }
 }

@@ -7,82 +7,14 @@ internal static class MenuInterface
         ExitProgram,
         AddElementToUniqueList,
         RemoveElementFromUniqueList,
-        ChangeElementInUniqueList
+        ChangeElementInUniqueList,
     }
 
     private enum ListChangingOption
     {
         AddElement,
         RemoveElement,
-        ChangeElement
-    }
-
-    private static void Wait()
-    {
-        Console.WriteLine("Press enter to continue...");
-        while (Console.ReadKey().Key != ConsoleKey.Enter);
-    }
-
-    private static void ChoiceChangeListContent(UniqueList<string> list, ListChangingOption option)
-    {
-        Console.WriteLine("Enter the string:");
-        var stringValue = Console.ReadLine();
-        if (stringValue is null)
-        {
-            Console.WriteLine("The string value was null.");
-            return;
-        }
-
-        switch (option)
-        {
-            case ListChangingOption.ChangeElement:
-                Console.WriteLine("Enter the position:");
-                if (!int.TryParse(Console.ReadLine(), out var position))
-                {
-                    Console.WriteLine("Bad input. Please enter a correct integer.");
-                    return;
-                }
-
-                try
-                {
-                    list.Change(stringValue, position);
-                }
-                catch (RepeatingValueException)
-                {
-                    Console.WriteLine("You cannot have two same values in the unique list.");
-                }
-
-                var template = option == ListChangingOption.AddElement ? "added to the list" : 
-                    "changed in the list";
-                Console.WriteLine("The string was successfully changed in the list.");
-
-                break;
-            case ListChangingOption.AddElement:
-            case ListChangingOption.RemoveElement:
-                try
-                {
-                    if (option == ListChangingOption.AddElement)
-                    {
-                        list.Add(stringValue);
-                    }
-                    else
-                    {
-                        list.Remove(stringValue);
-                    }
-                }
-                catch (ElementNotFoundException)
-                {
-                    Console.WriteLine("Element with such value doesn't exists at the list.");
-                }
-                catch (RepeatingValueException)
-                {
-                    Console.WriteLine("You cannot have two same values in the unique list.");
-                }
-                Console.WriteLine("The string was successfully {0} the list.",
-                    option == ListChangingOption.AddElement ? "added to" : "removed from");
-
-                break;
-        }
+        ChangeElement,
     }
 
     public static void ProgramLoop(UniqueList<string> list)
@@ -134,6 +66,74 @@ internal static class MenuInterface
             }
 
             Wait();
+        }
+    }
+
+    private static void Wait()
+    {
+        Console.WriteLine("Press enter to continue...");
+        while (Console.ReadKey().Key != ConsoleKey.Enter);
+    }
+
+    private static void ChoiceChangeListContent(UniqueList<string> list, ListChangingOption option)
+    {
+        Console.WriteLine("Enter the string:");
+        var stringValue = Console.ReadLine();
+        if (stringValue is null)
+        {
+            Console.WriteLine("The string value was null.");
+            return;
+        }
+
+        switch (option)
+        {
+            case ListChangingOption.ChangeElement:
+                Console.WriteLine("Enter the position:");
+                if (!int.TryParse(Console.ReadLine(), out var position))
+                {
+                    Console.WriteLine("Bad input. Please enter a correct integer.");
+                    return;
+                }
+
+                try
+                {
+                    list.Change(stringValue, position);
+                }
+                catch (RepeatingValueException)
+                {
+                    Console.WriteLine("You cannot have two same values in the unique list.");
+                }
+
+                Console.WriteLine("The string was successfully changed in the list.");
+
+                break;
+            case ListChangingOption.AddElement:
+            case ListChangingOption.RemoveElement:
+                try
+                {
+                    if (option == ListChangingOption.AddElement)
+                    {
+                        list.Add(stringValue);
+                    }
+                    else
+                    {
+                        list.Remove(stringValue);
+                    }
+                }
+                catch (ElementNotFoundException)
+                {
+                    Console.WriteLine("Element with such value doesn't exists at the list.");
+                }
+                catch (RepeatingValueException)
+                {
+                    Console.WriteLine("You cannot have two same values in the unique list.");
+                }
+
+                Console.WriteLine(
+                    "The string was successfully {0} the list.",
+                    option == ListChangingOption.AddElement ? "added to" : "removed from");
+
+                break;
         }
     }
 }

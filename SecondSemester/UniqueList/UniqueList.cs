@@ -1,5 +1,9 @@
 namespace UniqueList;
 
+/// <license>
+/// https://github.com/whflf/homework/blob/main/LICENSE
+/// </license>
+
 /// <summary>
 /// Represents a list that ensures unique elements.
 /// </summary>
@@ -34,9 +38,9 @@ public class UniqueList<T> : CommonList<T>
         {
             return false;
         }
-        
+
         var current = this.Head;
-        
+
         for (var i = 0; i < this.Count; ++i)
         {
             if (current is null)

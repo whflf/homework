@@ -1,5 +1,9 @@
 namespace UniqueList;
 
+/// <license>
+/// https://github.com/whflf/homework/blob/main/LICENSE
+/// </license>
+
 /// <summary>
 /// Represents a common list data structure.
 /// </summary>
@@ -31,7 +35,7 @@ public class CommonList<T>
             Tail.Previous.Next = Tail;
         }
 
-        Head ??= Tail;
+        this.Head ??= this.Tail;
     }
 
     /// <summary>
@@ -41,7 +45,7 @@ public class CommonList<T>
     /// <exception cref="ElementNotFoundException">Thrown when the specified element is not found in the list.</exception>
     public virtual void Remove(T value)
     {
-        var current = Head;
+        var current = this.Head;
 
         for (var i = 0; i < this.Count; ++i)
         {
@@ -51,7 +55,7 @@ public class CommonList<T>
                 continue;
             }
 
-            if (current != Head)
+            if (current != this.Head)
             {
                 current.Previous.Next = current.Next;
             }
@@ -63,10 +67,10 @@ public class CommonList<T>
                     Head.Previous = null;
                 }
             }
-            
-            if (current == Tail)
+
+            if (current == this.Tail)
             {
-                Tail = current.Previous;
+                this.Tail = current.Previous;
             }
 
             --this.Count;
@@ -89,18 +93,36 @@ public class CommonList<T>
             throw new IndexOutOfRangeException();
         }
 
-        var current = Head;
+        var current = this.Head;
         for (var i = 0; i < position; ++i)
         {
             current = current.Next;
         }
+
         current.Value = value;
     }
 
+    /// <summary>
+    /// Represents an element in the list.
+    /// </summary>
+    /// <param name="value">The value stored in the element.</param>
+    /// <param name="next">The next element for the current one.</param>
+    /// <param name="previous">The previous element for the current one.</param>
     protected class ListElement(T value, ListElement? next, ListElement? previous)
     {
+        /// <summary>
+        /// Gets or sets the value of the element.
+        /// </summary>
         public T Value { get; set; } = value;
+
+        /// <summary>
+        /// Gets or sets the next element for the current one.
+        /// </summary>
         public ListElement? Next { get; set; } = next;
+
+        /// <summary>
+        /// Gets or sets the previous element for the current one.
+        /// </summary>
         public ListElement? Previous { get; set; } = previous;
     }
 }
