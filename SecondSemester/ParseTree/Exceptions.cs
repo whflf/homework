@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-internal class IncorrectInputException : Exception
+/// <summary>
+/// Represents an exception which is thrown when string equivalent doesn't match the template for parse tree.
+/// </summary>
+public class IncorrectInputException : Exception
 {
 }

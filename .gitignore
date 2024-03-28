@@ -394,22 +394,10 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# JetBrains Rider
-*.sln.iml
-
- Common IntelliJ Platform excludes
-
 # JetBrains Rider specific
 .idea/
 *.sln.iml
 
-*.suo
-*.user
-*.userprefs
-.vs/
-[Bb]in/
-[Oo]bj/
-_UpgradeReport_Files/
 [Pp]ackages/
 
 Thumbs.db
