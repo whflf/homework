@@ -26,6 +26,12 @@ public class CommonList<T>
     {
         ++this.Count;
         Tail = new ListElement(value, null, Tail);
+        if (Tail.Previous is not null)
+        {
+            Tail.Previous.Next = Tail;
+        }
+
+        Head ??= Tail;
     }
 
     /// <summary>
