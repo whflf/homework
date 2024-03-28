@@ -30,12 +30,12 @@ public class UniqueList<T> : CommonList<T>
 
     private bool Contains(T element)
     {
-        if (this._head is null)
+        if (this.Head is null)
         {
             return false;
         }
         
-        var current = this._head;
+        var current = this.Head;
         
         for (var i = 0; i < this.Count; ++i)
         {

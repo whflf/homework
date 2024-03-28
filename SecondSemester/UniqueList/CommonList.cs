@@ -9,7 +9,9 @@ public class CommonList<T>
     /// <summary>
     /// The head element of the list.
     /// </summary>
-    protected ListElement? _head = null;
+    protected ListElement? Head = null;
+
+    protected ListElement? Tail = null;
 
     /// <summary>
     /// Gets the number of elements contained in the list.
@@ -23,7 +25,7 @@ public class CommonList<T>
     public virtual void Add(T value)
     {
         ++this.Count;
-        _head = new ListElement(value, _head, null);
+        Tail = new ListElement(value, null, Tail);
     }
 
     /// <summary>
@@ -33,7 +35,7 @@ public class CommonList<T>
     /// <exception cref="ElementNotFoundException">Thrown when the specified element is not found in the list.</exception>
     public virtual void Remove(T value)
     {
-        var current = _head;
+        var current = Head;
 
         for (var i = 0; i < this.Count; ++i)
         {
@@ -43,17 +45,22 @@ public class CommonList<T>
                 continue;
             }
 
-            if (current.Previous != null)
+            if (current != Head)
             {
                 current.Previous.Next = current.Next;
             }
             else
             {
-                _head = _head.Next;
-                if (_head is not null)
+                Head = Head.Next;
+                if (Head is not null)
                 {
-                    _head.Previous = null;
+                    Head.Previous = null;
                 }
+            }
+            
+            if (current == Tail)
+            {
+                Tail = current.Previous;
             }
 
             --this.Count;
@@ -76,7 +83,7 @@ public class CommonList<T>
             throw new IndexOutOfRangeException();
         }
 
-        var current = _head;
+        var current = Head;
         for (var i = 0; i < position; ++i)
         {
             current = current.Next;
