@@ -1,4 +1,1 @@
-﻿Trie myTrie = new Trie();
-
-myTrie = new Trie();
-MenuInterface.ProgramLoop(myTrie);
+﻿MenuInterface.ProgramLoop(new Trie());

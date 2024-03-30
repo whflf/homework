@@ -3,96 +3,32 @@
 /// </summary>
 public class Trie
 {
-    private Trie?[] next;
-    private bool isTerminal;
-    private int size;
-    public int code;
 
-    public static int Total { get; private set; } = 0;
+    private TrieElement head;
 
     public Trie()
     {
-        this.next = new Trie[256];
+        this.head = new TrieElement();
     }
 
     /// <summary>
     /// Adds the string to trie.
     /// </summary>
     /// <param name="element">String to add.</param>
-    /// <param name="position">Character index in the string from which it is necessary to add it (initially 0).</param>
     /// <returns>True if the string was added, otherwise false.</returns>
-    public bool Add(string element, int position = 0)
+    public bool Add(string element)
     {
-        if (position == element.Length)
-        {
-            if (this.isTerminal)
-            {
-                return false;
-            }
-
-            this.isTerminal = true;
-            this.code = Total++;
-            return true;
-        }
-
-        var newVertexCreated = false;
-        if (this.next[element[position]] == null)
-        {
-            this.next[element[position]] = new Trie();
-            ++this.size;
-            newVertexCreated = true;
-
-            if (position == element.Length - 1)
-            {
-                this.next[element[position]].isTerminal = true;
-                this.next[element[position]].code = Total++;
-                return true;
-            }
-        }
-
-        bool isNewElement = this.next[element[position]].Add(element, ++position);
-        if (isNewElement && !newVertexCreated)
-        {
-            ++this.size;
-        }
-
-        return isNewElement;
+        return head.Add(element);
     }
 
     /// <summary>
     /// Checks whether the string is in trie or not.
     /// </summary>
     /// <param name="element">String to check.</param>
-    /// <param name="position">Character index in the string from which it is necessary to check it (initially 0).</param>
     /// <returns>True if the string is in trie, otherwise false.</returns>
-    public bool Contains(string element, int position = 0)
+    public bool Contains(string element)
     {
-        if (position == element.Length)
-        {
-            return this.isTerminal;
-        }
-
-        if (this.next[element[position]] == null)
-        {
-            return false;
-        }
-
-        return this.next[element[position]].Contains(element, ++position);
-    }
-
-    public int GetCode(string element, int position = 0)
-    {
-        if (position == element.Length)
-        {
-            return this.code;
-        }
-
-        if (this.next[element[position]] == null)
-        {
-            return -1;
-        }
-
-        return this.next[element[position]].GetCode(element, ++position);
+        return head.Contains(element);
     }
 
     /// <summary>
@@ -100,41 +36,10 @@ public class Trie
     /// </summary>
     /// <param name="element">String to remove.</param>
     /// <param name="position">Character index in the string from which it is necessary to remove it (initially 0).</param>
-    /// <returns></returns>
-    public bool Remove(string element, int position = 0)
+    /// <returns>True if the string was added, otherwise false.</returns>
+    public bool Remove(string element)
     {
-        if (this.next[element[position]] == null)
-        {
-            return false;
-        }
-
-        if (position == element.Length - 1)
-        {
-            if (!this.next[element[position]].isTerminal)
-            {
-                return false;
-            }
-
-            if (this.size == 1)
-            {
-                this.next[element[position]] = null;
-            }
-            else
-            {
-                this.next[element[position]].isTerminal = false;
-            }
-            --this.size;
-            return true;
-        }
-
-        bool isRemoved = this.next[element[position]].Remove(element, ++position);
-        if (isRemoved && this.size == 1)
-        {
-            this.next[element[position]] = null;
-        }
-        --this.size;
-
-        return isRemoved;
+        return head.Remove(element);
     }
 
     /// <summary>
@@ -142,24 +47,141 @@ public class Trie
     /// </summary>
     /// <param name="prefix">Prefix to check.</param>
     /// <param name="position">Character index in the prefix from which it is necessary to count strings (initially 0).</param>
-    /// <returns></returns>
-    public int HowManyStartsWithPrefix(string prefix, int position = 0)
+    /// <returns>The amount of strings starting with given prefix.</returns>
+    public int HowManyStartsWithPrefix(string prefix)
     {
-        if (position == prefix.Length)
+        return head.HowManyStartsWithPrefix(prefix);
+    }
+
+    private class TrieElement
+    {
+        private TrieElement?[] next;
+        private bool isTerminal = false;
+        private int size = 0;
+
+        public TrieElement()
         {
-            if (this.isTerminal)
+            this.next = new TrieElement[256];
+        }
+
+        public bool Add(string element, int position = 0)
+        {
+            var current = this;
+            while (position < element.Length)
             {
-                return this.size + 1;
+                if (current.next[element[position]] == null)
+                {
+                    current.next[element[position]] = new TrieElement();
+                    ++current.size;
+
+                    if (position == element.Length - 1)
+                    {
+                        current.next[element[position]].isTerminal = true;
+                        return true;
+                    }
+                }
+
+                current = current.next[element[position]];
+                ++position;
             }
 
-            return this.size;
+            if (current.isTerminal)
+            {
+                return false;
+            }
+
+            current.isTerminal = true;
+            return true;
         }
 
-        if (this.next[prefix[position]] == null)
+        public bool Contains(string element)
         {
-            return 0;
+            var current = this;
+            var position = 0;
+
+            while (position < element.Length)
+            {
+                if (current.next[element[position]] == null)
+                {
+                    return false;
+                }
+
+                current = current.next[element[position]];
+                ++position;
+            }
+
+            return current.isTerminal;
         }
 
-        return this.next[prefix[position]].HowManyStartsWithPrefix(prefix, ++position);
+        public bool Remove(string element)
+        {
+            var current = this;
+            var position = 0;
+            var visitedNodes = new List<TrieElement?>() { current };
+
+            while (position < element.Length)
+            {
+                if (current.next[element[position]] == null)
+                {
+                    return false;
+                }
+
+                current = current.next[element[position]];
+                visitedNodes.Add(current);
+                ++position;
+            }
+
+            if (!current.isTerminal)
+            {
+                return false;
+            }
+
+            current.isTerminal = false;
+
+            if (current.size > 0)
+            {
+                return true;
+            }
+            else
+            {
+                current = null;
+            }
+
+            for (var i = visitedNodes.Count - 2; i >= 0; --i)
+            {
+                if (visitedNodes[i].size-- == 0)
+                {
+                    visitedNodes[i] = null;
+                }
+            }
+
+            return true;
+        }
+
+        public int HowManyStartsWithPrefix(string prefix)
+        {
+            var current = this;
+            var position = 0;
+
+            while (position < prefix.Length)
+            {
+                if (current.next[prefix[position]] == null)
+                {
+                    return 0;
+                }
+
+                current = current.next[prefix[position]];
+                ++position;
+            }
+
+            var result = current.size;
+
+            if (current.isTerminal)
+            {
+                ++result;
+            }
+
+            return result;
+        }
     }
 }
