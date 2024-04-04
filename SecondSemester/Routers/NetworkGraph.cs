@@ -1,14 +1,39 @@
+// <copyright file="NetworkGraph.cs" company="Elena Makarova">
+// Copyright (c) Elena Makarova. All rights reserved.
+// </copyright>
+
 namespace Routers;
 
+/// <license>
+/// https://github.com/whflf/homework/blob/main/LICENSE .
+/// </license>
+/// <summary>
+/// Represents a network graph and provides methods to generate router configurations.
+/// </summary>
+/// <remarks>
+/// This class can read a network topology from an input file, build a graph representation, and generate router configurations based on a maximum spanning tree algorithm.
+/// </remarks>
 public class NetworkGraph
 {
     private readonly List<List<Tuple<int, int>>> routersWithNeighbours = [];
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NetworkGraph"/> class with the specified input file.
+    /// </summary>
+    /// <param name="inputFile">The path to the input file containing the network topology.</param>
     public NetworkGraph(string inputFile)
     {
         this.BuildGraph(inputFile);
     }
 
+    /// <summary>
+    /// Generates router configurations based on the maximum spanning tree of the network
+    /// graph and writes them to the specified output file.
+    /// </summary>
+    /// <param name="outputFile">The path to the output file where the router configurations will be written.</param>
+    /// <exception cref="UnconnectedNetworkException">
+    /// Thrown when the network graph is not connected (contains disconnected components).
+    /// </exception>
     public void GenerateConfiguration(string outputFile)
     {
         var configuration = this.FindMaxSpanningTree();
@@ -21,10 +46,12 @@ public class NetworkGraph
                 continue;
             }
 
+            var orderedRouter = router.Value.OrderBy(tuple => tuple.Item1).ToList();
+
             configurationEntry += $"{router.Key + 1}: ";
             for (var i = 0; i < router.Value.Count; ++i)
             {
-                configurationEntry += $"{router.Value[i].Item1 + 1} ({-router.Value[i].Item2})";
+                configurationEntry += $"{orderedRouter[i].Item1 + 1} ({-orderedRouter[i].Item2})";
 
                 if (i != router.Value.Count - 1)
                 {
@@ -35,6 +62,11 @@ public class NetworkGraph
                     configurationEntry += '\n';
                 }
             }
+        }
+
+        if (configurationEntry == string.Empty)
+        {
+            configurationEntry = "1";
         }
 
         File.WriteAllText(outputFile, configurationEntry);
@@ -48,10 +80,24 @@ public class NetworkGraph
         foreach (var router in routers)
         {
             var numberAndNeighbours = router.Split(": ");
-            var number = int.Parse(numberAndNeighbours[0]);
-            var neighbours = numberAndNeighbours[1].Split(", ");
+            var number = int.Parse(numberAndNeighbours[0].Replace(":", string.Empty));
 
             this.ExtendRoutersList(number - this.routersWithNeighbours.Count);
+
+            string[] neighbours;
+            try
+            {
+                neighbours = numberAndNeighbours[1].Split(", ");
+            }
+            catch (IndexOutOfRangeException)
+            {
+                continue;
+            }
+
+            if (neighbours[0] == string.Empty)
+            {
+                continue;
+            }
 
             foreach (var neighbour in neighbours)
             {

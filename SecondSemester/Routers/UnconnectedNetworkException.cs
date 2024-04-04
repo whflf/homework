@@ -4,4 +4,7 @@
 
 namespace Routers;
 
+/// <summary>
+/// Represents an exception that thrown when the network graph is not connected.
+/// </summary>
 public class UnconnectedNetworkException : Exception;
