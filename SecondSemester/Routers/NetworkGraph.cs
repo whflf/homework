@@ -4,9 +4,40 @@ public class NetworkGraph
 {
     private readonly List<List<Tuple<int, int>>> routersWithNeighbours = [];
 
-    public NetworkGraph(string inputFile, string outputFile)
+    public NetworkGraph(string inputFile)
     {
         this.BuildGraph(inputFile);
+    }
+
+    public void GenerateConfiguration(string outputFile)
+    {
+        var configuration = this.FindMaxSpanningTree();
+        var configurationEntry = string.Empty;
+
+        foreach (var router in configuration)
+        {
+            if (router.Key == -1)
+            {
+                continue;
+            }
+
+            configurationEntry += $"{router.Key + 1}: ";
+            for (var i = 0; i < router.Value.Count; ++i)
+            {
+                configurationEntry += $"{router.Value[i].Item1 + 1} ({-router.Value[i].Item2})";
+
+                if (i != router.Value.Count - 1)
+                {
+                    configurationEntry += ", ";
+                }
+                else
+                {
+                    configurationEntry += '\n';
+                }
+            }
+        }
+
+        File.WriteAllText(outputFile, configurationEntry);
     }
 
     private void BuildGraph(string inputFile)
@@ -37,6 +68,11 @@ public class NetworkGraph
                     new Tuple<int, int>(number - 1, -neighbourBandwidth));
             }
         }
+
+        if (this.routersWithNeighbours.Contains([]))
+        {
+            throw new UnconnectedNetworkException();
+        }
     }
 
     private void ExtendRoutersList(int count)
@@ -47,14 +83,15 @@ public class NetworkGraph
         }
     }
 
-    private void FindMaxSpanningTree()
+    private Dictionary<int, List<Tuple<int, double>>> FindMaxSpanningTree()
     {
-        var spanningTree = new List<Tuple<int, int, double>>();
+        var spanningTree = new Dictionary<int, List<Tuple<int, double>>>();
 
         var parents = new int[this.routersWithNeighbours.Count];
         Array.Fill(parents, -1);
 
         var alreadyInTree = new bool[this.routersWithNeighbours.Count];
+        var bandwidthes = new int[this.routersWithNeighbours.Count];
         var queue = new PriorityQueue<int, double>();
 
         for (var i = 0; i < this.routersWithNeighbours.Count; ++i)
@@ -76,19 +113,35 @@ public class NetworkGraph
                 throw new UnconnectedNetworkException();
             }
 
-            spanningTree.Add(new Tuple<int, int, double>(router, parents[router], bandwidth));
+            if (alreadyInTree[router])
+            {
+                continue;
+            }
+
+            if (!spanningTree.ContainsKey(parents[router]))
+            {
+                spanningTree.Add(parents[router], [new Tuple<int, double>(router, bandwidth)]);
+            }
+            else
+            {
+                spanningTree[parents[router]].Add(new Tuple<int, double>(router, bandwidth));
+            }
+
             alreadyInTree[router] = true;
 
             foreach (var neighbour in this.routersWithNeighbours[router])
             {
-                if (alreadyInTree[neighbour.Item1] || bandwidth <= neighbour.Item2)
+                if (alreadyInTree[neighbour.Item1] || bandwidthes[neighbour.Item1] <= neighbour.Item2)
                 {
                     continue;
                 }
 
                 parents[neighbour.Item1] = router;
+                bandwidthes[neighbour.Item1] = neighbour.Item2;
                 queue.Enqueue(neighbour.Item1, neighbour.Item2);
             }
         }
+
+        return spanningTree;
     }
 }
