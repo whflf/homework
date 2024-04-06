@@ -37,7 +37,7 @@ public static class BurrowsWheeler
     /// </summary>
     /// <param name="inputString">The input string to be transformed.</param>
     /// <returns>The position of the original string within the transformed string.</returns>
-    public static int TransformStringAndGetPosition(ref string inputString)
+    public static int TransformStringAndGetPosition(string inputString, out string resultString)
     {
         var shifts = new int[inputString.Length];
 
@@ -45,6 +45,7 @@ public static class BurrowsWheeler
         {
             shifts[i] = i;
         }
+
         SortShifts(shifts, inputString);
         var charString = inputString.ToCharArray();
 
@@ -59,7 +60,7 @@ public static class BurrowsWheeler
             charString[i] = inputString[(shifts[i] + inputString.Length - 1) % inputString.Length];
         }
 
-        inputString = new string(charString);
+        resultString = new string(charString);
         return position;
     }
 
@@ -92,8 +93,10 @@ public static class BurrowsWheeler
     /// </summary>
     /// <param name="inputString">The transformed string to be detransformed.</param>
     /// <param name="position">The position of the original string within the transformed string.</param>
-    public static void DetransformString(ref string inputString, int position)
+    public static void DetransformString(string inputString, int position, out string resultString)
     {
+        resultString = string.Empty;
+
         var charString = inputString.ToArray();
         var vector = GetDetransformationVector(charString);
 
@@ -110,6 +113,6 @@ public static class BurrowsWheeler
             position = vector[position];
         }
 
-        inputString = new string(charString);
+        resultString = new string(charString);
     }
 }
