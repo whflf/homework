@@ -13,14 +13,17 @@ public class CommonList<T>
     /// <summary>
     /// The head element of the list.
     /// </summary>
-    protected ListElement? Head = null;
+    protected ListElement? head;
 
-    protected ListElement? Tail = null;
+    /// <summary>
+    /// The tail element of the list.
+    /// </summary>
+    protected ListElement? tail;
 
     /// <summary>
     /// Gets the number of elements contained in the list.
     /// </summary>
-    public int Count { get; private set; } = 0;
+    public int Count { get; private set; }
 
     /// <summary>
     /// Adds an element to the end of the list.
@@ -29,13 +32,13 @@ public class CommonList<T>
     public virtual void Add(T value)
     {
         ++this.Count;
-        Tail = new ListElement(value, null, Tail);
-        if (Tail.Previous is not null)
+        tail = new ListElement(value, null, tail);
+        if (tail.Previous is not null)
         {
-            Tail.Previous.Next = Tail;
+            tail.Previous.Next = tail;
         }
 
-        this.Head ??= this.Tail;
+        this.head ??= this.tail;
     }
 
     /// <summary>
@@ -45,7 +48,7 @@ public class CommonList<T>
     /// <exception cref="ElementNotFoundException">Thrown when the specified element is not found in the list.</exception>
     public virtual void Remove(T value)
     {
-        var current = this.Head;
+        var current = this.head;
 
         for (var i = 0; i < this.Count; ++i)
         {
@@ -55,22 +58,22 @@ public class CommonList<T>
                 continue;
             }
 
-            if (current != this.Head)
+            if (current != this.head)
             {
                 current.Previous.Next = current.Next;
             }
             else
             {
-                Head = Head.Next;
-                if (Head is not null)
+                head = head.Next;
+                if (head is not null)
                 {
-                    Head.Previous = null;
+                    head.Previous = null;
                 }
             }
 
-            if (current == this.Tail)
+            if (current == this.tail)
             {
-                this.Tail = current.Previous;
+                this.tail = current.Previous;
             }
 
             --this.Count;
@@ -93,7 +96,7 @@ public class CommonList<T>
             throw new IndexOutOfRangeException();
         }
 
-        var current = this.Head;
+        var current = this.head;
         for (var i = 0; i < position; ++i)
         {
             current = current.Next;

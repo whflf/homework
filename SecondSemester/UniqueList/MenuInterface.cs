@@ -63,6 +63,10 @@ internal static class MenuInterface
                 case (int)MenuOption.ChangeElementInUniqueList:
                     ChoiceChangeListContent(list, ListChangingOption.ChangeElement);
                     break;
+                default:
+                    Console.WriteLine("Bad input. Please enter a valid operation code.");
+                    Wait();
+                    break;
             }
 
             Wait();
@@ -133,6 +137,8 @@ internal static class MenuInterface
                     "The string was successfully {0} the list.",
                     option == ListChangingOption.AddElement ? "added to" : "removed from");
 
+                break;
+            default:
                 break;
         }
     }
