@@ -5,9 +5,9 @@ public class Trie
 {
     private class TrieElement
     {
-        private TrieElement?[] next;
-        private bool isTerminal = false;
-        private int size = 0;
+        private readonly TrieElement?[] next;
+        private bool isTerminal;
+        private int size;
         public int code;
 
         public TrieElement()
@@ -82,9 +82,9 @@ public class Trie
         }
     }
 
-    public int Total { get; private set; } = 0;
+    public int Total { get; private set; }
 
-    private TrieElement head;
+    private readonly TrieElement head;
 
     public Trie()
     {
