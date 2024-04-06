@@ -1,6 +1,4 @@
-
-
-[TestFixture]
+п»ї[TestFixture]
 public class BurrowsWheelerTests
 {
     [TestCase("", "", 0)]
@@ -10,7 +8,7 @@ public class BurrowsWheelerTests
     [TestCase("the quick brown fox jumps over the lazy dog", "kynxeserl i hhv ottu c uwd rfm ebp gqjoooza", 35)]
     [TestCase("12345", "51234", 0)]
     [TestCase("abc123!@#", "3@c12!#ab", 6)]
-    [TestCase("абракадабра", "рдакраааабб", 2)]
+    [TestCase("Р°Р±СЂР°РєР°РґР°Р±СЂР°", "СЂРґР°РєСЂР°Р°Р°Р°Р±Р±", 2)]
     public void TestDifferentStrings(string given, string expected, int position)
     {
         var afterTransform = given;
