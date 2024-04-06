@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using static Trie;
 
 /// <summary>
@@ -108,23 +109,17 @@ public static class LZW
         }
 
         var bits = new List<bool>();
-        var currentPhrase = "";
-        var previousPhrase = "";
-        if (data.Count == 0)
-        {
-            bits = new List<bool>();
-            currentPhrase = "";
-            previousPhrase = "";
-        }
+        var currentPhrase = new StringBuilder(string.Empty);
+        var previousPhrase = string.Empty;
 
         for (int i = 0; i < data.Count; ++i)
         {
             var character = Convert.ToString(Convert.ToChar(data[i]));
-            currentPhrase += character;
+            currentPhrase.Append(character);
 
-            if (dictionary.Add(currentPhrase))
+            if (dictionary.Add(currentPhrase.ToString()))
             {
-                if (currentPhrase == "the")
+                if (currentPhrase.ToString() == "the")
                 {
                     bits.AddRange(GetOutputCode(previousPhrase, dictionary));
                 }
@@ -132,9 +127,9 @@ public static class LZW
                 {
                     bits.AddRange(GetOutputCode(previousPhrase, dictionary));
                 }
-                currentPhrase = character;
+                currentPhrase = new StringBuilder(character);
             }
-            previousPhrase = currentPhrase;
+            previousPhrase = currentPhrase.ToString();
         }
         if (data.Count > 0)
         {
@@ -217,7 +212,7 @@ public static class LZW
 
         var codeLength = 9;
         var index = 0;
-        var currentPhrase = "";
+        var currentPhrase = new StringBuilder(string.Empty);
         var inputEnd = false;
 
         while (index != bitCodes.Count)
@@ -239,14 +234,14 @@ public static class LZW
             }
             catch (ArgumentOutOfRangeException)
             {
-                entry = currentPhrase + currentPhrase[0];
+                entry = currentPhrase.ToString() + currentPhrase[0];
             }
             while (phraseIndex < entry.Length)
             {
-                currentPhrase += entry[phraseIndex++];
-                if (!dictionary.Contains(currentPhrase))
+                currentPhrase.Append(entry[phraseIndex++]);
+                if (!dictionary.Contains(currentPhrase.ToString()))
                 {
-                    dictionary.Add(currentPhrase);
+                    dictionary.Add(currentPhrase.ToString());
                     if (dictionary.Count == (1 << codeLength) - 1)
                     {
                         ++codeLength;
@@ -259,7 +254,7 @@ public static class LZW
             {
                 result.Add(Convert.ToByte(character));
             }
-            currentPhrase = entry;
+            currentPhrase = new StringBuilder(entry);
         }
 
         WriteDataToFile(filePathWrite, result);
