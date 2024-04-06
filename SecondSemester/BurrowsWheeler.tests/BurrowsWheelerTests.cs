@@ -12,11 +12,11 @@ public class BurrowsWheelerTests
     public void TestDifferentStrings(string given, string expected, int position)
     {
         var afterTransform = given;
-        var result = BurrowsWheeler.TransformStringAndGetPosition(given, out var transformed);
-        Assert.That(transformed, Is.EqualTo(expected));
-        Assert.That(result, Is.EqualTo(position));
+        var result = BurrowsWheeler.TransformStringAndGetPosition(given);
+        Assert.That(result.transformed, Is.EqualTo(expected));
+        Assert.That(result.position, Is.EqualTo(position));
 
-        BurrowsWheeler.DetransformString(transformed, result, out var detransformed);
+        var detransformed = BurrowsWheeler.DetransformString(result.transformed, result.position);
         Assert.That(detransformed, Is.EqualTo(afterTransform));
     }
 }

@@ -12,8 +12,8 @@ if (mode == "1")
         return;
     }
 
-    var position = BurrowsWheeler.TransformStringAndGetPosition(inputString, out var resultString);
-    Console.Write($"Transformation result: {resultString}, {position}\n");
+    var result = BurrowsWheeler.TransformStringAndGetPosition(inputString);
+    Console.Write($"Transformation result: {result.transformed}, {result.position}\n");
 }
 else if (mode == "2")
 {
@@ -29,8 +29,8 @@ else if (mode == "2")
     Console.WriteLine("Enter the position: ");
     var position = Convert.ToInt32(Console.ReadLine());
 
-    BurrowsWheeler.DetransformString(inputString, position, out var resultString);
-    Console.Write($"Detransformation result: {inputString}\n");
+    var result = BurrowsWheeler.DetransformString(inputString, position);
+    Console.Write($"Detransformation result: {result}\n");
 }
 else
 {

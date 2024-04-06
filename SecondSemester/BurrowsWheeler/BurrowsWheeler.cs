@@ -37,8 +37,10 @@ public static class BurrowsWheeler
     /// </summary>
     /// <param name="inputString">The input string to be transformed.</param>
     /// <returns>The position of the original string within the transformed string.</returns>
-    public static int TransformStringAndGetPosition(string inputString, out string resultString)
+    public static (string transformed, int position) TransformStringAndGetPosition(string inputString)
     {
+        var result = (transformed: string.Empty, position: 0);
+
         var shifts = new int[inputString.Length];
 
         for (var i = 0; i < inputString.Length; ++i)
@@ -49,19 +51,18 @@ public static class BurrowsWheeler
         SortShifts(shifts, inputString);
         var charString = inputString.ToCharArray();
 
-        var position = 0;
         for (var i = 0; i < shifts.Length; ++i)
         {
             if (shifts[i] == 0)
             {
-                position = i;
+                result.position = i;
             }
 
             charString[i] = inputString[(shifts[i] + inputString.Length - 1) % inputString.Length];
         }
 
-        resultString = new string(charString);
-        return position;
+        result.transformed = new string(charString);
+        return result;
     }
 
     private static int[] GetDetransformationVector(char[] charString)
@@ -93,16 +94,16 @@ public static class BurrowsWheeler
     /// </summary>
     /// <param name="inputString">The transformed string to be detransformed.</param>
     /// <param name="position">The position of the original string within the transformed string.</param>
-    public static void DetransformString(string inputString, int position, out string resultString)
+    public static string DetransformString(string inputString, int position)
     {
-        resultString = string.Empty;
+        var detransformed = string.Empty;
 
         var charString = inputString.ToArray();
         var vector = GetDetransformationVector(charString);
 
         if (vector.Length == 0)
         {
-            return;
+            return detransformed;
         }
 
         position = vector[position];
@@ -113,6 +114,8 @@ public static class BurrowsWheeler
             position = vector[position];
         }
 
-        resultString = new string(charString);
+        detransformed = new string(charString);
+
+        return detransformed;
     }
 }
