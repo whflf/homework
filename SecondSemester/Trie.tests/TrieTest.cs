@@ -2,11 +2,9 @@ using NUnit.Framework;
 using System.Diagnostics;
 
 [TestFixture]
-public class Tests
+public class TrieTest
 {
-    private string[] strings = new string[] { "apple", "app", "banana", "bat" };
-
-    //private static Trie? myTrie = new Trie();
+    private readonly string[] strings = new string[] { "apple", "app", "banana", "bat" };
 
     [Test]
     public void TestAdding()

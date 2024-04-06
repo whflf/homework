@@ -4,7 +4,7 @@
 public class Trie
 {
 
-    private TrieElement head;
+    private readonly TrieElement head;
 
     public Trie()
     {
@@ -55,9 +55,9 @@ public class Trie
 
     private class TrieElement
     {
-        private TrieElement?[] next;
-        private bool isTerminal = false;
-        private int size = 0;
+        private readonly TrieElement?[] next;
+        private bool isTerminal;
+        private int size;
 
         public TrieElement()
         {
@@ -117,7 +117,7 @@ public class Trie
         {
             var current = this;
             var position = 0;
-            var visitedNodes = new List<TrieElement?>() { current };
+            var visitedNodes = new List<TrieElement?> { current };
 
             while (position < element.Length)
             {

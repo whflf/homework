@@ -108,6 +108,10 @@ internal class MenuInterface
 
                     Console.WriteLine($"{stringsCount} string{ends[0]} in the trie start{ends[1]} with that prefix");
                     break;
+                default:
+                    Console.WriteLine("Bad input. Please enter a valid operation code");
+                    Wait();
+                    break;
             }
 
             Wait();
