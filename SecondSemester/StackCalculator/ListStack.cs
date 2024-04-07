@@ -1,7 +1,7 @@
 ﻿/// <inheritdoc/>
 public class ListStack : IStack
 {
-    private StackElement? head = null;
+    private StackElement? head;
 
     /// <inheritdoc/>
     public bool IsEmpty()
