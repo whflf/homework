@@ -14,28 +14,28 @@ namespace ListFunctions.Tests
         {
             new object[]
             {
-                new List<bool> { true, true, false, false }, 
+                new List<bool> { true, true, false, false },
                 new Func<bool, bool>(x => !x),
                 new List<bool> { false, false, true, true },
             },
 
             new object[]
             {
-                new List<string> { "HELLO", "WORLD", "!" }, 
+                new List<string> { "HELLO", "WORLD", "!" },
                 new Func<string, string>(x => x.ToLower()),
                 new List<string> { "hello", "world", "!" },
             },
 
             new object[]
             {
-                new List<int> { 1, 2, 3, 4 }, 
+                new List<int> { 1, 2, 3, 4 },
                 new Func<int, string>(x => x.ToString()),
                 new List<string> { "1", "2", "3", "4" },
             },
 
             new object[]
             {
-                new List<int>() { 1, 2, 3, 4 }, 
+                new List<int>() { 1, 2, 3, 4 },
                 new Func<int, int>(x => x * 2),
                 new List<int> { 2, 4, 6, 8 },
             },

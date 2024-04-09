@@ -412,6 +412,8 @@ FodyWeavers.xsd
 _UpgradeReport_Files/
 [Pp]ackages/
 
+*.json
+
 Thumbs.db
 Desktop.ini
 .DS_Store
