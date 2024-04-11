@@ -107,8 +107,7 @@ public class SparseVector
 
     private SparseVector AddOrSubtract(SparseVector anotherVector, ArithmeticOperation operation)
     {
-        var resultVector = new SparseVector();
-        resultVector.Size = this.Size;
+        var resultVector = new SparseVector(new List<Tuple<int, int>>(), this.Size);
 
         for (var i = 0; i < this.Size; ++i)
         {
