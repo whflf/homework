@@ -38,7 +38,7 @@ namespace PriorityQueue
             while (i > 0)
             {
                 var parent = (i - 1) / 2;
-                if (this.heap[parent].Priority > priority)
+                if (this.heap[parent].Priority >= priority)
                 {
                     break;
                 }
@@ -62,6 +62,11 @@ namespace PriorityQueue
             var item = this.heap[0].Item;
             var lastIndex = this.heap.Count - 1;
 
+            while (lastIndex != 0 && this.heap[lastIndex].Priority == this.heap[lastIndex - 1].Priority)
+            {
+                --lastIndex;
+            }
+
             this.heap[0] = this.heap[lastIndex];
             this.heap.RemoveAt(lastIndex--);
 
@@ -78,7 +83,7 @@ namespace PriorityQueue
 
                 var next = right <= lastIndex && this.heap[right].Priority > this.heap[left].Priority ? right : left;
 
-                if (this.heap[current].Priority > this.heap[next].Priority)
+                if (this.heap[current].Priority >= this.heap[next].Priority)
                 {
                     break;
                 }
