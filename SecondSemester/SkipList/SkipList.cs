@@ -1,7 +1,15 @@
-﻿namespace SkipList
+﻿// <copyright file="SkipList.cs" company="Elena Makarova">
+// Copyright (c) Elena Makarova. All rights reserved.
+// </copyright>
+
+namespace SkipList
 {
     using System.Collections;
 
+    /// <summary>
+    /// Represents a skip list data structure.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the skip list.</typeparam>
     public class SkipList<T> : IList<T>
         where T : IComparable<T>
     {
@@ -13,12 +21,49 @@
 
         private Random random = new Random();
 
+        /// <inheritdoc/>
         public int Count { get; private set; } = 0;
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        /// <inheritdoc/>
+        public bool IsReadOnly => false;
 
-        public T this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        /// <inheritdoc/>
+        public T this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= this.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
 
+                var current = this.head.NextNodes[0];
+                for (int i = 0; i < index; i++)
+                {
+                    current = current.NextNodes[0];
+                }
+
+                return current.Value;
+            }
+
+            set
+            {
+                if (index < 0 || index >= this.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                var current = this.head.NextNodes[0];
+                for (int i = 0; i < index; i++)
+                {
+                    current = current.NextNodes[0];
+                }
+
+                current.Value = value;
+            }
+        }
+
+        /// <inheritdoc/>
         public void Add(T item)
         {
             var level = 0;
@@ -51,6 +96,7 @@
             ++this.Count;
         }
 
+        /// <inheritdoc/>
         public void Clear()
         {
             if (this.head.NextNodes[0] == null)
@@ -66,6 +112,7 @@
             this.Count = 0;
         }
 
+        /// <inheritdoc/>
         public bool Contains(T item)
         {
             var current = this.head;
@@ -85,6 +132,7 @@
             return false;
         }
 
+        /// <inheritdoc/>
         public void CopyTo(T[] array, int arrayIndex)
         {
             if (array == null)
@@ -110,6 +158,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public IEnumerator<T> GetEnumerator()
         {
             var current = this.head.NextNodes[0];
@@ -120,6 +169,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public int IndexOf(T item)
         {
             var current = this.head;
@@ -136,31 +186,28 @@
             throw new ArgumentException("There is no item with such value in the list.");
         }
 
+        /// <inheritdoc/>
         public void Insert(int index, T item)
         {
             this.Add(item);
         }
 
+        /// <inheritdoc/>
         public bool Remove(T item)
         {
-            var current = this.head;
             var removed = false;
+            var current = this.head;
             for (int i = this.levels - 1; i >= 0; --i)
             {
-                while (current.NextNodes[i] != null && current.NextNodes[i].Value.CompareTo(item) != 0)
+                while (current.NextNodes[i] != null && current.NextNodes[i].Value.CompareTo(item) < 0)
                 {
                     current = current.NextNodes[i];
                 }
 
-                if (current.NextNodes[i] != null)
+                if (current.NextNodes[i] != null && current.NextNodes[i].Value.CompareTo(item) == 0)
                 {
-                    for (var j = i; j >= 0; --j)
-                    {
-                        current.NextNodes[j] = current.NextNodes[j].NextNodes[j];
-                    }
-
+                    current.NextNodes[i] = current.NextNodes[i].NextNodes[i];
                     removed = true;
-                    break;
                 }
             }
 
@@ -168,38 +215,11 @@
             return removed;
         }
 
+        /// <inheritdoc/>
         public void RemoveAt(int index)
-        {
-            if (index < 0 || index >= this.Count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index));
-            }
+            => this.Remove(this[index]);
 
-            var nodeToRemove = this.head;
-            for (var i = 0; i <= index; ++i)
-            {
-                nodeToRemove = nodeToRemove.NextNodes[0];
-            }
-
-            var level = nodeToRemove.Level;
-            var nodesToUpdate = new Node[level];
-            for (var i = 0; i < level; ++i)
-            {
-                var current = this.head;
-                for (var j = 0; j < index; ++j)
-                {
-                    current = current.NextNodes[0];
-                }
-
-                nodesToUpdate[i] = current;
-            }
-
-            for (var i = 0; i < level; ++i)
-            {
-                nodesToUpdate[i].NextNodes[i] = nodeToRemove.NextNodes[i];
-            }
-        }
-
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
