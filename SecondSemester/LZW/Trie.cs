@@ -17,16 +17,27 @@ public class Trie
 
         public bool Add(string element, ref int total, int position = 0)
         {
-            TrieElement current = this;
+            TrieElement? current = this;
+
             while (position < element.Length)
             {
-                if (current.next[element[position]] == null)
+                if (current is null)
+                {
+                    return false;
+                }
+
+                if (current.next[element[position]] is null)
                 {
                     current.next[element[position]] = new TrieElement();
                     ++current.size;
 
                     if (position == element.Length - 1)
                     {
+                        if (current.next[element[position]] is null)
+                        {
+                            return false;
+                        }
+
                         current.next[element[position]].isTerminal = true;
                         current.next[element[position]].code = total++;
                         return true;
@@ -37,7 +48,7 @@ public class Trie
                 ++position;
             }
 
-            if (current.isTerminal)
+            if (current is null || current.isTerminal)
             {
                 return false;
             }
@@ -49,10 +60,10 @@ public class Trie
 
         public bool Contains(string element, int position = 0)
         {
-            TrieElement current = this;
+            TrieElement? current = this;
             while (position < element.Length)
             {
-                if (current.next[element[position]] == null)
+                if (current is null || current.next[element[position]] is null)
                 {
                     return false;
                 }
@@ -61,15 +72,15 @@ public class Trie
                 ++position;
             }
 
-            return current.isTerminal;
+            return current is not null ? current.isTerminal : false;
         }
 
         public int GetCode(string element, int position = 0)
         {
-            TrieElement current = this;
+            TrieElement? current = this;
             while (position < element.Length)
             {
-                if (current.next[element[position]] == null)
+                if (current is null || current.next[element[position]] is null)
                 {
                     return -1;
                 }
@@ -78,7 +89,7 @@ public class Trie
                 ++position;
             }
 
-            return current.code;
+            return current is not null ? current.code : -1;
         }
     }
 

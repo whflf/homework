@@ -15,15 +15,12 @@ public static class LZW
 {
     private static List<byte> ReadDataFromFile(string filePath)
     {
-        BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open));
         var data = new List<byte>();
 
-        using (reader)
+        using var reader = new BinaryReader(File.Open(filePath, FileMode.Open));
+        while (reader.BaseStream.Position != reader.BaseStream.Length)
         {
-            while (reader.BaseStream.Position != reader.BaseStream.Length)
-            {
-                data.Add(reader.ReadByte());
-            }
+            data.Add(reader.ReadByte());
         }
 
         return data;
@@ -67,7 +64,7 @@ public static class LZW
         var bitIndex = 0;
         byte currentByte = 0;
 
-        foreach (bool bit in bits)
+        foreach (var bit in bits)
         {
             if (bit)
             {
@@ -119,14 +116,7 @@ public static class LZW
 
             if (dictionary.Add(currentPhrase.ToString()))
             {
-                if (currentPhrase.ToString() == "the")
-                {
-                    bits.AddRange(GetOutputCode(previousPhrase, dictionary));
-                }
-                else
-                {
-                    bits.AddRange(GetOutputCode(previousPhrase, dictionary));
-                }
+                bits.AddRange(GetOutputCode(previousPhrase, dictionary));
                 currentPhrase = new StringBuilder(character);
             }
             previousPhrase = currentPhrase.ToString();
@@ -217,25 +207,26 @@ public static class LZW
 
         while (index != bitCodes.Count)
         {
-            var currentCode = SeparateCurrentCode(codeLength, bitCodes, ref index, ref inputEnd);
+            var currentCodeBits = SeparateCurrentCode(codeLength, bitCodes, ref index, ref inputEnd);
 
             if (inputEnd)
             {
                 break;
             }
 
-            var code = BinaryToDecimal(currentCode);
+            var code = BinaryToDecimal(currentCodeBits);
             var phraseIndex = 0;
 
             string entry;
-            try
+            if (code < dictionary.Count)
             {
                 entry = dictionary[code];
             }
-            catch (ArgumentOutOfRangeException)
+            else
             {
                 entry = currentPhrase.ToString() + currentPhrase[0];
             }
+
             while (phraseIndex < entry.Length)
             {
                 currentPhrase.Append(entry[phraseIndex++]);
