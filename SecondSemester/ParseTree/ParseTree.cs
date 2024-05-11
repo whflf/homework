@@ -1,12 +1,17 @@
-﻿using System;
+﻿// <copyright file="ParseTree.cs" company="Elena Makarova">
+// Copyright (c) Elena Makarova. All rights reserved.
+// </copyright>
+
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 /// <summary>
 /// Represents a parse tree for mathematical expressions.
 /// </summary>
 public class ParseTree
 {
-    private readonly Operator? root;
+    private readonly Node? root;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParseTree"/> class with the specified string representation
@@ -96,17 +101,17 @@ public class ParseTree
                 var operand = new Operand(element);
                 currentSubtree.Update(operand);
 
-                var parentheses = string.Empty;
+                var parentheses = new StringBuilder();
                 while (currentSubtree.Right is not null && subtrees.TryPop(out var oldSubtree))
                 {
-                    parentheses += ')';
+                    parentheses.Append(')');
                     oldSubtree.Update(currentSubtree);
                     currentSubtree = oldSubtree;
                 }
 
                 if (currentSubtree.Right != null)
                 {
-                    parentheses += ')';
+                    parentheses.Append(')');
                 }
 
                 if (splitFromOriginal[i] != $"{element}{parentheses}")
@@ -121,16 +126,21 @@ public class ParseTree
 
     private abstract class Node(string value)
     {
-        protected string Value { get; private set; } = value;
+        public string Value { get; init; } = value;
 
         public abstract double Calculate();
     }
 
-    private class Operand(string value) : Node(value)
+    private class Operand : Node
     {
+        public Operand(string value)
+            : base(value)
+        {
+        }
+
         public override double Calculate()
         {
-            if (!double.TryParse(value, out var result))
+            if (!double.TryParse(this.Value, out var result))
             {
                 throw new IncorrectInputException();
             }
@@ -138,11 +148,16 @@ public class ParseTree
             return result;
         }
 
-        public override string ToString() => value;
+        public override string ToString() => this.Value;
     }
 
-    private class Operator(string value) : Node(value)
+    private class Operator : Node
     {
+        public Operator(string value)
+            : base(value)
+        {
+        }
+
         public Node? Left { get; set; }
 
         public Node? Right { get; set; }
@@ -154,7 +169,7 @@ public class ParseTree
                 throw new IncorrectInputException();
             }
 
-            switch (value)
+            switch (this.Value)
             {
                 case "+":
                     return this.Left.Calculate() + this.Right.Calculate();
@@ -163,6 +178,12 @@ public class ParseTree
                 case "*":
                     return this.Left.Calculate() * this.Right.Calculate();
                 case "/":
+                    var epsilon = 0.0000001;
+                    if (Math.Abs(this.Right.Calculate()) < epsilon)
+                    {
+                        throw new DivideByZeroException();
+                    }
+
                     return this.Left.Calculate() / this.Right.Calculate();
                 default:
                     throw new IncorrectInputException();
@@ -176,23 +197,22 @@ public class ParseTree
                 throw new IncorrectInputException();
             }
 
-            return string.Format($"({value} {this.Left} {this.Right})");
+            return string.Format($"({this.Value} {this.Left} {this.Right})");
         }
 
         public void Update(Node element)
         {
-            if (this.Right != null)
-            {
-                throw new IncorrectInputException();
-            }
-
             if (this.Left == null)
             {
                 this.Left = element;
             }
-            else
+            else if (this.Right == null)
             {
                 this.Right = element;
+            }
+            else
+            {
+                throw new IncorrectInputException();
             }
         }
     }

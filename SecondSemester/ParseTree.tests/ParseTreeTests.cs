@@ -30,7 +30,7 @@ public class ParseTreeTests
     [TestCase("(- (/ 6 (* 7 0)) 5)")]
     public void TestDivisionByZero(string stringTree)
     {
-        Assert.That(new ParseTree(stringTree).CalculateExpression(), Is.EqualTo(double.PositiveInfinity));
+        Assert.Throws<DivideByZeroException>(() => new ParseTree(stringTree).CalculateExpression());
     }
 
     [TestCase("2 + 2 * 2")]

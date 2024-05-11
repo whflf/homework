@@ -1,4 +1,8 @@
-﻿try
+﻿// <copyright file="Program.cs" company="Elena Makarova">
+// Copyright (c) Elena Makarova. All rights reserved.
+// </copyright>
+
+try
 {
     var parseTree = new ParseTree(File.ReadAllText(args[0]));
 
