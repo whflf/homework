@@ -1,8 +1,8 @@
-namespace UniqueList;
+// <copyright file="CommonList.cs" company="Elena Makarova">
+// Copyright (c) Elena Makarova. All rights reserved.
+// </copyright>
 
-/// <license>
-/// https://github.com/whflf/homework/blob/main/LICENSE
-/// </license>
+namespace UniqueList;
 
 /// <summary>
 /// Represents a common list data structure.
@@ -32,10 +32,10 @@ public class CommonList<T>
     public virtual void Add(T value)
     {
         ++this.Count;
-        tail = new ListElement(value, null, tail);
-        if (tail.Previous is not null)
+        this.tail = new ListElement(value, null, this.tail);
+        if (this.tail.Previous is not null)
         {
-            tail.Previous.Next = tail;
+            this.tail.Previous.Next = this.tail;
         }
 
         this.head ??= this.tail;
@@ -52,26 +52,26 @@ public class CommonList<T>
 
         for (var i = 0; i < this.Count; ++i)
         {
-            if (!Equals(value, current.Value))
+            if (current is not null && !Equals(value, current.Value))
             {
                 current = current.Next;
                 continue;
             }
 
-            if (current != this.head)
+            if (current is not null && current.Previous is not null && current != this.head)
             {
                 current.Previous.Next = current.Next;
             }
-            else
+            else if (this.head is not null)
             {
-                head = head.Next;
-                if (head is not null)
+                this.head = this.head.Next;
+                if (this.head is not null)
                 {
-                    head.Previous = null;
+                    this.head.Previous = null;
                 }
             }
 
-            if (current == this.tail)
+            if (current is not null && current == this.tail)
             {
                 this.tail = current.Previous;
             }
@@ -99,10 +99,52 @@ public class CommonList<T>
         var current = this.head;
         for (var i = 0; i < position; ++i)
         {
+            if (current is null)
+            {
+                return;
+            }
+
             current = current.Next;
         }
 
+        if (current is null)
+        {
+            return;
+        }
+
         current.Value = value;
+    }
+
+    /// <summary>
+    /// Gets the index of the first occurrence of a specific element in the list.
+    /// </summary>
+    /// <param name="element">The element to locate in the list.</param>
+    /// <returns>The zero-based index of the first occurrence of <paramref name="element"/> within the entire list, if found; otherwise, -1.</returns>
+    public int GetIndex(T element)
+    {
+        if (this.head is null)
+        {
+            return -1;
+        }
+
+        var current = this.head;
+
+        for (var i = 0; i < this.Count; ++i)
+        {
+            if (current is null)
+            {
+                return -1;
+            }
+
+            if (Equals(current.Value, element))
+            {
+                return i;
+            }
+
+            current = current.Next;
+        }
+
+        return -1;
     }
 
     /// <summary>

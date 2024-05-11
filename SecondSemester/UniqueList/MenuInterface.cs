@@ -1,3 +1,7 @@
+// <copyright file="MenuInterface.cs" company="Elena Makarova">
+// Copyright (c) Elena Makarova. All rights reserved.
+// </copyright>
+
 namespace UniqueList;
 
 internal static class MenuInterface

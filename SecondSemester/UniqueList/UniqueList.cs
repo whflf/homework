@@ -1,8 +1,8 @@
-namespace UniqueList;
+// <copyright file="UniqueList.cs" company="Elena Makarova">
+// Copyright (c) Elena Makarova. All rights reserved.
+// </copyright>
 
-/// <license>
-/// https://github.com/whflf/homework/blob/main/LICENSE
-/// </license>
+namespace UniqueList;
 
 /// <summary>
 /// Represents a list that ensures unique elements.
@@ -13,7 +13,7 @@ public class UniqueList<T> : CommonList<T>
     /// <inheritdoc/>
     public override void Add(T value)
     {
-        if (this.Contains(value))
+        if (this.GetIndex(value) != -1)
         {
             throw new RepeatingValueException();
         }
@@ -24,38 +24,17 @@ public class UniqueList<T> : CommonList<T>
     /// <inheritdoc/>
     public override void Change(T value, int position)
     {
-        if (this.Contains(value))
+        var index = this.GetIndex(value);
+        if (index != -1)
         {
             throw new RepeatingValueException();
         }
 
+        if (index == position)
+        {
+            return;
+        }
+
         base.Change(value, position);
-    }
-
-    private bool Contains(T element)
-    {
-        if (this.head is null)
-        {
-            return false;
-        }
-
-        var current = this.head;
-
-        for (var i = 0; i < this.Count; ++i)
-        {
-            if (current is null)
-            {
-                return false;
-            }
-
-            if (Equals(current.Value, element))
-            {
-                return true;
-            }
-
-            current = current.Next;
-        }
-
-        return false;
     }
 }
