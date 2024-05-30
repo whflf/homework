@@ -1,1 +1,5 @@
-﻿public class IncorrectExpressionException : Exception { }
+﻿public class IncorrectExpressionException : Exception
+{
+    public IncorrectExpressionException()
+    {}
+}

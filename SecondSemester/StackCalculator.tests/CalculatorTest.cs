@@ -1,96 +1,84 @@
 using NUnit.Framework;
+using StackCalculator;
 
-namespace StackCalculator.tests
+namespace StackCalculator.tests;
+
+public class CalculatorTest
 {
-    [TestFixture]
-    public class CalculatorTests
+    [TestCase(StackType.ListStack)]
+    [TestCase(StackType.ArrayStack)]
+    public void TestBasicOperation(StackType stackType)
     {
-        [Test]
-        public void TestBasicOperation()
-        {
-            Assert.That(Calculator.CalcExpression("4 2 -"), Is.EqualTo(2));
-            Assert.That(Calculator.CalcExpression("4 2 -", StackType.ArrayStack), Is.EqualTo(2));
-        }
+        Assert.That(Calculator.CalculateExpression("4 2 -", stackType), Is.EqualTo(2));
+    }
 
-        [Test]
-        public void TestMultipleOperations()
-        {
-            Assert.That(Calculator.CalcExpression("1 2 3 + *"), Is.EqualTo(5));
-            Assert.That(Calculator.CalcExpression("1 2 3 + *", StackType.ArrayStack), Is.EqualTo(5));
-        }
+    [TestCase(StackType.ListStack)]
+    [TestCase(StackType.ArrayStack)]
+    public void TestMultipleOperations(StackType stackType)
+    {
+        Assert.That(Calculator.CalculateExpression("1 2 3 + *", stackType), Is.EqualTo(5));
+    }
 
-        [Test]
-        public void TestComplexExpression()
-        {
-            Assert.That(Calculator.CalcExpression("10 2 / 3 4 * -"), Is.EqualTo(-7));
-            Assert.That(Calculator.CalcExpression("10 2 / 3 4 * -", StackType.ArrayStack), Is.EqualTo(-7));
-        }
+    [TestCase(StackType.ListStack)]
+    [TestCase(StackType.ArrayStack)]
+    public void TestComplexExpression(StackType stackType)
+    {
+        Assert.That(Calculator.CalculateExpression("10 2 / 3 4 * -"), Is.EqualTo(-7));
+    }
 
-        [Test]
-        public void TestLargeNumbers()
-        {
-            Assert.That(Calculator.CalcExpression("99999999 99999999 +"), Is.EqualTo(199999998));
-            Assert.That(Calculator.CalcExpression("99999999 99999999 +", StackType.ArrayStack), Is.EqualTo(199999998));
+    [TestCase(StackType.ListStack)]
+    [TestCase(StackType.ArrayStack)]
+    public void TestLargeNumbers(StackType stackType)
+    {
+        Assert.That(Calculator.CalculateExpression("99999999 99999999 +", stackType), Is.EqualTo(199999998));
+        Assert.That(Calculator.CalculateExpression("1000000 2 /", stackType), Is.EqualTo(500000));
+    }
 
-            Assert.That(Calculator.CalcExpression("1000000 2 /"), Is.EqualTo(500000));
-            Assert.That(Calculator.CalcExpression("1000000 2 /", StackType.ArrayStack), Is.EqualTo(500000));
-        }
+    [TestCase(StackType.ListStack)]
+    [TestCase(StackType.ArrayStack)]
+    public void TestInvalidInput(StackType stackType)
+    {
+        Assert.Throws<IncorrectExpressionException>(
+            () => Calculator.CalculateExpression("5 + 3", stackType));
+        Assert.Throws<IncorrectExpressionException>(
+            () => Calculator.CalculateExpression("4 2 * *", stackType));
+        Assert.Throws<IncorrectExpressionException>(
+            () => Calculator.CalculateExpression("", stackType));
+    }
 
-        [Test]
-        public void TestInvalidInput()
-        {
-            Assert.Throws<IncorrectExpressionException>(() => Calculator.CalcExpression("5 + 3"));
-            Assert.Throws<IncorrectExpressionException>(() => Calculator.CalcExpression("5 + 3", StackType.ArrayStack));
+    [TestCase(StackType.ListStack)]
+    [TestCase(StackType.ArrayStack)]
+    public void TestDivisionByZero(StackType stackType)
+    {
+        Assert.Throws<DivideByZeroException>(
+            () => Calculator.CalculateExpression("10 0 /", stackType));
+        Assert.Throws<DivideByZeroException>(
+            () => Calculator.CalculateExpression("0 0 /", stackType));
+        Assert.Throws<DivideByZeroException>(
+            () => Calculator.CalculateExpression("1 1 100000000 / /", stackType));
+    }
 
-            Assert.Throws<IncorrectExpressionException>(() => Calculator.CalcExpression("4 2 * *"));
-            Assert.Throws<IncorrectExpressionException>(() => Calculator.CalcExpression("4 2 * *", StackType.ArrayStack));
+    [TestCase(StackType.ListStack)]
+    [TestCase(StackType.ArrayStack)]
+    public void TestEdgeCases(StackType stackType)
+    {
+        Assert.That(Calculator.CalculateExpression("1", stackType), Is.EqualTo(1));
+        Assert.That(Calculator.CalculateExpression("1 1 + 2 2 + +", stackType), Is.EqualTo(6));
+    }
 
-            Assert.Throws<IncorrectExpressionException>(() => Calculator.CalcExpression(""));
-            Assert.Throws<IncorrectExpressionException>(() => Calculator.CalcExpression("", StackType.ArrayStack));
-        }
+    [TestCase(StackType.ListStack)]
+    [TestCase(StackType.ArrayStack)]
+    public void TestPositiveAndNegativeMix(StackType stackType)
+    {
+        Assert.That(Calculator.CalculateExpression("-3 4 +", stackType), Is.EqualTo(1));
+        Assert.That(Calculator.CalculateExpression("-5 -2 *", stackType), Is.EqualTo(10));
+    }
 
-        [Test]
-        public void TestDivisionByZero()
-        {
-            Assert.Throws<DivideByZeroException>(() => Calculator.CalcExpression("10 0 /"));
-            Assert.Throws<DivideByZeroException>(() => Calculator.CalcExpression("10 0 /", StackType.ArrayStack));
-
-            Assert.Throws<DivideByZeroException>(() => Calculator.CalcExpression("0 0 /"));
-            Assert.Throws<DivideByZeroException>(() => Calculator.CalcExpression("0 0 /", StackType.ArrayStack));
-
-            Assert.Throws<DivideByZeroException>(() => Calculator.CalcExpression("1 1 100000000 / /"));
-            Assert.Throws<DivideByZeroException>(() => Calculator.CalcExpression("1 1 100000000 / /", StackType.ArrayStack));
-        }
-
-        [Test]
-        public void TestEdgeCases()
-        {
-            Assert.That(Calculator.CalcExpression("1"), Is.EqualTo(1));
-            Assert.That(Calculator.CalcExpression("1", StackType.ArrayStack), Is.EqualTo(1));
-
-            Assert.That(Calculator.CalcExpression("1 1 + 2 2 + +"), Is.EqualTo(6));
-            Assert.That(Calculator.CalcExpression("1 1 + 2 2 + +", StackType.ArrayStack), Is.EqualTo(6));
-        }
-
-        [Test]
-        public void TestPositiveAndNegativeMix()
-        {
-            Assert.That(Calculator.CalcExpression("-3 4 +"), Is.EqualTo(1));
-            Assert.That(Calculator.CalcExpression("-3 4 +", StackType.ArrayStack), Is.EqualTo(1));
-
-            Assert.That(Calculator.CalcExpression("-5 -2 *"), Is.EqualTo(10));
-            Assert.That(Calculator.CalcExpression("-5 -2 *", StackType.ArrayStack), Is.EqualTo(10));
-        }
-
-        [Test]
-        public void TestFloatResult()
-        {
-            Assert.That(Calculator.CalcExpression("10 8 /"), Is.EqualTo(1.25));
-            Assert.That(Calculator.CalcExpression("10 8 /", StackType.ArrayStack), Is.EqualTo(1.25));
-
-            Assert.That(Calculator.CalcExpression("-9 2 /"), Is.EqualTo(-4.5));
-            Assert.That(Calculator.CalcExpression("-9 2 /", StackType.ArrayStack), Is.EqualTo(-4.5));
-        }
+    [TestCase(StackType.ListStack)]
+    [TestCase(StackType.ArrayStack)]
+    public void TestFloatResult(StackType stackType)
+    {
+        Assert.That(Calculator.CalculateExpression("10 8 /", stackType), Is.EqualTo(1.25));
+        Assert.That(Calculator.CalculateExpression("-9 2 /", stackType), Is.EqualTo(-4.5));
     }
 }
-

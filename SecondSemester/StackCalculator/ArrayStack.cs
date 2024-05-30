@@ -1,23 +1,17 @@
 ﻿using System;
 
 /// <inheritdoc/>
-public class ArrayStack : IStack
+public class ArrayStack<T> : IStack<T>
 {
-    private double[] array;
-    private int top;
-
-    public ArrayStack()
-    {
-        this.array = new double[16];
-        this.top = -1;
-    }
+    private T?[] array = new T?[16];
+    private int top = -1;
 
     /// <inheritdoc/>
     public bool IsEmpty()
         => this.top == -1;
 
     /// <inheritdoc/>
-    public void Push(double element)
+    public void Push(T element)
     {
         ++this.top;
         if (this.top > this.array.Length - 1)
@@ -29,7 +23,7 @@ public class ArrayStack : IStack
     }
 
     /// <inheritdoc/>
-    public double Pop()
+    public T Pop()
     {
         if (this.IsEmpty())
         {
@@ -37,6 +31,8 @@ public class ArrayStack : IStack
         }
 
         --this.top;
-        return this.array[this.top + 1];
+        var result = this.array[this.top + 1] ?? throw new ArgumentException("Couldn't pop from empty stack");
+
+        return result;
     }
 }

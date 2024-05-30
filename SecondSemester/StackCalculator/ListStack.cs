@@ -1,37 +1,35 @@
 ﻿/// <inheritdoc/>
-public class ListStack : IStack
+public class ListStack<T> : IStack<T>
 {
     private StackElement? head;
 
     /// <inheritdoc/>
     public bool IsEmpty()
-    {
-        return head == null;
-    }
+        => head == null;
 
     /// <inheritdoc/>
-    public void Push(double value)
+    public void Push(T value)
     {
         this.head = new StackElement(value, head);
     }
 
     /// <inheritdoc/>
-    public double Pop()
+    public T Pop()
     {
         if (this.IsEmpty())
         {
             throw new UnderflowException("The stack is empty");
         }
 
-        double value = this.head.Value;
+        T value = this.head.Value ?? throw new ArgumentException("The stack is empty");
         this.head = this.head.Next;
 
         return value;
     }
 
-    private class StackElement(double value, StackElement? next)
+    private class StackElement(T value, StackElement? next)
     {
-        public double Value { get; set; } = value;
+        public T Value { get; set; } = value;
         public StackElement? Next { get; set; } = next;
     }
 }

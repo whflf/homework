@@ -9,7 +9,53 @@
 /// </summary>
 public static class Calculator
 {
-    private static void PushResult(string operation, IStack numbers)
+    /// <summary>
+    /// Calculates given expression.
+    /// </summary>
+    /// <param name="postfixNotation">Expression in the postfix notation to compute.</param>
+    /// <param name="stackType">The type of stack which is to be used when calculating expression.</param>
+    /// <returns>Expression value.</returns>
+    /// <exception cref="IncorrectExpressionException">Is thrown when the input expression cannot be computed.</exception>
+    public static double CalculateExpression(string postfixNotation, StackType stackType = StackType.ListStack)
+    {
+        IStack<double> numbers;
+        if (stackType == StackType.ArrayStack)
+        {
+            numbers = new ArrayStack<double>();
+        }
+        else
+        {
+            numbers = new ListStack<double>();
+        }
+
+        var expression = postfixNotation.Split(' ');
+
+        foreach (var element in expression) 
+        {
+            if (int.TryParse(element, out var value))
+            {
+                numbers.Push(value);
+            }
+            else
+            {
+                PushResult(element, numbers);
+            }
+        }
+
+        if (numbers.IsEmpty())
+        {
+            throw new IncorrectExpressionException();
+        }
+
+        double result = numbers.Pop();
+        if (numbers.IsEmpty())
+        {
+            return result;
+        }
+        throw new IncorrectExpressionException();
+    }
+    
+    private static void PushResult(string operation, IStack<double> numbers)
     {
         double a;
         double b;
@@ -45,50 +91,5 @@ public static class Calculator
             default:
                 throw new IncorrectExpressionException();
         }
-    }
-
-    /// <summary>
-    /// Calculates given expression.
-    /// </summary>
-    /// <param name="postfixNotation">Expression in the postfix notation to compute.</param>
-    /// <returns>Expression value.</returns>
-    /// <exception cref="IncorrectExpressionException">Is thrown when the input expression cannot be computed.</exception>
-    public static double CalcExpression(string postfixNotation, StackType stackType = StackType.ListStack)
-    {
-        IStack numbers;
-        if (stackType == StackType.ArrayStack)
-        {
-            numbers = new ArrayStack();
-        }
-        else
-        {
-            numbers = new ListStack();
-        }
-
-        string[] expression = postfixNotation.Split(' ');
-
-        foreach (string element in expression) 
-        {
-            if (int.TryParse(element, out var value))
-            {
-                numbers.Push(value);
-            }
-            else
-            {
-                PushResult(element, numbers);
-            }
-        }
-
-        if (numbers.IsEmpty())
-        {
-            throw new IncorrectExpressionException();
-        }
-
-        double result = numbers.Pop();
-        if (numbers.IsEmpty())
-        {
-            return result;
-        }
-        throw new IncorrectExpressionException();
     }
 }

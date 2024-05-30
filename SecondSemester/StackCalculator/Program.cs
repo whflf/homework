@@ -4,7 +4,7 @@ if (input != null)
 {
     try
     {
-        var result = Calculator.CalcExpression(input);
+        var result = Calculator.CalculateExpression(input);
         Console.WriteLine(result);
     }
     catch (IncorrectExpressionException)
