@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniqueList", "UniqueList.csproj", "{9E5A9879-C025-4837-BB08-4EAE793E7597}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniqueList.tests", "..\UniqueList.tests\UniqueList.tests.csproj", "{97415E67-9884-4E0B-8746-477FDD936503}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E5A9879-C025-4837-BB08-4EAE793E7597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E5A9879-C025-4837-BB08-4EAE793E7597}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E5A9879-C025-4837-BB08-4EAE793E7597}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E5A9879-C025-4837-BB08-4EAE793E7597}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97415E67-9884-4E0B-8746-477FDD936503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97415E67-9884-4E0B-8746-477FDD936503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97415E67-9884-4E0B-8746-477FDD936503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97415E67-9884-4E0B-8746-477FDD936503}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
