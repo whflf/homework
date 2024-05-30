@@ -13,12 +13,12 @@ public class CommonList<T>
     /// <summary>
     /// The head element of the list.
     /// </summary>
-    protected ListElement? head;
+    private ListElement? head;
 
     /// <summary>
     /// The tail element of the list.
     /// </summary>
-    protected ListElement? tail;
+    private ListElement? tail;
 
     /// <summary>
     /// Gets the number of elements contained in the list.
@@ -153,7 +153,7 @@ public class CommonList<T>
     /// <param name="value">The value stored in the element.</param>
     /// <param name="next">The next element for the current one.</param>
     /// <param name="previous">The previous element for the current one.</param>
-    protected class ListElement(T value, ListElement? next, ListElement? previous)
+    private class ListElement(T value, ListElement? next, ListElement? previous)
     {
         /// <summary>
         /// Gets or sets the value of the element.
