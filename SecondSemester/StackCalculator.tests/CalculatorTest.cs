@@ -1,42 +1,43 @@
 using NUnit.Framework;
-using StackCalculator;
+using System.Collections;
 
 namespace StackCalculator.tests;
 
 public class CalculatorTest
 {
-    [TestCase(StackType.ListStack)]
-    [TestCase(StackType.ArrayStack)]
-    public void TestBasicOperation(StackType stackType)
+    public static IEnumerable<TestCaseData> Stack()
+    {
+        yield return new TestCaseData(new ListStack<double>());
+        yield return new TestCaseData(new ArrayStack<double>());
+    }
+    
+    [TestCaseSource(nameof(Stack))]
+    public void TestBasicOperation(IStack<double> stackType)
     {
         Assert.That(Calculator.CalculateExpression("4 2 -", stackType), Is.EqualTo(2));
     }
 
-    [TestCase(StackType.ListStack)]
-    [TestCase(StackType.ArrayStack)]
-    public void TestMultipleOperations(StackType stackType)
+    [TestCaseSource(nameof(Stack))]
+    public void TestMultipleOperations(IStack<double> stackType)
     {
         Assert.That(Calculator.CalculateExpression("1 2 3 + *", stackType), Is.EqualTo(5));
     }
 
-    [TestCase(StackType.ListStack)]
-    [TestCase(StackType.ArrayStack)]
-    public void TestComplexExpression(StackType stackType)
+    [TestCaseSource(nameof(Stack))]
+    public void TestComplexExpression(IStack<double> stackType)
     {
         Assert.That(Calculator.CalculateExpression("10 2 / 3 4 * -"), Is.EqualTo(-7));
     }
 
-    [TestCase(StackType.ListStack)]
-    [TestCase(StackType.ArrayStack)]
-    public void TestLargeNumbers(StackType stackType)
+    [TestCaseSource(nameof(Stack))]
+    public void TestLargeNumbers(IStack<double> stackType)
     {
         Assert.That(Calculator.CalculateExpression("99999999 99999999 +", stackType), Is.EqualTo(199999998));
         Assert.That(Calculator.CalculateExpression("1000000 2 /", stackType), Is.EqualTo(500000));
     }
 
-    [TestCase(StackType.ListStack)]
-    [TestCase(StackType.ArrayStack)]
-    public void TestInvalidInput(StackType stackType)
+    [TestCaseSource(nameof(Stack))]
+    public void TestInvalidInput(IStack<double> stackType)
     {
         Assert.Throws<IncorrectExpressionException>(
             () => Calculator.CalculateExpression("5 + 3", stackType));
@@ -46,9 +47,8 @@ public class CalculatorTest
             () => Calculator.CalculateExpression("", stackType));
     }
 
-    [TestCase(StackType.ListStack)]
-    [TestCase(StackType.ArrayStack)]
-    public void TestDivisionByZero(StackType stackType)
+    [TestCaseSource(nameof(Stack))]
+    public void TestDivisionByZero(IStack<double> stackType)
     {
         Assert.Throws<DivideByZeroException>(
             () => Calculator.CalculateExpression("10 0 /", stackType));
@@ -58,25 +58,22 @@ public class CalculatorTest
             () => Calculator.CalculateExpression("1 1 100000000 / /", stackType));
     }
 
-    [TestCase(StackType.ListStack)]
-    [TestCase(StackType.ArrayStack)]
-    public void TestEdgeCases(StackType stackType)
+    [TestCaseSource(nameof(Stack))]
+    public void TestEdgeCases(IStack<double> stackType)
     {
         Assert.That(Calculator.CalculateExpression("1", stackType), Is.EqualTo(1));
         Assert.That(Calculator.CalculateExpression("1 1 + 2 2 + +", stackType), Is.EqualTo(6));
     }
 
-    [TestCase(StackType.ListStack)]
-    [TestCase(StackType.ArrayStack)]
-    public void TestPositiveAndNegativeMix(StackType stackType)
+    [TestCaseSource(nameof(Stack))]
+    public void TestPositiveAndNegativeMix(IStack<double> stackType)
     {
         Assert.That(Calculator.CalculateExpression("-3 4 +", stackType), Is.EqualTo(1));
         Assert.That(Calculator.CalculateExpression("-5 -2 *", stackType), Is.EqualTo(10));
     }
 
-    [TestCase(StackType.ListStack)]
-    [TestCase(StackType.ArrayStack)]
-    public void TestFloatResult(StackType stackType)
+    [TestCaseSource(nameof(Stack))]
+    public void TestFloatResult(IStack<double> stackType)
     {
         Assert.That(Calculator.CalculateExpression("10 8 /", stackType), Is.EqualTo(1.25));
         Assert.That(Calculator.CalculateExpression("-9 2 /", stackType), Is.EqualTo(-4.5));

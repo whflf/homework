@@ -1,10 +1,4 @@
-﻿public enum StackType
-{
-    ArrayStack,
-    ListStack,
-}
-
-/// <summary>
+﻿/// <summary>
 /// Calculator that performs operations "+", "-", "*", "/" over an arithmetic expressions written in the postfix notation.
 /// </summary>
 public static class Calculator
@@ -13,21 +7,11 @@ public static class Calculator
     /// Calculates given expression.
     /// </summary>
     /// <param name="postfixNotation">Expression in the postfix notation to compute.</param>
-    /// <param name="stackType">The type of stack which is to be used when calculating expression.</param>
+    /// <param name="numbers">The stack to store numbers for calculator.</param>
     /// <returns>Expression value.</returns>
     /// <exception cref="IncorrectExpressionException">Is thrown when the input expression cannot be computed.</exception>
-    public static double CalculateExpression(string postfixNotation, StackType stackType = StackType.ListStack)
+    public static double CalculateExpression(string postfixNotation, IStack<double> numbers)
     {
-        IStack<double> numbers;
-        if (stackType == StackType.ArrayStack)
-        {
-            numbers = new ArrayStack<double>();
-        }
-        else
-        {
-            numbers = new ListStack<double>();
-        }
-
         var expression = postfixNotation.Split(' ');
 
         foreach (var element in expression) 

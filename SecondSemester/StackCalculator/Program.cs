@@ -4,7 +4,7 @@ if (input != null)
 {
     try
     {
-        var result = Calculator.CalculateExpression(input);
+        var result = Calculator.CalculateExpression(input, new ListStack<double>());
         Console.WriteLine(result);
     }
     catch (IncorrectExpressionException)
